@@ -1,4 +1,6 @@
 #include "PWindow.h"
+#include "Graphics/PGraphicsEngine.h"
+#include "Debug/PDebug.h"
 
 // External Libs
 #include <SDL/SDL.h>
@@ -56,7 +58,24 @@ bool PWindow::CreateWindow(const PSWindowParams& params)
 		return false;
 	}
 
-	
+	m_GraphicsEngine = std::make_unique<PGraphicsEngine>();
+
+	// Initialise the graphics engine and test if it failed
+	if (!m_GraphicsEngine->InitEngine(m_SDLWindow, m_Params.vsync))
+	{
+		PDebug::Log("Window failed to initialise graphics engine", LT_ERROR);
+		m_GraphicsEngine = nullptr;
+		return false;
+	}
 
 	return true;
+}
+
+void PWindow::Render()
+{
+	// Render the graphics engine if one exists
+	if (m_GraphicsEngine)
+	{
+		m_GraphicsEngine->Render(m_SDLWindow);
+	}
 }

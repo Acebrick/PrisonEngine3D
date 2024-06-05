@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+class PGraphicsEngine;
+
 struct PSWindowParams
 {
 	// Default constructor
@@ -58,6 +60,9 @@ public:
 	// Check if the window has been set to closed
 	bool IsPendingClose() { return m_ShouldClose; }
 
+	// Render the graphics engine
+	void Render();
+
 private:
 	// A ref to the window in sdl
 	SDL_Window* m_SDLWindow;
@@ -67,4 +72,7 @@ private:
 
 	// Determine if the window should close
 	bool m_ShouldClose;
+
+	// Store the graphics engine
+	std::unique_ptr<PGraphicsEngine> m_GraphicsEngine;
 };
