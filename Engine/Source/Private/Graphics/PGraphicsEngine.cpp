@@ -7,13 +7,11 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 
-std::vector<PSVertexData> triangle1Vertex;
-std::vector<PSVertexData> triangle2Vertex;
+std::vector<PSVertexData> vertexData;
 std::vector<uint32_t> indexData;
+
 // Test mesh for debug
 std::unique_ptr<PMesh> m_Mesh;
-std::unique_ptr<PMesh> m_Mesh2;
-
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 {
@@ -74,50 +72,39 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// Create the debug mesh
 	m_Mesh = std::make_unique<PMesh>();
-	m_Mesh2 = std::make_unique<PMesh>();
-
 
 	// Bottom right triangle
-	triangle1Vertex.resize(3);
-	triangle1Vertex[0].m_Position[0] = -0.5f;
-	triangle1Vertex[0].m_Position[1] = 0.5f * 1.78f;
-	triangle1Vertex[0].m_Position[2] = 0.0f;
+	vertexData.resize(4);
+	// Top left
+	vertexData[0].m_Position[0] = -0.5f;
+	vertexData[0].m_Position[1] = 0.5f * 1.78f;
+	vertexData[0].m_Position[2] = 0.0f;
+	// Bottom left
+	vertexData[1].m_Position[0] = -0.5f;
+	vertexData[1].m_Position[1] = -0.5f * 1.78f;
+	vertexData[1].m_Position[2] = 0.0f;
+	// Bottom right
+	vertexData[2].m_Position[0] = 0.5f;
+	vertexData[2].m_Position[1] = -0.5f * 1.78f;
+	vertexData[2].m_Position[2] = 0.0f;
+	// Top right
+	vertexData[3].m_Position[0] = 0.5f;
+	vertexData[3].m_Position[1] = 0.5f * 1.78f;
+	vertexData[3].m_Position[2] = 0.0f;
 
-	triangle1Vertex[1].m_Position[0] = -0.5f;
-	triangle1Vertex[1].m_Position[1] = -0.5f * 1.78f;
-	triangle1Vertex[1].m_Position[2] = 0.0f;
-
-	triangle1Vertex[2].m_Position[0] = 0.5f;
-	triangle1Vertex[2].m_Position[1] = -0.5f * 1.78f;
-	triangle1Vertex[2].m_Position[2] = 0.0f;
-
-	//Top right triangle
-	triangle2Vertex.resize(3);
-	triangle2Vertex[0].m_Position[0] = -0.5f;
-	triangle2Vertex[0].m_Position[1] = 0.5f * 1.78f;
-	triangle2Vertex[0].m_Position[2] = 0.0f;
-
-	triangle2Vertex[1].m_Position[0] = 0.5f;
-	triangle2Vertex[1].m_Position[1] = 0.5f * 1.78f;
-	triangle2Vertex[1].m_Position[2] = 0.0f;
-
-	triangle2Vertex[2].m_Position[0] = 0.5f;
-	triangle2Vertex[2].m_Position[1] = -0.5f * 1.78f;
-	triangle2Vertex[2].m_Position[2] = 0.0f;
-
-	indexData.resize(3);
+	indexData.resize(6);
+	// Triangle 1
 	indexData[0] = 0; // Vertex 1
 	indexData[1] = 1; // Vertex 2
 	indexData[2] = 2; // Vertex 3
+	// Triangle 2
+	indexData[3] = 0; // Vertex 4
+	indexData[4] = 2; // Vertex 5
+	indexData[5] = 3; // Vertex 6
 
-	if (!m_Mesh->CreateMesh(triangle1Vertex, indexData))
+	if (!m_Mesh->CreateMesh(vertexData, indexData))
 	{
 		PDebug::Log("Failed to create debug mesh");
-	}
-
-	if (!m_Mesh2->CreateMesh(triangle2Vertex, indexData))
-	{
-		PDebug::Log("Failed to create debug mesh2");
 	}
 
 	return true;
@@ -136,7 +123,6 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 
 	// Render custom graphics
 	m_Mesh->Render();
-	m_Mesh2->Render();
 
 	// Presented the frame to the window
 	// Swapping the back buffer with the front buffer
