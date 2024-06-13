@@ -23,4 +23,10 @@ private:
 
 	// Store the shader for trhe engine
 	std::shared_ptr<PShaderProgram> m_Shader;
+
+	void SetTriangleData();
+	void SetSquareData();
+	void SetScleraData();
+	void SetIrisData();
+	void SetLightningData();
 };
