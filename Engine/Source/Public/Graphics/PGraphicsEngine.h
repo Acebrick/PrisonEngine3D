@@ -3,6 +3,7 @@
 
 typedef void* SDL_GLContext;
 struct SDL_Window;
+class PShaderProgram;
 
 class PGraphicsEngine
 {
@@ -19,4 +20,7 @@ public:
 private:
 	// Storing memory location for open gl context
 	SDL_GLContext m_SDLGLContext;
+
+	// Store the shader for trhe engine
+	std::shared_ptr<PShaderProgram> m_Shader;
 };

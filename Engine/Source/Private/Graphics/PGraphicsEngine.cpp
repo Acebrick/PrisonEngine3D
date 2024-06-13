@@ -1,6 +1,8 @@
 #include "Graphics/PGraphicsEngine.h"
 #include "Debug/PDebug.h"
 #include "Graphics/PMesh.h"
+#include "Graphics/PShaderProgram.h"
+#include "Math/PSTransform.h"
 
 // External Libs
 #include <GLEW/glew.h>
@@ -67,6 +69,15 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 		return false;
 	}
 
+	m_Shader = std::make_shared<PShaderProgram>();
+
+	// Attempt to initialise shdaer and test if failed
+	if (!m_Shader->InitShader("Shaders/SimpleShader/SimpleShader.vertex", "Shaders/SimpleShader/SimpleShader.frag"))
+	{
+		PDebug::Log("Graphics engine failed to intialise due to shader failure");
+		return false;
+	}
+
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
 
@@ -75,32 +86,38 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// Bottom right triangle
 	vertexData.resize(4);
-	// Top left
-	vertexData[0].m_Position[0] = -0.5f;
-	vertexData[0].m_Position[1] = 0.5f * 1.78f;
+	// Top middle
+	vertexData[0].m_Position[0] = 0.0f;
+	vertexData[0].m_Position[1] = 0.5f;
 	vertexData[0].m_Position[2] = 0.0f;
+	// Colour for V1
+	vertexData[0].m_Colour[0] = 1.0f;
+	vertexData[0].m_Colour[1] = 0.0f;
+	vertexData[0].m_Colour[2] = 0.0f;
+
 	// Bottom left
 	vertexData[1].m_Position[0] = -0.5f;
-	vertexData[1].m_Position[1] = -0.5f * 1.78f;
+	vertexData[1].m_Position[1] = -0.5f;
 	vertexData[1].m_Position[2] = 0.0f;
+	// Colour for V2
+	vertexData[1].m_Colour[0] = 0.0f;
+	vertexData[1].m_Colour[1] = 1.0f;
+	vertexData[1].m_Colour[2] = 0.0f;
+
 	// Bottom right
 	vertexData[2].m_Position[0] = 0.5f;
-	vertexData[2].m_Position[1] = -0.5f * 1.78f;
+	vertexData[2].m_Position[1] = -0.5f;
 	vertexData[2].m_Position[2] = 0.0f;
-	// Top right
-	vertexData[3].m_Position[0] = 0.5f;
-	vertexData[3].m_Position[1] = 0.5f * 1.78f;
-	vertexData[3].m_Position[2] = 0.0f;
+	// Colour for V1
+	vertexData[2].m_Colour[0] = 0.0f;
+	vertexData[2].m_Colour[1] = 0.0f;
+	vertexData[2].m_Colour[2] = 1.0f;
 
 	indexData.resize(6);
 	// Triangle 1
 	indexData[0] = 0; // Vertex 1
 	indexData[1] = 1; // Vertex 2
 	indexData[2] = 2; // Vertex 3
-	// Triangle 2
-	indexData[3] = 0; // Vertex 4
-	indexData[4] = 2; // Vertex 5
-	indexData[5] = 3; // Vertex 6
 
 	if (!m_Mesh->CreateMesh(vertexData, indexData))
 	{
@@ -112,17 +129,19 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 {
-	// There is a wireframe shader by default, this activates it
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 	// Set a background colour
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	PSTransform transform;
+	transform.position.x = 0.5f;
+	transform.rotation.z = 90.0f;
+	transform.scale = glm::vec3(0.5f);
+
 	// Render custom graphics
-	m_Mesh->Render();
+	m_Mesh->Render(m_Shader, transform);
 
 	// Presented the frame to the window
 	// Swapping the back buffer with the front buffer

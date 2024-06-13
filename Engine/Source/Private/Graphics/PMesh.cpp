@@ -1,5 +1,6 @@
 #include "Graphics/PMesh.h"
 #include "Debug/PDebug.h"
+#include "Graphics/PShaderProgram.h"
 
 // External Libs
 #include <GLEW/glew.h>
@@ -85,7 +86,8 @@ bool PMesh::CreateMesh(const std::vector<PSVertexData>& vertices, const std::vec
 		GL_STATIC_DRAW
 	);
 
-	// Pass out the verterx data in separate formats
+	// Pass out the vertex data in separate formats
+	// POSITION
 	glEnableVertexAttribArray(0);
 
 	// Set the position of that data to the 0 index of the attribute array
@@ -98,14 +100,33 @@ bool PMesh::CreateMesh(const std::vector<PSVertexData>& vertices, const std::vec
 		nullptr // How many numbers to skip
 	);
 
+	// Pass out the vertex data in separate formats
+	// COLOUR
+	glEnableVertexAttribArray(1);
+
+	// Set the position of that data to the 0 index of the attribute array
+	glVertexAttribPointer(
+		1, // Location to store the data in the attribute array
+		3, // How many numbers to pass into the attribute array index
+		GL_FLOAT, // The type of data to store (only one per index)
+		GL_FALSE, // Should we normalise the values, generally no
+		sizeof(PSVertexData), // How big is each data array in a VertexData
+		(void*)(sizeof(float) * 3) // How many numbers to skip in bytes
+	);
+
 	// Common practice to clear the VAO from the GPU
 	glBindVertexArray(0); // Set to 0 because there is no such thing as a 0 id
 
 	return true;
 }
 
-void PMesh::Render()
+void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform)
 {
+	shader->Activate();
+
+	// Update the transform of the mesh based on the model transform
+	shader->SetModelTransform(transform);
+
 	// Binding this mesh as the active VAO
 	glBindVertexArray(m_VAO);
 

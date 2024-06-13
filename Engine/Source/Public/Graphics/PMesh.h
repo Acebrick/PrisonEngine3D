@@ -5,6 +5,9 @@
 #include <vector>
 #include <cstdint>
 
+class PShaderProgram;
+struct PSTransform;
+
 struct PSVertexData
 {
 	float m_Position[3] = { 0.0f, 0.0f, 0.0f };
@@ -23,7 +26,7 @@ public:
 	bool CreateMesh(const std::vector<PSVertexData>& vertices, const std::vector<uint32_t>& indices);
 
 	// Draw the mesh to the rendered
-	void Render();
+	void Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform);
 
 private:
 	// Store the vertices
