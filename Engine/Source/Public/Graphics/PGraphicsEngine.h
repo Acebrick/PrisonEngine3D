@@ -27,6 +27,7 @@ private:
 	void DrawTriangle(float topX, float topY, float botLeftX, float botLeftY, float botRightX, float botRightY);
 	void Draw3DTriangle();
 	void DrawSquare(float topLeft, float topRight, float botLeft, float botRight);
+	void Draw3DRectangle();
 	void DrawLightning();
 	void DrawStar();
 

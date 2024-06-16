@@ -14,13 +14,15 @@ std::vector<uint32_t> indexData;
 
 // Test mesh for debug
 std::unique_ptr<PMesh> m_MeshTriangle3D;
-std::unique_ptr<PMesh> m_MeshSquare;
+std::unique_ptr<PMesh> m_MeshSquareYellow;
+std::unique_ptr<PMesh> m_MeshSquareBlue;
 std::unique_ptr<PMesh> m_MeshSclera;
 std::unique_ptr<PMesh> m_MeshIris;
 std::unique_ptr<PMesh> m_MeshLightning;
 std::unique_ptr<PMesh> m_Background;
 std::unique_ptr<PMesh> m_MeshIrisPoint;
 std::unique_ptr<PMesh> m_MeshStar;
+std::unique_ptr<PMesh> m_MeshRectangle3D;
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 {
@@ -90,13 +92,15 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// Create the debug mesh
 	m_MeshTriangle3D = std::make_unique<PMesh>();
-	m_MeshSquare = std::make_unique<PMesh>();
+	m_MeshSquareYellow = std::make_unique<PMesh>();
+	m_MeshSquareBlue = std::make_unique<PMesh>();
 	m_MeshSclera = std::make_unique<PMesh>();
 	m_MeshIris = std::make_unique<PMesh>();
 	m_MeshLightning = std::make_unique<PMesh>();
 	m_Background = std::make_unique<PMesh>();
 	m_MeshIrisPoint = std::make_unique<PMesh>();
 	m_MeshStar = std::make_unique<PMesh>();
+	m_MeshRectangle3D = std::make_unique<PMesh>();
 
 	// TRIANGLE
 	Draw3DTriangle();
@@ -120,10 +124,15 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	if (!m_MeshIrisPoint->CreateMesh(vertexData, indexData))
 		PDebug::Log("Failed to create iris point debug mesh");
 
-	// SQUARE
-	DrawSquare(0.4f, 0.8f, 0.8f, 0.4f);
+	// SQUARE YELLOW
+	DrawSquare(1.0f, 0.75f, 0.75f, 1.0f);
 	MakeMeshSolidColour(1.0f, 1.0f, 0.0f);
-	if (!m_MeshSquare->CreateMesh(vertexData, indexData))
+	if (!m_MeshSquareYellow->CreateMesh(vertexData, indexData))
+		PDebug::Log("Failed to create square debug mesh");
+
+	// SQUARE BLUE
+	MakeMeshSolidColour(0.0f, 0.0f, 1.0f);
+	if (!m_MeshSquareBlue->CreateMesh(vertexData, indexData))
 		PDebug::Log("Failed to create square debug mesh");
 
 	// BACKGROUND
@@ -142,6 +151,11 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	if (!m_MeshStar->CreateMesh(vertexData, indexData))
 		PDebug::Log("Failed to create star debug mesh");
 
+	// 3D RECTANGLE
+	Draw3DRectangle();
+	if (!m_MeshRectangle3D->CreateMesh(vertexData, indexData))
+		PDebug::Log("Failed to create square debug mesh");
+
 	return true;
 }
 
@@ -157,6 +171,7 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	static PSTransform transformBackground;
 	static PSTransform transformStar;
 	static PSTransform transformNose;
+	static PSTransform transformDiamond;
 	
 	// BACKGROUND
 	static float moveSpeed = 0.0f;
@@ -202,24 +217,31 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	else
 		scale += 0.001f;
 
-	// TRIANGLE
+	// 3D TRIANGLE
 	transformNose.position.y = -0.5f;
 	transformNose.scale = glm::vec3(0.5f);
 	transformNose.rotation.x = 15.0f;
 	transformNose.rotation.y += 0.5f;
 	m_MeshTriangle3D->Render(m_Shader, transformNose);
 
-	// SQUARE
-	transform.position.y = -0.9f;
-	transform.rotation.z = 45.0f;
-	transform.scale = glm::vec3(0.075f);
+	// 3D RECTANGLE
+	transformDiamond.position.y = -0.9f;
+	transformDiamond.rotation.y = 225.0f;
+	//transformDiamond.rotation.x = 45.0f;
+	transformDiamond.rotation.z += 0.5f;
+	transformDiamond.scale = glm::vec3(0.5f);
+	m_MeshRectangle3D->Render(m_Shader, transformDiamond);
 
-	// Creating a line of squares
-	for (float i = -0.95f; i <= 1.0f; i += 0.07)
-	{
-		transform.position.x = i;
-		m_MeshSquare->Render(m_Shader, transform);
-	}
+	// 2D DIAMOND/SQUARE
+	// YELLOW SQUARE
+	transform.position.x = -0.875f;
+	transform.position.y = -0.85f;
+	transform.scale = glm::vec3(0.075f);
+	transform.rotation.z = -45.0f;
+	m_MeshSquareYellow->Render(m_Shader, transform);
+	//BLUE SQUARE
+	transform.position.x = 0.875;
+	m_MeshSquareBlue->Render(m_Shader, transform);
 
 	// SCLERA
 	transform.position.x = -0.5f;
@@ -459,6 +481,128 @@ void PGraphicsEngine::DrawSquare(float topLeft, float topRight, float botLeft, f
 	vertexData[3].m_Colour[0] = 1.0f;
 	vertexData[3].m_Colour[1] = 0.0f;
 	vertexData[3].m_Colour[2] = 0.0f;
+}
+
+void PGraphicsEngine::Draw3DRectangle()
+{
+	float topRight = 0.1f;
+	float topLeft = 0.1f;
+	float botRight = 0.1f;
+	float botLeft = 0.1f;
+	float length = 2.0f;
+
+	vertexData.resize(8);
+	MakeMeshSolidColour(1.0f, 1.0f, 0.0f);
+
+	// FRONT SQUARE
+	// Top left
+	vertexData[0].m_Position[0] = -topLeft;
+	vertexData[0].m_Position[1] = topLeft;
+	vertexData[0].m_Position[2] = length;
+	// Top right
+	vertexData[1].m_Position[0] = topRight;
+	vertexData[1].m_Position[1] = topRight;
+	vertexData[1].m_Position[2] = length;
+	// Bottom left
+	vertexData[2].m_Position[0] = -botLeft;
+	vertexData[2].m_Position[1] = -botLeft;
+	vertexData[2].m_Position[2] = length;
+	// Bottom right
+	vertexData[3].m_Position[0] = botRight;
+	vertexData[3].m_Position[1] = -botRight;
+	vertexData[3].m_Position[2] = length;
+
+	// BACK SQUARE
+	// Top left
+	vertexData[4].m_Position[0] = -topLeft;
+	vertexData[4].m_Position[1] = topLeft;
+	vertexData[4].m_Position[2] = -length;
+	vertexData[4].m_Colour[0] = 0.0f;
+	vertexData[4].m_Colour[1] = 0.0f;
+	vertexData[4].m_Colour[2] = 1.0f;
+	// Top right
+	vertexData[5].m_Position[0] = topRight;
+	vertexData[5].m_Position[1] = topRight;
+	vertexData[5].m_Position[2] = -length;
+	vertexData[5].m_Colour[0] = 0.0f;
+	vertexData[5].m_Colour[1] = 0.0f;
+	vertexData[5].m_Colour[2] = 1.0f;
+	// Bottom left
+	vertexData[6].m_Position[0] = -botLeft;
+	vertexData[6].m_Position[1] = -botLeft;
+	vertexData[6].m_Position[2] = -length;
+	vertexData[6].m_Colour[0] = 0.0f;
+	vertexData[6].m_Colour[1] = 0.0f;
+	vertexData[6].m_Colour[2] = 1.0f;
+	// Bottom right
+	vertexData[7].m_Position[0] = botRight;
+	vertexData[7].m_Position[1] = -botRight;
+	vertexData[7].m_Position[2] = -length;
+	vertexData[7].m_Colour[0] = 0.0f;
+	vertexData[7].m_Colour[1] = 0.0f;
+	vertexData[7].m_Colour[2] = 1.0f;
+
+	indexData.resize(36);
+	
+	// FRONT SQUARE
+	// Triangle 1
+	indexData[0] = 0;
+	indexData[1] = 1;
+	indexData[2] = 2;
+	// Triangle 2
+	indexData[3] = 1;
+	indexData[4] = 2;
+	indexData[5] = 3;
+
+	// BACK SQUARE
+	// Triangle 1
+	indexData[6] = 4;
+	indexData[7] = 5;
+	indexData[8] = 6;
+	// Triangle 2
+	indexData[9] = 5;
+	indexData[10] = 6;
+	indexData[11] = 7;
+
+	// LEFT SIDE
+	// Triangle 1
+	indexData[12] = 0;
+	indexData[13] = 2;
+	indexData[14] = 6;
+	// Triangle 2
+	indexData[15] = 0;
+	indexData[16] = 6;
+	indexData[17] = 4;
+
+	// RIGHT SIDE
+	// Triangle 1
+	indexData[18] = 1;
+	indexData[19] = 3;
+	indexData[20] = 5;
+	// Triangle 2
+	indexData[21] = 3;
+	indexData[22] = 5;
+	indexData[23] = 7;
+
+	// TOP SIDE
+	// Triangle 1
+	indexData[24] = 0;
+	indexData[25] = 1;
+	indexData[26] = 4;
+	// Triangle 2
+	indexData[27] = 1;
+	indexData[28] = 4;
+	indexData[29] = 5;
+
+	// BOTTOM SIDE
+	// Triangle 1
+	indexData[30] = 2;
+	indexData[31] = 6;
+	indexData[32] = 3;
+	// Triangle 2
+	indexData[33] = 3;
+	indexData[34] = 6;
+	indexData[35] = 7;
 }
 
 void PGraphicsEngine::DrawLightning()
