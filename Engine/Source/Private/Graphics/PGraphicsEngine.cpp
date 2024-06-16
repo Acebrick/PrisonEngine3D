@@ -13,7 +13,7 @@ std::vector<PSVertexData> vertexData; // Triangle
 std::vector<uint32_t> indexData;
 
 // Test mesh for debug
-std::unique_ptr<PMesh> m_MeshTriangle;
+std::unique_ptr<PMesh> m_MeshTriangle3D;
 std::unique_ptr<PMesh> m_MeshSquare;
 std::unique_ptr<PMesh> m_MeshSclera;
 std::unique_ptr<PMesh> m_MeshIris;
@@ -89,7 +89,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
 
 	// Create the debug mesh
-	m_MeshTriangle = std::make_unique<PMesh>();
+	m_MeshTriangle3D = std::make_unique<PMesh>();
 	m_MeshSquare = std::make_unique<PMesh>();
 	m_MeshSclera = std::make_unique<PMesh>();
 	m_MeshIris = std::make_unique<PMesh>();
@@ -99,8 +99,8 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	m_MeshStar = std::make_unique<PMesh>();
 
 	// TRIANGLE
-	DrawTriangle(0.0f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f);
-	if (!m_MeshTriangle->CreateMesh(vertexData, indexData))
+	Draw3DTriangle();
+	if (!m_MeshTriangle3D->CreateMesh(vertexData, indexData))
 		PDebug::Log("Failed to create triangle debug mesh");
 
 	// SCLERA
@@ -156,6 +156,7 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	PSTransform transform;
 	static PSTransform transformBackground;
 	static PSTransform transformStar;
+	static PSTransform transformNose;
 	
 	// BACKGROUND
 	static float moveSpeed = 0.0f;
@@ -202,9 +203,11 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 		scale += 0.001f;
 
 	// TRIANGLE
-	transform.position.y = -0.5f;
-	transform.scale = glm::vec3(0.5f);
-	m_MeshTriangle->Render(m_Shader, transform);
+	transformNose.position.y = -0.5f;
+	transformNose.scale = glm::vec3(0.5f);
+	transformNose.rotation.x = 15.0f;
+	transformNose.rotation.y += 0.5f;
+	m_MeshTriangle3D->Render(m_Shader, transformNose);
 
 	// SQUARE
 	transform.position.y = -0.9f;
@@ -325,6 +328,86 @@ void PGraphicsEngine::DrawTriangle(float topX, float topY, float botLeftX, float
 	vertexData[2].m_Colour[0] = 0.0f;
 	vertexData[2].m_Colour[1] = 0.0f;
 	vertexData[2].m_Colour[2] = 1.0f;
+}
+
+void PGraphicsEngine::Draw3DTriangle()
+{
+	// Bottom right triangle
+	vertexData.resize(5);
+	// TRIANGLE 1
+	// Top middle
+	vertexData[0].m_Position[0] = 0.0f;
+	vertexData[0].m_Position[1] = 0.5f;
+	vertexData[0].m_Position[2] = 0.0f;
+
+	vertexData[0].m_Colour[0] = 1.0f;
+	vertexData[0].m_Colour[1] = 0.0f;
+	vertexData[0].m_Colour[2] = 0.0f;
+
+	// Bottom left
+	vertexData[1].m_Position[0] = -0.5f;
+	vertexData[1].m_Position[1] = -0.5f;
+	vertexData[1].m_Position[2] = 0.5f;
+
+	vertexData[1].m_Colour[0] = 0.0f;
+	vertexData[1].m_Colour[1] = 1.0f;
+	vertexData[1].m_Colour[2] = 0.0f;
+
+	// Bottom right
+	vertexData[2].m_Position[0] = 0.5f;
+	vertexData[2].m_Position[1] = -0.5f;
+	vertexData[2].m_Position[2] = 0.5f;
+
+	vertexData[2].m_Colour[0] = 0.0f;
+	vertexData[2].m_Colour[1] = 0.0f;
+	vertexData[2].m_Colour[2] = 1.0f;
+
+	// TRIANGLE 2 (opposite triangle 1)
+	// Bottom left
+	vertexData[3].m_Position[0] = -0.5f;
+	vertexData[3].m_Position[1] = -0.5f;
+	vertexData[3].m_Position[2] = -0.5f;
+
+	vertexData[3].m_Colour[0] = 0.0f;
+	vertexData[3].m_Colour[1] = 1.0f;
+	vertexData[3].m_Colour[2] = 0.0f;
+
+	// Bottom right
+	vertexData[4].m_Position[0] = 0.5f;
+	vertexData[4].m_Position[1] = -0.5f;
+	vertexData[4].m_Position[2] = -0.5f;
+
+	vertexData[4].m_Colour[0] = 0.0f;
+	vertexData[4].m_Colour[1] = 0.0f;
+	vertexData[4].m_Colour[2] = 1.0f;
+
+	indexData.resize(18);
+	// SIDE 1 & 2
+	// Triangle 1
+	indexData[0] = 0;
+	indexData[1] = 1;
+	indexData[2] = 2;
+	// Triangle opposite 1
+	indexData[3] = 0;
+	indexData[4] = 3;
+	indexData[5] = 4;
+	// SIDE 3 & 4
+	// Triangle 3
+	indexData[6] = 0;
+	indexData[7] = 1;
+	indexData[8] = 3;
+	// Triangle opposite 3
+	indexData[9] = 0;
+	indexData[10] = 2;
+	indexData[11] = 4;
+	// Base triangle 1
+	indexData[9] = 1;
+	indexData[10] = 3;
+	indexData[11] = 2;
+	// Base triangle 2
+	indexData[12] = 2;
+	indexData[13] = 4;
+	indexData[14] = 3;
 }
 
 void PGraphicsEngine::DrawSquare(float topLeft, float topRight, float botLeft, float botRight)

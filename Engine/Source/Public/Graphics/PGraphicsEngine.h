@@ -25,6 +25,7 @@ private:
 	std::shared_ptr<PShaderProgram> m_Shader;
 
 	void DrawTriangle(float topX, float topY, float botLeftX, float botLeftY, float botRightX, float botRightY);
+	void Draw3DTriangle();
 	void DrawSquare(float topLeft, float topRight, float botLeft, float botRight);
 	void DrawLightning();
 	void DrawStar();
