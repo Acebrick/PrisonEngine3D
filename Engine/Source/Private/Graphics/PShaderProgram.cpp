@@ -1,6 +1,7 @@
 #include "Graphics/PShaderProgram.h"
 #include "Debug/PDebug.h"
 #include "Math/PSTransform.h"
+#include "Graphics/PTexture.h"
 
 // External Libs
 #include <GLEW/glew.h>
@@ -22,7 +23,7 @@ PShaderProgram::~PShaderProgram()
 	PDebug::Log("Shader program " + std::to_string(m_ProgramID) + " destroyed");
 }
 
-bool PShaderProgram::InitShader(const std::string& vShaderPath, const std::string& fShaderPath)
+bool PShaderProgram::InitShader(const PString& vShaderPath, const PString& fShaderPath)
 {
 	// Create the shader program in open gl
 	m_ProgramID = glCreateProgram();
@@ -75,10 +76,32 @@ void PShaderProgram::SetModelTransform(const PSTransform& transform)
 	glUniformMatrix4fv(varID, 1, GL_FALSE, value_ptr(matrixT));
 }
 
-bool PShaderProgram::ImportShaderByType(const std::string& filePath, PEShaderType shaderType)
+void PShaderProgram::RunTexture(const TShared<PTexture>& texture, const PUi32& slot)
+{
+	// Bind the texture
+	texture->BindTexture(slot);
+
+	// The ID for the variable in the shader
+	int varID = 0;
+
+	// Get the ID depending on the slot
+	switch (slot)
+	{
+	case 0:
+		varID = glGetUniformLocation(m_ProgramID, "colourMap");
+		break;
+	default:
+		break;
+	}
+
+	// Update the shader
+	glUniform1i(varID, slot);
+}
+
+bool PShaderProgram::ImportShaderByType(const PString& filePath, PEShaderType shaderType)
 {
 	// Convert the shader to a string
-	const std::string shaderStr = ConvertFileToString(filePath);
+	const PString shaderStr = ConvertFileToString(filePath);
 
 	// Make sure there is a string path
 	if (shaderStr.empty())
@@ -104,7 +127,7 @@ bool PShaderProgram::ImportShaderByType(const std::string& filePath, PEShaderTyp
 	// Make sure there is a string path
 	if (m_ShaderIDs[shaderType] == 0)
 	{
-		const std::string errorMessage = LGET_GLEW_ERROR;
+		const PString errorMessage = LGET_GLEW_ERROR;
 		// Error that the string failed to import
 		PDebug::Log("Shader program could not assign shader ID: " + errorMessage, LT_ERROR);
 		return false;
@@ -128,7 +151,7 @@ bool PShaderProgram::ImportShaderByType(const std::string& filePath, PEShaderTyp
 		glGetShaderInfoLog(m_ShaderIDs[shaderType], 512, nullptr, infoLog);
 
 		// Log it
-		PDebug::Log("Shader compilation error: " + std::string(infoLog), LT_ERROR);
+		PDebug::Log("Shader compilation error: " + PString(infoLog), LT_ERROR);
 		return false;
 	}
 
@@ -138,7 +161,7 @@ bool PShaderProgram::ImportShaderByType(const std::string& filePath, PEShaderTyp
 	return true;
 }
 
-std::string PShaderProgram::ConvertFileToString(const std::string& filePath)
+PString PShaderProgram::ConvertFileToString(const PString& filePath)
 {
 	// Convert the file path into an ifstream
 	std::ifstream shaderSource(filePath);
@@ -181,7 +204,7 @@ bool PShaderProgram::LinkToGPU()
 		glGetShaderInfoLog(m_ProgramID, 512, nullptr, infoLog);
 
 		// Log it
-		PDebug::Log("Shader link error: " + std::string(infoLog), LT_ERROR);
+		PDebug::Log("Shader link error: " + PString(infoLog), LT_ERROR);
 		return false;
 	}
 

@@ -4,10 +4,12 @@
 // location = index
 layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec3 vColour;
+layout (location = 2) in vec2 vTexCoords;
 
 uniform mat4 model = mat4(1.0);
 
 out vec3 fColour;
+out vec2 fTexCoords;
 
 void main() {
 	// gl_Position is the position of the vertex based on screen and then offset
@@ -16,4 +18,6 @@ void main() {
 	// Pass the colour from the vertex to the frag shader
 	fColour = vColour;
 
+	// Pass the texture coordinates to the frag shader
+	fTexCoords = vTexCoords;
 }

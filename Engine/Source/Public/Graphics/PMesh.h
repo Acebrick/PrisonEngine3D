@@ -1,12 +1,9 @@
 #pragma once
-
-// System Libs
-#include <iostream>
-#include <vector>
-#include <cstdint>
+#include "EngineTypes.h"
 
 class PShaderProgram;
 struct PSTransform;
+class PTexture;
 
 struct PSVertexData
 {
@@ -25,8 +22,10 @@ public:
 	// Creating a mesh using vertex ad index data
 	bool CreateMesh(const std::vector<PSVertexData>& vertices, const std::vector<uint32_t>& indices);
 
-	// Draw the mesh to the rendered
 	void Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform);
+
+	// Set the texture in the mesh
+	void SetTexture(const TShared<PTexture>& texture) { m_Texture = texture; }
 
 private:
 	// Store the vertices
@@ -43,4 +42,7 @@ private:
 
 	// Store the ID for the element array object
 	uint32_t m_EAO;
+
+	// Texture for the mesh
+	TShared<PTexture> m_Texture;
 };

@@ -98,18 +98,23 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ExternalLibs\Includes\STB_IMAGE\stb_image.cpp" />
     <ClCompile Include="Source\Private\Graphics\PGraphicsEngine.cpp" />
     <ClCompile Include="Source\Private\Graphics\PMesh.cpp" />
     <ClCompile Include="Source\Private\Graphics\PShaderProgram.cpp" />
     <ClCompile Include="Source\Private\PWindow.cpp" />
+    <ClCompile Include="Source\Private\Graphics\PTexture.cpp" />
     <ClCompile Include="Source\Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ExternalLibs\Includes\STB_IMAGE\stb_image.h" />
     <ClInclude Include="Source\Private\Graphics\Math\PSTransform.h" />
     <ClInclude Include="Source\Public\Debug\PDebug.h" />
+    <ClInclude Include="Source\Public\EngineTypes.h" />
     <ClInclude Include="Source\Public\Graphics\PGraphicsEngine.h" />
     <ClInclude Include="Source\Public\Graphics\PMesh.h" />
     <ClInclude Include="Source\Public\Graphics\PShaderProgram.h" />
+    <ClInclude Include="Source\Public\Graphics\PTexture.h" />
     <ClInclude Include="Source\Public\PWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

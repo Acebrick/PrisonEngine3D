@@ -1,11 +1,10 @@
 #pragma once
+#include "EngineTypes.h"
 
-// System Libs
-#include <string>
-#include <cstdint>
+class PTexture;
 
 // Enum to determine the typw of shader
-enum PEShaderType : uint8_t
+enum PEShaderType : PUi8
 {
 	ST_VERTEX = 0U,
 	ST_FRAGMENT
@@ -20,7 +19,7 @@ public:
 	~PShaderProgram();
 
 	// Create the shader using a vertex and fragment file
-	bool InitShader(const std::string& vShaderPath, const std::string& fShaderPath);
+	bool InitShader(const PString& vShaderPath, const PString& fShaderPath);
 
 	// Activate the shader to update
 	// You can't change values in a shader without activating it
@@ -29,21 +28,24 @@ public:
 	// Set the transform of the model in the shader
 	void SetModelTransform(const PSTransform& transform);
 
+	// Set a texture in the shader based on the slot
+	void RunTexture(const TShared<PTexture>& texture, const PUi32& slot);
+
 private:
 	// Store the file paths
-	std::string m_FilePath[2] = { "", "" };
+	PString m_FilePath[2] = { "", "" };
 
 	// Store the shader IDs
-	uint32_t m_ShaderIDs[2] = { 0, 0 };
+	PUi32 m_ShaderIDs[2] = { 0, 0 };
 
 	// Store the ID for the program
-	uint32_t m_ProgramID;
+	PUi32 m_ProgramID;
 
 	// Import a shader based on the shader type
-	bool ImportShaderByType(const std::string& filePath, PEShaderType shaderType);
+	bool ImportShaderByType(const PString& filePath, PEShaderType shaderType);
 
 	// Convert a file into a string
-	std::string ConvertFileToString(const std::string& filePath);
+	PString ConvertFileToString(const PString& filePath);
 
 	// Link the shader to the GPU through open gl
 	bool LinkToGPU();

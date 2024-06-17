@@ -104,14 +104,28 @@ bool PMesh::CreateMesh(const std::vector<PSVertexData>& vertices, const std::vec
 	// COLOUR
 	glEnableVertexAttribArray(1);
 
-	// Set the position of that data to the 0 index of the attribute array
+	// Set the colour of that data to the 1 index of the attribute array
 	glVertexAttribPointer(
 		1, // Location to store the data in the attribute array
 		3, // How many numbers to pass into the attribute array index
 		GL_FLOAT, // The type of data to store (only one per index)
 		GL_FALSE, // Should we normalise the values, generally no
 		sizeof(PSVertexData), // How big is each data array in a VertexData
-		(void*)(sizeof(float) * 3) // How many numbers to skip in bytes
+		(void*)(sizeof(float) * 3) // How many numbers to skip in bytes (skipping the 3 position values)
+	);
+
+	// Pass out the vertex data in separate formats
+	// TEXTURE COORDINATES
+	glEnableVertexAttribArray(2);
+
+	// Set the texture coordinates of that data to the 2 index of the attribute array
+	glVertexAttribPointer(
+		2, // Location to store the data in the attribute array
+		2, // How many numbers to pass into the attribute array index
+		GL_FLOAT, // The type of data to store (only one per index)
+		GL_FALSE, // Should we normalise the values, generally no
+		sizeof(PSVertexData), // How big is each data array in a VertexData
+		(void*)(sizeof(float) * 6) // How many numbers to skip in bytes (skipping the position and colour values)
 	);
 
 	// Common practice to clear the VAO from the GPU
@@ -123,6 +137,13 @@ bool PMesh::CreateMesh(const std::vector<PSVertexData>& vertices, const std::vec
 void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform)
 {
 	shader->Activate();
+
+	// Does a texture exist
+	if (m_Texture)
+	{
+		// Run the texture
+		shader->RunTexture(m_Texture, 0);
+	}
 
 	// Update the transform of the mesh based on the model transform
 	shader->SetModelTransform(transform);

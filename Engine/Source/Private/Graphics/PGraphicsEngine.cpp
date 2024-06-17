@@ -3,14 +3,26 @@
 #include "Graphics/PMesh.h"
 #include "Graphics/PShaderProgram.h"
 #include "Math/PSTransform.h"
+#include "Graphics/PTexture.h"
+
 
 // External Libs
 #include <GLEW/glew.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 
-std::vector<PSVertexData> vertexData;
-std::vector<uint32_t> indexData;
+const std::vector<PSVertexData> vertexData = {
+	//   x      y	   z      r     g     b       tx    ty
+	{ {-0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 1 (top left)
+	{ { 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 2 (top right)
+	{ {-0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 3 (bot left) 
+	{ { 0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} } // vertex data 4 (bot right)
+};
+
+const std::vector<uint32_t> indexData = {
+	 0, 1, 2, // Triangle 1
+	 1, 2, 3  // Triangle 2
+};
 
 // Test mesh for debug
 std::unique_ptr<PMesh> m_Mesh;
@@ -84,44 +96,18 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	// Create the debug mesh
 	m_Mesh = std::make_unique<PMesh>();
 
-	// Bottom right triangle
-	vertexData.resize(4);
-	// Top middle
-	vertexData[0].m_Position[0] = 0.0f;
-	vertexData[0].m_Position[1] = 0.5f;
-	vertexData[0].m_Position[2] = 0.0f;
-	// Colour for V1
-	vertexData[0].m_Colour[0] = 1.0f;
-	vertexData[0].m_Colour[1] = 0.0f;
-	vertexData[0].m_Colour[2] = 0.0f;
-
-	// Bottom left
-	vertexData[1].m_Position[0] = -0.5f;
-	vertexData[1].m_Position[1] = -0.5f;
-	vertexData[1].m_Position[2] = 0.0f;
-	// Colour for V2
-	vertexData[1].m_Colour[0] = 0.0f;
-	vertexData[1].m_Colour[1] = 1.0f;
-	vertexData[1].m_Colour[2] = 0.0f;
-
-	// Bottom right
-	vertexData[2].m_Position[0] = 0.5f;
-	vertexData[2].m_Position[1] = -0.5f;
-	vertexData[2].m_Position[2] = 0.0f;
-	// Colour for V1
-	vertexData[2].m_Colour[0] = 0.0f;
-	vertexData[2].m_Colour[1] = 0.0f;
-	vertexData[2].m_Colour[2] = 1.0f;
-
-	indexData.resize(6);
-	// Triangle 1
-	indexData[0] = 0; // Vertex 1
-	indexData[1] = 1; // Vertex 2
-	indexData[2] = 2; // Vertex 3
-
 	if (!m_Mesh->CreateMesh(vertexData, indexData))
 	{
 		PDebug::Log("Failed to create debug mesh");
+	}
+
+	// Create the texture object
+	TShared<PTexture> defaultTexture = TMakeShared<PTexture>();
+
+	// Add the texture to the mesh if it successfully created
+	if (defaultTexture->LoadTexture("Default Grid", "Textures/P_DefaultGrid.png"))
+	{
+		m_Mesh->SetTexture(defaultTexture);
 	}
 
 	return true;
@@ -135,10 +121,8 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	PSTransform transform;
-	transform.position.x = 0.5f;
-	transform.rotation.z = 90.0f;
-	transform.scale = glm::vec3(0.5f);
+	static PSTransform transform;
+	//transform.rotation.z -= 0.5f;
 
 	// Render custom graphics
 	m_Mesh->Render(m_Shader, transform);
