@@ -1,9 +1,10 @@
 #pragma once
-#include <iostream>
+#include "EngineTypes.h"
 
 typedef void* SDL_GLContext;
 struct SDL_Window;
 class PShaderProgram;
+struct PSCamera;
 
 class PGraphicsEngine
 {
@@ -22,5 +23,8 @@ private:
 	SDL_GLContext m_SDLGLContext;
 
 	// Store the shader for trhe engine
-	std::shared_ptr<PShaderProgram> m_Shader;
+	TShared<PShaderProgram> m_Shader;
+
+	// Store the camera
+	TShared<PSCamera> m_Camera;
 };

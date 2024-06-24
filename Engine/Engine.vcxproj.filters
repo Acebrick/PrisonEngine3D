@@ -36,6 +36,9 @@
     <ClCompile Include="Source\Private\Graphics\PTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Private\Graphics\PModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\PWindow.h">
@@ -53,7 +56,7 @@
     <ClInclude Include="Source\Public\Graphics\PShaderProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Private\Graphics\Math\PSTransform.h">
+    <ClInclude Include="Source\Public\Math\PSTransform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExternalLibs\Includes\STB_IMAGE\stb_image.h">
@@ -63,6 +66,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Public\EngineTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\Graphics\PModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Public\Graphics\PSCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

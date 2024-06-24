@@ -2,6 +2,7 @@
 #include "EngineTypes.h"
 
 class PTexture;
+struct PSCamera;
 
 // Enum to determine the typw of shader
 enum PEShaderType : PUi8
@@ -27,6 +28,9 @@ public:
 
 	// Set the transform of the model in the shader
 	void SetModelTransform(const PSTransform& transform);
+
+	// Set the 3D coordinates for the model
+	void SetWorldTransform(const TShared<PSCamera>& camera);
 
 	// Set a texture in the shader based on the slot
 	void RunTexture(const TShared<PTexture>& texture, const PUi32& slot);

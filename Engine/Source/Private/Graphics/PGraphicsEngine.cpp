@@ -1,31 +1,17 @@
 #include "Graphics/PGraphicsEngine.h"
-#include "Debug/PDebug.h"
-#include "Graphics/PMesh.h"
+#include "Graphics/PModel.h"
 #include "Graphics/PShaderProgram.h"
 #include "Math/PSTransform.h"
 #include "Graphics/PTexture.h"
-
+#include "Graphics/PSCamera.h"
 
 // External Libs
 #include <GLEW/glew.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 
-const std::vector<PSVertexData> vertexData = {
-	//   x      y	   z      r     g     b       tx    ty
-	{ {-0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 1 (top left)
-	{ { 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 2 (top right)
-	{ {-0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 3 (bot left) 
-	{ { 0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} } // vertex data 4 (bot right)
-};
-
-const std::vector<uint32_t> indexData = {
-	 0, 1, 2, // Triangle 1
-	 1, 2, 3  // Triangle 2
-};
-
 // Test mesh for debug
-std::unique_ptr<PMesh> m_Mesh;
+TUnique<PModel> m_Model;
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 {
@@ -81,7 +67,11 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 		return false;
 	}
 
-	m_Shader = std::make_shared<PShaderProgram>();
+	// Enable depth to be tested
+	glEnable(GL_DEPTH_TEST);
+
+	// Create the shader object
+	m_Shader = TMakeShared<PShaderProgram>();
 
 	// Attempt to initialise shdaer and test if failed
 	if (!m_Shader->InitShader("Shaders/SimpleShader/SimpleShader.vertex", "Shaders/SimpleShader/SimpleShader.frag"))
@@ -90,25 +80,25 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 		return false;
 	}
 
-	// Log the success of the graphics engine
-	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
-
-	// Create the debug mesh
-	m_Mesh = std::make_unique<PMesh>();
-
-	if (!m_Mesh->CreateMesh(vertexData, indexData))
-	{
-		PDebug::Log("Failed to create debug mesh");
-	}
+	// Create the camera
+	m_Camera = TMakeShared<PSCamera>();
+	m_Camera->transform.position.z = -5.0f;
 
 	// Create the texture object
 	TShared<PTexture> defaultTexture = TMakeShared<PTexture>();
 
 	// Add the texture to the mesh if it successfully created
-	if (defaultTexture->LoadTexture("Default Grid", "Textures/P_DefaultGrid.png"))
+	if (!defaultTexture->LoadTexture("Default Grid", "Textures/P_DefaultGrid.png"))
 	{
-		m_Mesh->SetTexture(defaultTexture);
+		PDebug::Log("Graphics engine default texeture failed to load", LT_ERROR);
 	}
+
+	// DEBUG
+	m_Model = TMakeUnique<PModel>();
+	m_Model->MakeCube(defaultTexture);
+
+	// Log the success of the graphics engine
+	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
 
 	return true;
 }
@@ -119,13 +109,26 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Clear the back buffer with a solid colour
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	static PSTransform transform;
-	//transform.rotation.z -= 0.5f;
+	// Rotate the cube
+	if (m_Model->GetTransform().rotation.y >= 360.0f)
+	{
+		if (m_Model->GetTransform().rotation.x <= 360.0f)
+			m_Model->GetTransform().rotation.x += 0.5f;
+	}
+	else
+		m_Model->GetTransform().rotation.y += 0.5f;
+
+	// Activate the shader
+	m_Shader->Activate();
+
+	// Set the world transformations based on the camera
+	m_Shader->SetWorldTransform(m_Camera);
 
 	// Render custom graphics
-	m_Mesh->Render(m_Shader, transform);
+	// Models will update their own positions in the mesh based on the transform
+	m_Model->Render(m_Shader);
 
 	// Presented the frame to the window
 	// Swapping the back buffer with the front buffer

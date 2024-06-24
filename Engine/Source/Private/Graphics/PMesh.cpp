@@ -136,8 +136,6 @@ bool PMesh::CreateMesh(const std::vector<PSVertexData>& vertices, const std::vec
 
 void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform)
 {
-	shader->Activate();
-
 	// Does a texture exist
 	if (m_Texture)
 	{

@@ -2,6 +2,7 @@
 #include "Debug/PDebug.h"
 #include "Math/PSTransform.h"
 #include "Graphics/PTexture.h"
+#include "Graphics/PSCamera.h"
 
 // External Libs
 #include <GLEW/glew.h>
@@ -73,6 +74,36 @@ void PShaderProgram::SetModelTransform(const PSTransform& transform)
 	const int varID = glGetUniformLocation(m_ProgramID, "model");
 
 	// Update the value
+	glUniformMatrix4fv(varID, 1, GL_FALSE, value_ptr(matrixT));
+}
+
+void PShaderProgram::SetWorldTransform(const TShared<PSCamera>& camera)
+{
+	// Initialise a matrix
+	glm::mat4 matrixT = glm::mat4(1.0f);
+
+	// HANDLE THE VIEW MATRIX
+	// Translate the matrix based on the camera position
+	matrixT = glm::translate(matrixT, camera->transform.position);
+
+	// Find the variable in the shader and update it
+	int varID = glGetUniformLocation(m_ProgramID, "view");
+
+	// Update the value
+	glUniformMatrix4fv(varID, 1, GL_FALSE, glm::value_ptr(matrixT));
+
+	// HANDLE THE PROJECTION MATRIX
+	// Set the projectino matrix to a perspective view
+	matrixT = glm::perspective(glm::radians(
+		camera->fov), // The zoom of your camera
+		camera->aspectRatio, // How wide the view is
+		camera->nearClip, // How close you can see 3D models
+		camera->farClip); // How far you can see 3D models - all other models woll not render
+
+	// Find the variable in the shader for the projection matrix
+	varID = glGetUniformLocation(m_ProgramID, "projection");
+
+	// Update the projection matrix in the shader
 	glUniformMatrix4fv(varID, 1, GL_FALSE, value_ptr(matrixT));
 }
 
