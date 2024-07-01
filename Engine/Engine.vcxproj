@@ -103,6 +103,7 @@
     <ClCompile Include="Source\Private\Graphics\PMesh.cpp" />
     <ClCompile Include="Source\Private\Graphics\PModel.cpp" />
     <ClCompile Include="Source\Private\Graphics\PShaderProgram.cpp" />
+    <ClCompile Include="Source\Private\Listeners\PInput.cpp" />
     <ClCompile Include="Source\Private\PWindow.cpp" />
     <ClCompile Include="Source\Private\Graphics\PTexture.cpp" />
     <ClCompile Include="Source\Source.cpp" />
@@ -110,6 +111,8 @@
   <ItemGroup>
     <ClInclude Include="ExternalLibs\Includes\STB_IMAGE\stb_image.h" />
     <ClInclude Include="Source\Public\Graphics\PSCamera.h" />
+    <ClInclude Include="Source\Public\Listeners\PInput.h" />
+    <ClInclude Include="Source\Public\Listeners\PEvents.h" />
     <ClInclude Include="Source\Public\Math\PSTransform.h" />
     <ClInclude Include="Source\Public\Debug\PDebug.h" />
     <ClInclude Include="Source\Public\EngineTypes.h" />

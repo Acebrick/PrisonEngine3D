@@ -1,6 +1,8 @@
 #include "PWindow.h"
 #include "Graphics/PGraphicsEngine.h"
 #include "Debug/PDebug.h"
+#include "Listeners/PInput.h"
+#include "Graphics/PSCamera.h"
 
 // External Libs
 #include <SDL/SDL.h>
@@ -9,6 +11,7 @@ PWindow::PWindow()
 {
 	m_SDLWindow = nullptr;
 	m_ShouldClose = false;
+	m_CameraDirection = glm::vec3(0.0f);
 
 	std::cout << "Window created" << std::endl;
 }
@@ -71,11 +74,88 @@ bool PWindow::CreateWindow(const PSWindowParams& params)
 	return true;
 }
 
+void PWindow::RegisterInput(const TShared<PInput>& m_Input)
+{
+	
+
+	m_Input->OnKeyPress->Bind([this](const SDL_Scancode& key)
+	{
+		if (key == SDL_SCANCODE_W)
+		{
+			m_CameraDirection.z += 1.0f;
+		}
+
+		if (key == SDL_SCANCODE_S)
+		{
+			m_CameraDirection.z += -1.0f;
+		}
+
+		if (key == SDL_SCANCODE_A)
+		{
+			m_CameraDirection.x += 1.0f;
+		}
+
+		if (key == SDL_SCANCODE_D)
+		{
+			m_CameraDirection.x += -1.0f;
+		}
+
+		if (key == SDL_SCANCODE_E)
+		{
+			m_CameraDirection.y += 1.0f;
+		}
+
+		if (key == SDL_SCANCODE_Q)
+		{
+			m_CameraDirection.y += -1.0f;
+		}
+	});
+
+	m_Input->OnKeyRelease->Bind([this](const SDL_Scancode& key)
+	{
+		if (key == SDL_SCANCODE_W)
+		{
+			m_CameraDirection.z += -1.0f;
+		}
+
+		if (key == SDL_SCANCODE_S)
+		{
+			m_CameraDirection.z += 1.0f;
+		}
+
+		if (key == SDL_SCANCODE_A)
+		{
+			m_CameraDirection.x += -1.0f;
+		}
+
+		if (key == SDL_SCANCODE_D)
+		{
+			m_CameraDirection.x += 1.0f;
+		}
+
+		if (key == SDL_SCANCODE_E)
+		{
+			m_CameraDirection.y += -1.0f;
+		}
+
+		if (key == SDL_SCANCODE_Q)
+		{
+			m_CameraDirection.y += 1.0f;
+		}
+	});
+}
+
 void PWindow::Render()
 {
 	// Render the graphics engine if one exists
 	if (m_GraphicsEngine)
 	{
+		// Test if there is a camera
+		if (const auto& camRef = m_GraphicsEngine->GetCamera().lock())
+		{
+			// If a camera exists move it based on the camera direction input
+			camRef->transform.position += m_CameraDirection * 0.1f;
+		}
 		m_GraphicsEngine->Render(m_SDLWindow);
 	}
 }

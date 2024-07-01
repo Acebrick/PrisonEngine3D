@@ -18,6 +18,9 @@ public:
 	// Render the graphics engine
 	void Render(SDL_Window* sdlWindow);
 
+	// Return a weak version of the camera
+	TWeak<PSCamera> GetCamera() { return m_Camera; }
+
 private:
 	// Storing memory location for open gl context
 	SDL_GLContext m_SDLGLContext;

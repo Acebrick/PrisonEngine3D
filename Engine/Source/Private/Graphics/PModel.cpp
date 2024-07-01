@@ -45,10 +45,10 @@ const std::vector<PSVertexData> cubeVData = {
 	{ { 1.0f,  1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} },   // vertex data 19 (bot right)
 
 	// Bottom vertices
-	{ { 1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 16 (top left)
-	{ {-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 17 (top right)
-	{ { 1.0f, -1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 18 (bot left) 
-	{ {-1.0f, -1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }   // vertex data 19 (bot right)
+	{ { 1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 20 (top left)
+	{ {-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 21 (top right)
+	{ { 1.0f, -1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 22 (bot left) 
+	{ {-1.0f, -1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }   // vertex data 23 (bot right)
 };
 
 const std::vector<uint32_t> cubeIData = {
@@ -68,8 +68,8 @@ const std::vector<uint32_t> cubeIData = {
 	16, 17, 18,
 	17, 18, 19,
 	// BOTTOM
-	20, 21, 22,
-	21, 22, 23
+	21, 22, 23,
+	22, 23, 24
 };
 
 void PModel::MakePoly(const TShared<PTexture>& texture)

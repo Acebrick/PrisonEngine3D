@@ -24,7 +24,7 @@ public:
 
 	// Get the transform of the model
 	PSTransform& GetTransform() { return m_Transform; }
-
+	
 private:
 	// Array of meshes
 	TArray<TUnique<PMesh>> m_MeshStack;

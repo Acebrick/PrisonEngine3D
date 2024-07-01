@@ -1,10 +1,11 @@
 #pragma once
 
 // System Libs
-#include <iostream>
-#include <string>
+#include "EngineTypes.h"
+#include "Math/PSTransform.h"
 
 class PGraphicsEngine;
+class PInput;
 
 struct PSWindowParams
 {
@@ -20,7 +21,7 @@ struct PSWindowParams
 	}
 
 	// Settings constructor
-	PSWindowParams(std::string title, int x, int y, unsigned int w, unsigned int h) :
+	PSWindowParams(PString title, int x, int y, unsigned int w, unsigned int h) :
 		title(title),
 		x(x), y(y),
 		w(w), h(h),
@@ -28,7 +29,7 @@ struct PSWindowParams
 		fullscreen(false) {}
 
 	// Title of the window
-	std::string title;
+	PString title;
 
 	// Position of the window
 	int x, y;
@@ -60,6 +61,9 @@ public:
 	// Check if the window has been set to closed
 	bool IsPendingClose() { return m_ShouldClose; }
 
+	// Listen for input
+	void RegisterInput(const TShared<PInput>& m_Input);
+
 	// Render the graphics engine
 	void Render();
 
@@ -74,5 +78,8 @@ private:
 	bool m_ShouldClose;
 
 	// Store the graphics engine
-	std::unique_ptr<PGraphicsEngine> m_GraphicsEngine;
+	TUnique<PGraphicsEngine> m_GraphicsEngine;
+
+	// Direction to move the camera
+	glm::vec3 m_CameraDirection;
 };

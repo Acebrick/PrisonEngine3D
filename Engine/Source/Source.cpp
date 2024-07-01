@@ -1,19 +1,20 @@
-// System Libs
-#include <iostream>
+#include "EngineTypes.h"
 
 // External Libs
 #include <SDL/SDL.h>
 
 // Engine Libs
 #include "PWindow.h"
-
+#include "Listeners/PInput.h"
+#include "Graphics/PSCamera.h"
 // Smart pointers delete themselves when there is no reference
 // Shared pointer = Shares ownership across all references
 // Unique pointer = Does not share ownership with anything
 // Weak pointer = this has no ownership over any references
 
 // Source variables
-std::unique_ptr<PWindow> m_Window = nullptr;
+TShared<PWindow> m_Window = nullptr;
+TShared<PInput> m_Input = nullptr;
 
 // Source functions
 bool Initialise()
@@ -38,13 +39,18 @@ bool Initialise()
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 
-	m_Window = std::make_unique<PWindow>();
+	m_Window = TMakeShared<PWindow>();
+	
 	
 	// Creating an SDL window
 	if (!m_Window->CreateWindow({"Game Window", 
 		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 		720, 720}))
 		return false;
+
+	//  Create the input class and assign the window
+	m_Input = TMakeShared<PInput>();
+	m_Input->InitInput(m_Window);
 
 	return true;
 }
@@ -64,18 +70,13 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
+	m_Window->RegisterInput(m_Input);
+
 	// Keep the game open as long as the window is open
 	while (!m_Window->IsPendingClose())
 	{
-		// TO DO: Game loop
-		SDL_Event e;
-		while (SDL_PollEvent(&e))
-		{
-			if (e.type == SDL_QUIT)
-			{
-				m_Window->CloseWindow();
-			}
-		}
+		// Handle inputs
+		m_Input->UpdateInputs();
 
 		// Render the window
 		m_Window->Render();
