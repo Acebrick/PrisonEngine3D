@@ -83,8 +83,12 @@ void PShaderProgram::SetWorldTransform(const TShared<PSCamera>& camera)
 	glm::mat4 matrixT = glm::mat4(1.0f);
 
 	// HANDLE THE VIEW MATRIX
-	// Translate the matrix based on the camera position
-	matrixT = glm::translate(matrixT, camera->transform.position);
+	// Translate  and rotate the matrix based on the camera position
+	matrixT = glm::lookAt(
+		camera->transform.position,
+		camera->transform.position + camera->transform.Forward(),
+		camera->transform.Up()
+	);
 
 	// Find the variable in the shader and update it
 	int varID = glGetUniformLocation(m_ProgramID, "view");

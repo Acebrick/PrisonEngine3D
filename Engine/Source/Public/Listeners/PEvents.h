@@ -42,7 +42,7 @@ public:
 				// If no ID matches the potentialIDN then break the while loop and set ID
 				if (!foundID)
 				{
-					id == potentialID;
+					id = potentialID;
 					break;
 				}
 				// If an ID was found that matched increase to the next potential

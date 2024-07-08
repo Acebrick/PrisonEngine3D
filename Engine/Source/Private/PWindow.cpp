@@ -12,6 +12,9 @@ PWindow::PWindow()
 	m_SDLWindow = nullptr;
 	m_ShouldClose = false;
 	m_CameraDirection = glm::vec3(0.0f);
+	m_CameraRotation = glm::vec3(0.0f);
+	m_CanZoom = false;
+	m_InputMode = false;
 
 	std::cout << "Window created" << std::endl;
 }
@@ -76,73 +79,126 @@ bool PWindow::CreateWindow(const PSWindowParams& params)
 
 void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 {
-	
+	// Hide the cursor and set relative mouse mode
+	m_Input->ShowCursor(false);
 
-	m_Input->OnKeyPress->Bind([this](const SDL_Scancode& key)
-	{
-		if (key == SDL_SCANCODE_W)
+	m_Input->OnKeyPress->Bind([this, m_Input](const SDL_Scancode& key)
 		{
-			m_CameraDirection.z += 1.0f;
-		}
+			// Quick exit for debug
+			if (key == SDL_SCANCODE_ESCAPE)
+				CloseWindow();
 
-		if (key == SDL_SCANCODE_S)
-		{
-			m_CameraDirection.z += -1.0f;
-		}
+			// Toggle the cursor visibility
+			if (key == SDL_SCANCODE_PERIOD)
+			{
+				m_Input->ShowCursor(m_Input->IsCursorHidden());
 
-		if (key == SDL_SCANCODE_A)
-		{
-			m_CameraDirection.x += 1.0f;
-		}
+				// Set the game to input mode if the cursor is visible
+				m_InputMode = !m_Input->IsCursorHidden();
+			}
 
-		if (key == SDL_SCANCODE_D)
-		{
-			m_CameraDirection.x += -1.0f;
-		}
+			if (key == SDL_SCANCODE_W) //  Forward
+			{
+				m_CameraDirection.z += 1.0f;
+			}
 
-		if (key == SDL_SCANCODE_E)
-		{
-			m_CameraDirection.y += 1.0f;
-		}
+			if (key == SDL_SCANCODE_S) //  Backward
+			{
+				m_CameraDirection.z += -1.0f;
+			}
 
-		if (key == SDL_SCANCODE_Q)
-		{
-			m_CameraDirection.y += -1.0f;
-		}
-	});
+			if (key == SDL_SCANCODE_A) // Left
+			{
+				m_CameraDirection.x += -1.0f;
+			}
+
+			if (key == SDL_SCANCODE_D) // Right
+			{
+				m_CameraDirection.x += 1.0f;
+			}
+
+			if (key == SDL_SCANCODE_Q) // Down
+			{
+				m_CameraDirection.y += -1.0f;
+			}
+
+			if (key == SDL_SCANCODE_E) // Up
+			{
+				m_CameraDirection.y += 1.0f;
+			}
+		});
 
 	m_Input->OnKeyRelease->Bind([this](const SDL_Scancode& key)
-	{
-		if (key == SDL_SCANCODE_W)
 		{
-			m_CameraDirection.z += -1.0f;
-		}
+			if (key == SDL_SCANCODE_W) // Forward
+			{
+				m_CameraDirection.z += -1.0f;
+			}
 
-		if (key == SDL_SCANCODE_S)
-		{
-			m_CameraDirection.z += 1.0f;
-		}
+			if (key == SDL_SCANCODE_S) // Backward
+			{
+				m_CameraDirection.z += 1.0f;
+			}
 
-		if (key == SDL_SCANCODE_A)
-		{
-			m_CameraDirection.x += -1.0f;
-		}
+			if (key == SDL_SCANCODE_A) // Left
+			{
+				m_CameraDirection.x += 1.0f;
+			}
 
-		if (key == SDL_SCANCODE_D)
-		{
-			m_CameraDirection.x += 1.0f;
-		}
+			if (key == SDL_SCANCODE_D) // Right
+			{
+				m_CameraDirection.x += -1.0f;
+			}
 
-		if (key == SDL_SCANCODE_E)
-		{
-			m_CameraDirection.y += -1.0f;
-		}
+			if (key == SDL_SCANCODE_Q) // Down
+			{
+				m_CameraDirection.y += 1.0f;
+			}
 
-		if (key == SDL_SCANCODE_Q)
+			if (key == SDL_SCANCODE_E) // Up
+			{
+				m_CameraDirection.y += -1.0f;
+			}
+		});
+
+	// On mouse move rotate the camera input
+	m_Input->OnMouseMove->Bind([this](const float& x, const float& y,
+		const float& xrel, const float& yrel)
 		{
-			m_CameraDirection.y += 1.0f;
-		}
-	});
+			m_CameraRotation.y = -xrel;
+			m_CameraRotation.x = -yrel;
+		});
+
+	m_Input->OnMouseScroll->Bind([this](const float& delta)
+		{
+			if (m_CanZoom)
+			{
+				if (const auto& camRef = m_GraphicsEngine->GetCamera().lock())
+				{
+					camRef->Zoom(delta);
+				}
+			}
+		});
+
+	m_Input->OnMousePress->Bind([this](const PUi8& button)
+		{
+			if (button == SDL_BUTTON_RIGHT)
+			{
+				m_CanZoom = true;
+			}
+		});
+
+	m_Input->OnMouseRelease->Bind([this](const PUi8& button)
+		{
+			if (button == SDL_BUTTON_RIGHT)
+			{
+				m_CanZoom = false;
+				if (const auto& camRef = m_GraphicsEngine->GetCamera().lock())
+				{
+					camRef->ResetZoom();
+				}
+			}
+		});
 }
 
 void PWindow::Render()
@@ -153,8 +209,16 @@ void PWindow::Render()
 		// Test if there is a camera
 		if (const auto& camRef = m_GraphicsEngine->GetCamera().lock())
 		{
-			// If a camera exists move it based on the camera direction input
-			camRef->transform.position += m_CameraDirection * 0.1f;
+			if (!m_InputMode)
+			{
+				// Translate the camera based on input direction
+				camRef->Translate(m_CameraDirection);
+
+				// Rotate the camera based on input direction
+				// glm::abs = absolute (force a positive value)
+				camRef->Rotate(m_CameraRotation, glm::abs(m_CameraRotation));
+			}
+			
 		}
 		m_GraphicsEngine->Render(m_SDLWindow);
 	}

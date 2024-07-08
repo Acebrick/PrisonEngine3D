@@ -68,8 +68,8 @@ const std::vector<uint32_t> cubeIData = {
 	16, 17, 18,
 	17, 18, 19,
 	// BOTTOM
-	21, 22, 23,
-	22, 23, 24
+	20, 21, 22,
+	21, 22, 23
 };
 
 void PModel::MakePoly(const TShared<PTexture>& texture)

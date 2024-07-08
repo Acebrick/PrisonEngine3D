@@ -111,15 +111,6 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Rotate the cube
-	if (m_Model->GetTransform().rotation.y >= 360.0f)
-	{
-		if (m_Model->GetTransform().rotation.x <= 360.0f)
-			m_Model->GetTransform().rotation.x += 0.5f;
-	}
-	else
-		m_Model->GetTransform().rotation.y += 0.5f;
-
 	// Activate the shader
 	m_Shader->Activate();
 
