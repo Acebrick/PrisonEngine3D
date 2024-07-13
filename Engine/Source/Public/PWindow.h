@@ -6,6 +6,8 @@
 
 class PGraphicsEngine;
 class PInput;
+struct PSCamera;
+class PModel;
 
 struct PSWindowParams
 {
@@ -34,7 +36,7 @@ struct PSWindowParams
 	// Position of the window
 	int x, y;
 
-	// Width and hright of the window
+	// Width and height of the window
 	unsigned int w, h;
 
 	// VSync enable
@@ -91,4 +93,9 @@ private:
 
 	// Is the user in input mode
 	bool m_InputMode;
+
+	TShared<PSCamera> cameraRef;
+	TShared<PModel> tankRef;
+
+	glm::vec3 m_TankDirection;
 };

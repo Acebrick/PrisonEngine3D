@@ -10,8 +10,15 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 
+// DEBUG
+#include "PWindow.h"
+
 // Test mesh for debug
-TUnique<PModel> m_Model;
+
+
+TUnique<PModel> m_LTreads;
+TUnique<PModel> m_Gun;
+TUnique<PModel> m_Pillar;
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 {
@@ -94,9 +101,18 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	}
 
 	// DEBUG
-	m_Model = TMakeUnique<PModel>();
-	m_Model->MakeCube(defaultTexture);
-
+	m_Body = TMakeShared<PModel>();
+	m_Body->MakeCube(defaultTexture);
+	m_Body->GetTransform().position.y = -3.0f;
+	m_RTreads = TMakeShared<PModel>();
+	m_RTreads->MakeRightTreads(defaultTexture);
+	m_LTreads = TMakeUnique<PModel>();
+	m_LTreads->MakeLeftTreads(defaultTexture);
+	m_Gun = TMakeUnique<PModel>();
+	m_Gun->MakePoly(defaultTexture);
+	m_Pillar = TMakeUnique<PModel>();
+	m_Pillar->MakePoly(defaultTexture);
+	
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
 
@@ -111,6 +127,19 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// Scale the gun
+	m_Gun->GetTransform().scale = glm::vec3(0.8f);
+
+	// Move tank components position as the body moves
+	m_Gun->GetTransform().position = m_LTreads->GetTransform().position = m_RTreads->GetTransform().position = m_Body->GetTransform().position;
+
+	// Rotate tank components as the body rotates
+	m_RTreads->GetTransform().rotation = m_LTreads->GetTransform().rotation = m_Gun->GetTransform().rotation = m_Body->GetTransform().rotation;
+
+	// Set the position of the pillars so you can see the tank moving
+	m_Pillar->GetTransform().rotation.x = 90.0f;
+	m_Pillar->GetTransform().position.x = 15.0f;
+
 	// Activate the shader
 	m_Shader->Activate();
 
@@ -119,7 +148,11 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 
 	// Render custom graphics
 	// Models will update their own positions in the mesh based on the transform
-	m_Model->Render(m_Shader);
+	m_Body->Render(m_Shader);
+	m_RTreads->Render(m_Shader);
+	m_LTreads->Render(m_Shader);
+	m_Gun->Render(m_Shader);
+	m_Pillar->Render(m_Shader);
 
 	// Presented the frame to the window
 	// Swapping the back buffer with the front buffer

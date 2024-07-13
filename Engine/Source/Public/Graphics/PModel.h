@@ -22,6 +22,10 @@ public:
 	// Transform of mesges will be based on the models transform
 	void Render(const TShared<PShaderProgram>& shader);
 
+	void MakeLeftTreads(const TShared<PTexture>& texture);
+
+	void MakeRightTreads(const TShared<PTexture>& texture);
+
 	// Get the transform of the model
 	PSTransform& GetTransform() { return m_Transform; }
 	

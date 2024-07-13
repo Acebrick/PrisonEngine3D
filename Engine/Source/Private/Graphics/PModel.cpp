@@ -1,16 +1,42 @@
 #include "Graphics/PModel.h"
 
-const std::vector<PSVertexData> polyVData = {
-	//   x      y	   z      r     g     b       tx    ty
-	{ {-0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 1 (top left)
-	{ { 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 2 (top right)
-	{ {-0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 3 (bot left) 
-	{ { 0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} } // vertex data 4 (bot right)
-};
+const std::vector<PSVertexData> gunVData =
+{
+	// Front vertices
+	{ {-0.5f,  0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 0 (top left)
+	{ { 0.5f,  0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 1 (top right)
+	{ {-0.5f, -0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 2 (bot left) 
+	{ { 0.5f, -0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }, // vertex data 3 (bot right)
 
-const std::vector<uint32_t> polyIData = {
-	 0, 1, 2, // Triangle 1
-	 1, 2, 3  // Triangle 2
+	// Back vertices
+	{ { 0.5f,  0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 4 (top left)
+	{ {-0.5f,  0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 5 (top right)
+	{ { 0.5f, -0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 6 (bot left) 
+	{ {-0.5f, -0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }, // vertex data 7 (bot right)
+
+	// Left vertices
+	{ {-0.5f,  0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 8 (top left)
+	{ {-0.5f,  0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 9 (top right)
+	{ {-0.5f, -0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 10 (bot left) 
+	{ {-0.5f, -0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} },  // vertex data 11 (bot right)
+
+	// Right vertices
+	{ { 0.5f,  0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 12 (top left)
+	{ { 0.5f,  0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 13 (top right)
+	{ { 0.5f, -0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 14 (bot left) 
+	{ { 0.5f, -0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} },   // vertex data 15 (bot right)
+
+	// Top vertices
+	{ {-0.5f,  0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 16 (top left)
+	{ { 0.5f,  0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 17 (top right)
+	{ {-0.5f,  0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 18 (bot left) 
+	{ { 0.5f,  0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} },   // vertex data 19 (bot right)
+
+	// Bottom vertices
+	{ { 0.5f, -0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 20 (top left)
+	{ {-0.5f, -0.5f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 21 (top right)
+	{ { 0.5f, -0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 22 (bot left) 
+	{ {-0.5f, -0.5f,  5.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }   // vertex data 23 (bot right)
 };
 
 const std::vector<PSVertexData> cubeVData = {
@@ -20,6 +46,7 @@ const std::vector<PSVertexData> cubeVData = {
 	{ { 1.0f,  1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 1 (top right)
 	{ {-1.0f, -1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 2 (bot left) 
 	{ { 1.0f, -1.0f,  1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }, // vertex data 3 (bot right)
+
 	// Back vertices
 	{ { 1.0f,  1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 4 (top left)
 	{ {-1.0f,  1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 5 (top right)
@@ -72,12 +99,91 @@ const std::vector<uint32_t> cubeIData = {
 	21, 22, 23
 };
 
+const std::vector<PSVertexData> leftTreadsVData =
+{
+	// Front vertices
+	{ {-1.4f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 0 (top left)
+	{ {-0.6f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 1 (top right)
+	{ {-1.4f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 2 (bot left) 
+	{ {-0.6f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }, // vertex data 3 (bot right)
+
+	// Back vertices
+	{ {-0.6f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 4 (top left)
+	{ {-1.4f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 5 (top right)
+	{ {-0.6f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 6 (bot left) 
+	{ {-1.4f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }, // vertex data 7 (bot right)
+
+	// Left vertices
+	{ {-1.4f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 8 (top left)
+	{ {-1.4f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 9 (top right)
+	{ {-1.4f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 10 (bot left) 
+	{ {-1.4f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} },  // vertex data 11 (bot right)
+
+	// Right vertices
+	{ {-0.6f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 12 (top left)
+	{ {-0.6f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 13 (top right)
+	{ {-0.6f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 14 (bot left) 
+	{ {-0.6f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} },   // vertex data 15 (bot right)
+
+	// Top vertices
+	{ {-1.4f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 16 (top left)
+	{ {-0.6f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 17 (top right)
+	{ {-1.4f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 18 (bot left) 
+	{ {-0.6f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} },   // vertex data 19 (bot right)
+
+	// Bottom vertices
+	{ {-0.6f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 20 (top left)
+	{ {-1.4f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 21 (top right)
+	{ {-0.6f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 22 (bot left) 
+	{ {-1.4f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }   // vertex data 23 (bot right)
+};
+
+
+const std::vector<PSVertexData> rightTreadsVData =
+{
+	// Front vertices
+	{ { 1.4f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 0 (top left)
+	{ { 0.6f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 1 (top right)
+	{ { 1.4f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 2 (bot left) 
+	{ { 0.6f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }, // vertex data 3 (bot right)
+
+	// Back vertices
+	{ { 0.6f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 4 (top left)
+	{ { 1.4f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 5 (top right)
+	{ { 0.6f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 6 (bot left) 
+	{ { 1.4f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }, // vertex data 7 (bot right)
+
+	// Left vertices
+	{ { 1.4f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 8 (top left)
+	{ { 1.4f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 9 (top right)
+	{ { 1.4f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 10 (bot left) 
+	{ { 1.4f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} },  // vertex data 11 (bot right)
+
+	// Right vertices
+	{ { 0.6f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 12 (top left)
+	{ { 0.6f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 13 (top right)
+	{ { 0.6f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 14 (bot left) 
+	{ { 0.6f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} },   // vertex data 15 (bot right)
+
+	// Top vertices
+	{ { 1.4f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 16 (top left)
+	{ { 0.6f, -1.0f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 17 (top right)
+	{ { 1.4f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 18 (bot left) 
+	{ { 0.6f, -1.0f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} },   // vertex data 19 (bot right)
+
+	// Bottom vertices
+	{ { 0.6f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 20 (top left)
+	{ { 1.4f, -1.4f, -1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} },  // vertex data 21 (top right)
+	{ { 0.6f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 22 (bot left) 
+	{ { 1.4f, -1.4f,  1.6f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} }   // vertex data 23 (bot right)
+};
+
 void PModel::MakePoly(const TShared<PTexture>& texture)
 {
 	// Create the debug mesh
 	TUnique<PMesh> mesh = TMakeUnique<PMesh>();
 
-	if (!mesh->CreateMesh(polyVData, polyIData))
+	if (!mesh->CreateMesh(gunVData, cubeIData))
 	{
 		PDebug::Log("Failed to create debug mesh");
 	}
@@ -110,4 +216,36 @@ void PModel::Render(const TShared<PShaderProgram>& shader)
 	{
 		mesh->Render(shader, m_Transform);
 	}
+}
+
+void PModel::MakeLeftTreads(const TShared<PTexture>& texture)
+{
+	// Create the debug mesh
+	TUnique<PMesh> mesh = TMakeUnique<PMesh>();
+
+	if (!mesh->CreateMesh(leftTreadsVData, cubeIData))
+	{
+		PDebug::Log("Failed to create debug mesh");
+	}
+
+	// Add the texture and add it to the mesh stack
+	mesh->SetTexture(texture);
+	// std::move will move the reference from the previous reference to a new one without destroying or copying the reference
+	m_MeshStack.push_back(std::move(mesh));
+}
+
+void PModel::MakeRightTreads(const TShared<PTexture>& texture)
+{
+	// Create the debug mesh
+	TUnique<PMesh> mesh = TMakeUnique<PMesh>();
+
+	if (!mesh->CreateMesh(rightTreadsVData, cubeIData))
+	{
+		PDebug::Log("Failed to create debug mesh");
+	}
+
+	// Add the texture and add it to the mesh stack
+	mesh->SetTexture(texture);
+	// std::move will move the reference from the previous reference to a new one without destroying or copying the reference
+	m_MeshStack.push_back(std::move(mesh));
 }

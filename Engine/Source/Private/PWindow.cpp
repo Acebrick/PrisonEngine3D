@@ -7,6 +7,11 @@
 // External Libs
 #include <SDL/SDL.h>
 
+// DEBUG
+#include "Graphics/PModel.h"
+
+float tankRotationSpeed = 1.5f;
+
 PWindow::PWindow()
 {
 	m_SDLWindow = nullptr;
@@ -15,6 +20,7 @@ PWindow::PWindow()
 	m_CameraRotation = glm::vec3(0.0f);
 	m_CanZoom = false;
 	m_InputMode = false;
+	m_TankDirection = glm::vec3(0.0f);
 
 	std::cout << "Window created" << std::endl;
 }
@@ -74,6 +80,9 @@ bool PWindow::CreateWindow(const PSWindowParams& params)
 		return false;
 	}
 
+	cameraRef = m_GraphicsEngine->GetCamera().lock();
+	tankRef = m_GraphicsEngine->GetTank().lock();
+
 	return true;
 }
 
@@ -95,6 +104,43 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 
 				// Set the game to input mode if the cursor is visible
 				m_InputMode = !m_Input->IsCursorHidden();
+			}
+
+			// Toggle third person mode
+			if (key == SDL_SCANCODE_COMMA)
+			{
+				// Turn on/off third person mode
+				cameraRef->ToggleThirdPerson(); 
+
+				cameraRef->transform.position.x = tankRef->GetTransform().position.x;
+				cameraRef->transform.position.y = tankRef->GetTransform().position.y + 5.0f;
+				cameraRef->transform.position.z = tankRef->GetTransform().position.z - 15.0f;
+
+				PDebug::Log(std::to_string(cameraRef->thirdPerson));
+			}
+
+			// Controls for the tank (third person mode)
+			if (cameraRef->thirdPerson)
+			{
+				if (key == SDL_SCANCODE_W) //  Forward
+				{
+					m_TankDirection.z += 1.0f;
+				}
+
+				if (key == SDL_SCANCODE_S) //  Backward
+				{
+					m_TankDirection.z += -1.0f;
+				}
+
+				if (key == SDL_SCANCODE_A) // Left
+				{
+					tankRef->GetTransform().rotation.y += tankRotationSpeed;
+				}
+
+				if (key == SDL_SCANCODE_D) // Right
+				{
+					tankRef->GetTransform().rotation.y -= tankRotationSpeed;
+				}
 			}
 
 			if (key == SDL_SCANCODE_W) //  Forward
@@ -130,6 +176,19 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 
 	m_Input->OnKeyRelease->Bind([this](const SDL_Scancode& key)
 		{
+			// Controls for the tank (third person mode)
+			if (cameraRef->thirdPerson)
+			{
+				if (key == SDL_SCANCODE_W) //  Forward
+				{
+					m_TankDirection.z -= 1.0f;
+				}
+
+				if (key == SDL_SCANCODE_S) //  Backward
+				{
+					m_TankDirection.z += 1.0f;
+				}
+			}
 			if (key == SDL_SCANCODE_W) // Forward
 			{
 				m_CameraDirection.z += -1.0f;
@@ -161,22 +220,38 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 			}
 		});
 
+	m_Input->OnKeyHeld->Bind([this](const SDL_Scancode& key)
+		{
+			// Controls for the tank (third person mode)
+			if (cameraRef->thirdPerson)
+			{
+				if (key == SDL_SCANCODE_A) // Left
+				{
+					tankRef->GetTransform().rotation.y += tankRotationSpeed;
+					cameraRef->transform.rotation.y += tankRotationSpeed;
+				}
+
+				if (key == SDL_SCANCODE_D) // Right
+				{
+					tankRef->GetTransform().rotation.y -= tankRotationSpeed;
+					cameraRef->transform.rotation.y -= tankRotationSpeed;
+				}
+			}
+		});
+
 	// On mouse move rotate the camera input
 	m_Input->OnMouseMove->Bind([this](const float& x, const float& y,
 		const float& xrel, const float& yrel)
 		{
-			m_CameraRotation.y = -xrel;
-			m_CameraRotation.x = -yrel;
+				m_CameraRotation.y = -xrel;
+				m_CameraRotation.x = -yrel;
 		});
 
 	m_Input->OnMouseScroll->Bind([this](const float& delta)
 		{
 			if (m_CanZoom)
 			{
-				if (const auto& camRef = m_GraphicsEngine->GetCamera().lock())
-				{
-					camRef->Zoom(delta);
-				}
+				cameraRef->Zoom(delta);
 			}
 		});
 
@@ -193,10 +268,7 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 			if (button == SDL_BUTTON_RIGHT)
 			{
 				m_CanZoom = false;
-				if (const auto& camRef = m_GraphicsEngine->GetCamera().lock())
-				{
-					camRef->ResetZoom();
-				}
+				cameraRef->ResetZoom();
 			}
 		});
 }
@@ -211,15 +283,35 @@ void PWindow::Render()
 		{
 			if (!m_InputMode)
 			{
+				if (cameraRef->thirdPerson)
+				{
+					cameraRef->transform.rotation.x = 0.0f;
+					cameraRef->transform.position.y = 0.0f;
+
+					// Move the tank by using the cameras position with an offset
+					tankRef->GetTransform().position.x = cameraRef->transform.position.x;
+					tankRef->GetTransform().position.y = cameraRef->transform.position.y - 2.0f;
+					tankRef->GetTransform().position.z = cameraRef->transform.position.z + 1.0f;
+					
+					cameraRef->Translate(m_TankDirection);
+					cameraRef->Rotate(m_TankDirection, glm::abs(m_TankDirection));
+				}
+					
+				else
+				{
+					cameraRef->Translate(m_CameraDirection);
+					camRef->Rotate(m_CameraRotation, glm::abs(m_CameraRotation));
+				}
+					
+
 				// Translate the camera based on input direction
-				camRef->Translate(m_CameraDirection);
 
 				// Rotate the camera based on input direction
 				// glm::abs = absolute (force a positive value)
-				camRef->Rotate(m_CameraRotation, glm::abs(m_CameraRotation));
+				
 			}
 			
 		}
 		m_GraphicsEngine->Render(m_SDLWindow);
 	}
-}
+} 

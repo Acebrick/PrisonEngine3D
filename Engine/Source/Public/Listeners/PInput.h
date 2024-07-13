@@ -25,6 +25,8 @@ public:
 	// On a key release event
 	TShared<PEvents<SDL_Scancode>> OnKeyRelease;
 
+	// On a key held down event
+	TShared<PEvents<SDL_Scancode>> OnKeyHeld;
 
 	// On mouse movement
 	// @params 1: mouse pos x

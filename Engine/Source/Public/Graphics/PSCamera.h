@@ -12,6 +12,7 @@ struct PSCamera
 		farClip = 10000.0f;
 		moveSpeed = 0.1f;
 		rotationSpeed = 1.0f;
+		thirdPerson = false;
 	}
 
 	// Rotate the camera based on the rotation passed in
@@ -63,6 +64,22 @@ struct PSCamera
 		defaultFov = defaultFov;
 	}
 
+	// Turn on/off third person mode
+	void ToggleThirdPerson()
+	{
+		thirdPerson = !thirdPerson;
+	}
+
+	glm::vec3 GetPosition()
+	{
+		return transform.position;
+	}
+
+	void MoveWithoutMouse(glm::vec3 direction)
+	{
+		transform.position = direction;
+	}
+
 	PSTransform transform;
 	float fov;
 	float defaultFov; // don't change, will auto set based on the fov on initialisation
@@ -71,4 +88,5 @@ struct PSCamera
 	float farClip;
 	float moveSpeed;
 	float rotationSpeed;
+	bool thirdPerson;
 };

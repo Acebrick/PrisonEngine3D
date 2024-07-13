@@ -5,6 +5,7 @@ PInput::PInput()
 {
 	OnKeyPress = TMakeShared<PEvents<SDL_Scancode>>();
 	OnKeyRelease = TMakeShared<PEvents<SDL_Scancode>>();
+	OnKeyHeld = TMakeShared<PEvents<SDL_Scancode>>();
 	OnMouseMove = TMakeShared<PEvents<float, float, float, float>>();
 	OnMouseScroll = TMakeShared<PEvents<float>>();
 	OnMousePress = TMakeShared<PEvents<PUi8>>();
@@ -40,6 +41,8 @@ void PInput::UpdateInputs()
 			// Is the key not already being held down
 			if (e.key.repeat == 0)
 				OnKeyPress->Run(e.key.keysym.scancode);
+			if (e.key.repeat == 1)
+				OnKeyHeld->Run(e.key.keysym.scancode);
 			break;
 		case SDL_KEYUP:
 			if (e.key.repeat == 0)

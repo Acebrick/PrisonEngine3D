@@ -5,6 +5,7 @@ typedef void* SDL_GLContext;
 struct SDL_Window;
 class PShaderProgram;
 struct PSCamera;
+class PModel;
 
 class PGraphicsEngine
 {
@@ -20,6 +21,7 @@ public:
 
 	// Return a weak version of the camera
 	TWeak<PSCamera> GetCamera() { return m_Camera; }
+	TWeak<PModel> GetTank() { return m_Body; }
 
 private:
 	// Storing memory location for open gl context
@@ -30,4 +32,7 @@ private:
 
 	// Store the camera
 	TShared<PSCamera> m_Camera;
+
+	TShared<PModel> m_Body;
+	TShared<PModel> m_RTreads;
 };
