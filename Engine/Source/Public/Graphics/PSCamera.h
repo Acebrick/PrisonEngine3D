@@ -67,17 +67,36 @@ struct PSCamera
 	}
 
 	// Turn on/off third person mode
-	void ToggleThirdPerson()
+	void ToggleThirdPerson(const PSTransform& object, const glm::vec3 cameraOffset)
 	{
 		thirdPerson = !thirdPerson;
+
+		if (thirdPerson)
+		{
+			// Move to objects position and copy its rotation
+			transform.rotation = object.rotation;
+			transform.position = object.position;
+
+			// Offset the camera
+			transform.position.x += cameraOffset.x;
+			transform.position.y += cameraOffset.y;
+			transform.position.z += cameraOffset.z;
+
+			// Move around the object relative to how much it has rotated to face the same direction
+			TranslateOffModelRotation(
+				object.position.x,
+				object.position.z,
+				-object.rotation.y);
+
+			PDebug::Log("Third person mode on");
+		}
+		else
+			PDebug::Log("Third person mode off");
 	}
 
-	glm::vec3 GetPosition()
-	{
-		return transform.position;
-	}
-
-	void RotateAroundObject(float pointX, float pointZ, float degrees)
+	// Have the camera translate (looks like rotating) around the target object... 
+	// ... in this case the tank to maintain third person perspective from behind the model
+	void TranslateOffModelRotation(float pointX, float pointZ, float degrees)
 	{
 		float newX = 0.0f;
 		float newZ = 0.0f;

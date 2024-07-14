@@ -110,13 +110,7 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 			if (key == SDL_SCANCODE_COMMA)
 			{
 				// Turn on/off third person mode
-				cameraRef->ToggleThirdPerson(); 
-
-				cameraRef->transform.position.x = tankRef->GetTransform().position.x;
-				cameraRef->transform.position.y = tankRef->GetTransform().position.y + 5.0f;
-				cameraRef->transform.position.z = tankRef->GetTransform().position.z - 15.0f;
-
-				PDebug::Log(std::to_string(cameraRef->thirdPerson));
+				cameraRef->ToggleThirdPerson(tankRef->GetTransform(), glm::vec3(0.0f, 5.0f, -15.0f)); 
 			}
 
 			// Controls for the tank (third person mode)
@@ -137,7 +131,7 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 					tankRef->GetTransform().rotation.y += tankRotationSpeed;
 					cameraRef->transform.rotation.y += tankRotationSpeed;
 
-					cameraRef->RotateAroundObject(
+					cameraRef->TranslateOffModelRotation(
 						tankRef->GetTransform().position.x,
 						tankRef->GetTransform().position.z,
 						-tankRotationSpeed);
@@ -148,7 +142,7 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 					tankRef->GetTransform().rotation.y -= tankRotationSpeed;
 					cameraRef->transform.rotation.y -= tankRotationSpeed;
 
-					cameraRef->RotateAroundObject(
+					cameraRef->TranslateOffModelRotation(
 						tankRef->GetTransform().position.x,
 						tankRef->GetTransform().position.z,
 						tankRotationSpeed);
@@ -193,7 +187,7 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 			{
 				if (key == SDL_SCANCODE_W) //  Forward
 				{
-					m_TankDirection.z -= 1.0f;
+					m_TankDirection.z += -1.0f;
 				}
 
 				if (key == SDL_SCANCODE_S) //  Backward
@@ -242,7 +236,7 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 					tankRef->GetTransform().rotation.y += tankRotationSpeed;
 					cameraRef->transform.rotation.y += tankRotationSpeed;
 
-					cameraRef->RotateAroundObject(
+					cameraRef->TranslateOffModelRotation(
 						tankRef->GetTransform().position.x,
 						tankRef->GetTransform().position.z,
 						-tankRotationSpeed);
@@ -253,7 +247,7 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 					tankRef->GetTransform().rotation.y -= tankRotationSpeed;
 					cameraRef->transform.rotation.y -= tankRotationSpeed;
 
-					cameraRef->RotateAroundObject(
+					cameraRef->TranslateOffModelRotation(
 						tankRef->GetTransform().position.x,
 						tankRef->GetTransform().position.z,
 						tankRotationSpeed);

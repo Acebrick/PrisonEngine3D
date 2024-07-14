@@ -14,12 +14,12 @@
 #include "PWindow.h"
 
 // Test mesh for debug
-
-
 TUnique<PModel> m_LTreads;
 TUnique<PModel> m_Gun;
 TUnique<PModel> m_Pillar;
 TUnique<PModel> m_Pillar2;
+TUnique<PModel> m_Pillar3;
+TUnique<PModel> m_Pillar4;
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 {
@@ -94,27 +94,37 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// Create the texture object
 	TShared<PTexture> defaultTexture = TMakeShared<PTexture>();
+	TShared<PTexture> camoTexture = TMakeShared<PTexture>();
+	TShared<PTexture> grassTexture = TMakeShared<PTexture>();
 
 	// Add the texture to the mesh if it successfully created
 	if (!defaultTexture->LoadTexture("Default Grid", "Textures/P_DefaultGrid.png"))
 	{
-		PDebug::Log("Graphics engine default texeture failed to load", LT_ERROR);
+		PDebug::Log("Graphics engine default texture failed to load", LT_ERROR);
+	}
+	if (!camoTexture->LoadTexture("Camo Texture", "Textures/Camo.png"))
+	{
+		PDebug::Log("Graphics engine camo texture failed to load", LT_ERROR);
 	}
 
 	// DEBUG
 	m_Body = TMakeShared<PModel>();
-	m_Body->MakeCube(defaultTexture);
+	m_Body->MakeCube(camoTexture);
 	m_Body->GetTransform().position.y = -3.0f;
 	m_RTreads = TMakeShared<PModel>();
-	m_RTreads->MakeRightTreads(defaultTexture);
+	m_RTreads->MakeRightTreads(camoTexture);
 	m_LTreads = TMakeUnique<PModel>();
-	m_LTreads->MakeLeftTreads(defaultTexture);
+	m_LTreads->MakeLeftTreads(camoTexture);
 	m_Gun = TMakeUnique<PModel>();
-	m_Gun->MakePoly(defaultTexture);
+	m_Gun->MakePoly(camoTexture);
 	m_Pillar = TMakeUnique<PModel>();
 	m_Pillar->MakePoly(defaultTexture);
 	m_Pillar2 = TMakeUnique<PModel>();
 	m_Pillar2->MakePoly(defaultTexture);
+	m_Pillar3 = TMakeUnique<PModel>();
+	m_Pillar3->MakePoly(defaultTexture);
+	m_Pillar4 = TMakeUnique<PModel>();
+	m_Pillar4->MakePoly(defaultTexture);
 	
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
@@ -140,13 +150,22 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	m_RTreads->GetTransform().rotation = m_LTreads->GetTransform().rotation = m_Gun->GetTransform().rotation = m_Body->GetTransform().rotation;
 
 	// Set the position of the pillars so you can see the tank moving
+	// Left Pillar
 	m_Pillar->GetTransform().rotation.x = 90.0f;
 	m_Pillar->GetTransform().position.x = 15.0f;
 	m_Pillar->GetTransform().position.y = 0.5f;
-
+	// Front pillar
 	m_Pillar2->GetTransform().rotation.x = 90.0f;
 	m_Pillar2->GetTransform().position.z = 15.0f;
 	m_Pillar2->GetTransform().position.y = 0.5f;
+	// Right pillar
+	m_Pillar3->GetTransform().rotation.x = 90.0f;
+	m_Pillar3->GetTransform().position.x = -15.0f;
+	m_Pillar3->GetTransform().position.y = 0.5f;
+	// Back pillar
+	m_Pillar4->GetTransform().rotation.x = 90.0f;
+	m_Pillar4->GetTransform().position.z = -15.0f;
+	m_Pillar4->GetTransform().position.y = 0.5f;
 
 	// Activate the shader
 	m_Shader->Activate();
@@ -162,6 +181,8 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	m_Gun->Render(m_Shader);
 	m_Pillar->Render(m_Shader);
 	m_Pillar2->Render(m_Shader);
+	m_Pillar3->Render(m_Shader);
+	m_Pillar4->Render(m_Shader);
 
 	// Presented the frame to the window
 	// Swapping the back buffer with the front buffer
