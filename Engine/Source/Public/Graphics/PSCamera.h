@@ -1,6 +1,8 @@
 #pragma once
 #include "Math/PSTransform.h"
 
+const double pi = 3.14159265358979323846;
+
 struct PSCamera
 {
 	PSCamera()
@@ -75,9 +77,27 @@ struct PSCamera
 		return transform.position;
 	}
 
-	void MoveWithoutMouse(glm::vec3 direction)
+	void RotateAroundObject(float pointX, float pointZ, float degrees)
 	{
-		transform.position = direction;
+		float newX = 0.0f;
+		float newZ = 0.0f;
+
+		float finalX = 0.0f;
+		float finalZ = 0.0f;
+
+		float radians = degrees * pi / 180;
+
+		// Translate
+		newX = transform.position.x - pointX;
+		newZ = transform.position.z - pointZ;
+
+		// Rotate
+		finalX = (newX * cos(radians)) - (newZ * sin(radians));
+		finalZ = (newX * sin(radians)) + (newZ * cos(radians));
+
+		// Translate back
+		transform.position.x = finalX + pointX;
+		transform.position.z = finalZ + pointZ;
 	}
 
 	PSTransform transform;

@@ -26,6 +26,8 @@ public:
 
 	void MakeRightTreads(const TShared<PTexture>& texture);
 
+	void Translate(glm::vec3 translation, glm::vec3 scale = glm::vec3(1.0f));
+
 	// Get the transform of the model
 	PSTransform& GetTransform() { return m_Transform; }
 	

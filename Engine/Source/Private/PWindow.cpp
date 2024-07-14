@@ -135,11 +135,23 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 				if (key == SDL_SCANCODE_A) // Left
 				{
 					tankRef->GetTransform().rotation.y += tankRotationSpeed;
+					cameraRef->transform.rotation.y += tankRotationSpeed;
+
+					cameraRef->RotateAroundObject(
+						tankRef->GetTransform().position.x,
+						tankRef->GetTransform().position.z,
+						-tankRotationSpeed);
 				}
 
 				if (key == SDL_SCANCODE_D) // Right
 				{
 					tankRef->GetTransform().rotation.y -= tankRotationSpeed;
+					cameraRef->transform.rotation.y -= tankRotationSpeed;
+
+					cameraRef->RotateAroundObject(
+						tankRef->GetTransform().position.x,
+						tankRef->GetTransform().position.z,
+						tankRotationSpeed);
 				}
 			}
 
@@ -229,12 +241,22 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 				{
 					tankRef->GetTransform().rotation.y += tankRotationSpeed;
 					cameraRef->transform.rotation.y += tankRotationSpeed;
+
+					cameraRef->RotateAroundObject(
+						tankRef->GetTransform().position.x,
+						tankRef->GetTransform().position.z,
+						-tankRotationSpeed);
 				}
 
 				if (key == SDL_SCANCODE_D) // Right
 				{
 					tankRef->GetTransform().rotation.y -= tankRotationSpeed;
 					cameraRef->transform.rotation.y -= tankRotationSpeed;
+
+					cameraRef->RotateAroundObject(
+						tankRef->GetTransform().position.x,
+						tankRef->GetTransform().position.z,
+						tankRotationSpeed);
 				}
 			}
 		});
@@ -285,32 +307,21 @@ void PWindow::Render()
 			{
 				if (cameraRef->thirdPerson)
 				{
-					cameraRef->transform.rotation.x = 0.0f;
-					cameraRef->transform.position.y = 0.0f;
-
-					// Move the tank by using the cameras position with an offset
-					tankRef->GetTransform().position.x = cameraRef->transform.position.x;
-					tankRef->GetTransform().position.y = cameraRef->transform.position.y - 2.0f;
-					tankRef->GetTransform().position.z = cameraRef->transform.position.z + 1.0f;
-					
+					// Move the camera according to the tanks direction
 					cameraRef->Translate(m_TankDirection);
-					cameraRef->Rotate(m_TankDirection, glm::abs(m_TankDirection));
+					tankRef->Translate(m_TankDirection);
 				}
 					
 				else
 				{
+					// Translate the camera based on input direction
 					cameraRef->Translate(m_CameraDirection);
+
+					// Rotate the camera based on input direction
+					// glm::abs = absolute (force a positive value)
 					camRef->Rotate(m_CameraRotation, glm::abs(m_CameraRotation));
 				}
-					
-
-				// Translate the camera based on input direction
-
-				// Rotate the camera based on input direction
-				// glm::abs = absolute (force a positive value)
-				
 			}
-			
 		}
 		m_GraphicsEngine->Render(m_SDLWindow);
 	}

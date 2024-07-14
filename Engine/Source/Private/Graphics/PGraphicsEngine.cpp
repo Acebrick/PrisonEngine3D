@@ -19,6 +19,7 @@
 TUnique<PModel> m_LTreads;
 TUnique<PModel> m_Gun;
 TUnique<PModel> m_Pillar;
+TUnique<PModel> m_Pillar2;
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 {
@@ -112,6 +113,8 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	m_Gun->MakePoly(defaultTexture);
 	m_Pillar = TMakeUnique<PModel>();
 	m_Pillar->MakePoly(defaultTexture);
+	m_Pillar2 = TMakeUnique<PModel>();
+	m_Pillar2->MakePoly(defaultTexture);
 	
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
@@ -139,6 +142,11 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Set the position of the pillars so you can see the tank moving
 	m_Pillar->GetTransform().rotation.x = 90.0f;
 	m_Pillar->GetTransform().position.x = 15.0f;
+	m_Pillar->GetTransform().position.y = 0.5f;
+
+	m_Pillar2->GetTransform().rotation.x = 90.0f;
+	m_Pillar2->GetTransform().position.z = 15.0f;
+	m_Pillar2->GetTransform().position.y = 0.5f;
 
 	// Activate the shader
 	m_Shader->Activate();
@@ -153,6 +161,7 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	m_LTreads->Render(m_Shader);
 	m_Gun->Render(m_Shader);
 	m_Pillar->Render(m_Shader);
+	m_Pillar2->Render(m_Shader);
 
 	// Presented the frame to the window
 	// Swapping the back buffer with the front buffer

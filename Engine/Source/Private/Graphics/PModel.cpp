@@ -249,3 +249,17 @@ void PModel::MakeRightTreads(const TShared<PTexture>& texture)
 	// std::move will move the reference from the previous reference to a new one without destroying or copying the reference
 	m_MeshStack.push_back(std::move(mesh));
 }
+
+// Translate the model based on the translation passed in
+void PModel::Translate(glm::vec3 translation, glm::vec3 scale)
+{
+	// Move the input direction forward if required
+	glm::vec3 moveDir = GetTransform().Forward() * translation.z;
+	moveDir += GetTransform().Right() * translation.x;
+	moveDir.y += translation.y;
+
+	if (glm::length(moveDir) != 0.0f)
+		moveDir = glm::normalize(moveDir);
+
+	GetTransform().position += moveDir * scale * 0.1f;
+}
