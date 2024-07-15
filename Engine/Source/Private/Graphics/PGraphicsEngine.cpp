@@ -95,7 +95,9 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// DEBUG
 	m_Model = TMakeUnique<PModel>();
-	m_Model->MakeCube(defaultTexture);
+	m_Model->ImportModel("Models/Lambo/Lambo.fbx");
+	m_Model->GetTransform().scale = glm::vec3(0.1f);
+	m_Model->GetTransform().position.z = 100.0f;
 
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
@@ -106,7 +108,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 {
 	// Set a background colour
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

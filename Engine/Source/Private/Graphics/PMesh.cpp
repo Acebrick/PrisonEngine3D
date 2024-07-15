@@ -8,6 +8,7 @@
 PMesh::PMesh()
 {
 	m_VAO = m_VBO = m_EAO = 0;
+	m_MatTransform = glm::mat4(1.0f);
 	PDebug::Log("Mesh created");
 }
 
@@ -145,6 +146,9 @@ void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransf
 
 	// Update the transform of the mesh based on the model transform
 	shader->SetModelTransform(transform);
+
+	// Set the relative transform for the mesh in the shader
+	shader->SetMeshTransform(m_MatTransform);
 
 	// Binding this mesh as the active VAO
 	glBindVertexArray(m_VAO);

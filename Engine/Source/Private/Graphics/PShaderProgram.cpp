@@ -52,6 +52,16 @@ void PShaderProgram::Activate()
 	glUseProgram(m_ProgramID);
 }
 
+void PShaderProgram::SetMeshTransform(const glm::mat4& matTransform)
+{
+	// Find the variable in the shader
+	// All uniform variables are given an ID by gl
+	const int varID = glGetUniformLocation(m_ProgramID, "mesh");
+
+	// Update the value
+	glUniformMatrix4fv(varID, 1, GL_FALSE, value_ptr(matTransform));
+}
+
 void PShaderProgram::SetModelTransform(const PSTransform& transform)
 {
 	// Translate (move) > rotate > scale (this allows us to rotate around the new location)

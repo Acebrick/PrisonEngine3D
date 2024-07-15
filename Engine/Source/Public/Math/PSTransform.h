@@ -13,6 +13,13 @@ struct PSTransform
 		scale = glm::vec3(1.0f);
 	}
 
+	PSTransform(const glm::vec3& p, const glm::vec3& r, const glm::vec3& s)
+	{
+		position = p;
+		rotation = r;
+		scale = s;
+	}
+
 	// Get the forward vector of the local rotation
 	glm::vec3 Forward()
 	{
@@ -56,6 +63,21 @@ struct PSTransform
 			glm::normalize(up);
 
 		return up;
+	}
+
+	PSTransform operator+(const PSTransform& other) const
+	{
+		return
+		{
+			position + other.position,
+			rotation + other.rotation,
+			scale + other.scale
+		};
+	}
+
+	PSTransform& operator+=(const PSTransform& other)
+	{
+		return *this = *this + other;
 	}
 
 	glm::vec3 position;

@@ -1,15 +1,32 @@
 #pragma once
 #include "EngineTypes.h"
 
+// External Libs
+#include <GLM/mat4x4.hpp>
+
 class PShaderProgram;
 struct PSTransform;
 class PTexture;
 
 struct PSVertexData
 {
+	// 0 = x
+	// 1 = y
+	// 2 = z
 	float m_Position[3] = { 0.0f, 0.0f, 0.0f };
+
+	// 0 = r
+	// 1 = g
+	// 2 = b
 	float m_Colour[3] = { 1.0f, 1.0f, 1.0f };
+
+	// 0 = x, u, s
+	// 1 = y, v, t
 	float m_TexCoords[2] = { 0.0f, 0.0f };
+
+	// 0 = x
+	// 1 = y
+	// 2 = z
 	float m_Normal[3] = { 0.0f, 0.0f, 0.0f };
 };
 
@@ -26,6 +43,9 @@ public:
 
 	// Set the texture in the mesh
 	void SetTexture(const TShared<PTexture>& texture) { m_Texture = texture; }
+
+	// Set the transform of the mesh relative to the model
+	void SetRelativeTransform(const glm::mat4& transform) { m_MatTransform = transform; }
 
 private:
 	// Store the vertices
@@ -45,4 +65,7 @@ private:
 
 	// Texture for the mesh
 	TShared<PTexture> m_Texture;
+
+	// Relative transform of the mesh
+	glm::mat4 m_MatTransform;
 };
