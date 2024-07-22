@@ -99,6 +99,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ExternalLibs\Includes\STB_IMAGE\stb_image.cpp" />
+    <ClCompile Include="Source\Private\Game\GameObjects\PObject.cpp" />
+    <ClCompile Include="Source\Private\Game\PGameEngine.cpp" />
     <ClCompile Include="Source\Private\Graphics\PGraphicsEngine.cpp" />
     <ClCompile Include="Source\Private\Graphics\PMesh.cpp" />
     <ClCompile Include="Source\Private\Graphics\PModel.cpp" />
@@ -110,6 +112,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ExternalLibs\Includes\STB_IMAGE\stb_image.h" />
+    <ClInclude Include="Source\Public\Game\GameObjects\PObject.h" />
+    <ClInclude Include="Source\Public\Game\GameObjects\PObjectChild.h" />
+    <ClInclude Include="Source\Public\Game\PGameEngine.h" />
     <ClInclude Include="Source\Public\Graphics\PSCamera.h" />
     <ClInclude Include="Source\Public\Listeners\PInput.h" />
     <ClInclude Include="Source\Public\Listeners\PEvents.h" />
