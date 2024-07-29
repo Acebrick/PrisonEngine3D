@@ -10,6 +10,7 @@ class PTexture;
 class PShaderProgram;
 struct aiScene;
 struct aiNode;
+struct PSLight;
 
 class PModel
 {
@@ -29,7 +30,7 @@ public:
 
 	// Render all of the meshes within the model
 	// Transform of mesges will be based on the models transform
-	void Render(const TShared<PShaderProgram>& shader);
+	void Render(const TShared<PShaderProgram>& shader, const TArray<TShared<PSLight>>& lights);
 
 	// Get the transform of the model
 	PSTransform& GetTransform() { return m_Transform; }
@@ -42,5 +43,6 @@ private:
 	PSTransform m_Transform;
 
 	// Find all of the meshes in a scene and convert them to a LMesh
-	bool FindAndImportMeshes(const aiNode& node, const aiScene& scene, const aiMatrix4x4& parentTransform);
+	bool FindAndImportMeshes(const aiNode& node, const aiScene& scene, 
+		const aiMatrix4x4& parentTransform, PUi32* meshesCreated);
 };

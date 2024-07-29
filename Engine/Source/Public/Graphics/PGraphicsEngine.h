@@ -5,6 +5,7 @@ typedef void* SDL_GLContext;
 struct SDL_Window;
 class PShaderProgram;
 struct PSCamera;
+struct PSLight;
 
 class PGraphicsEngine
 {
@@ -30,4 +31,6 @@ private:
 
 	// Store the camera
 	TShared<PSCamera> m_Camera;
+
+	TArray<TShared<PSLight>> m_Lights;
 };

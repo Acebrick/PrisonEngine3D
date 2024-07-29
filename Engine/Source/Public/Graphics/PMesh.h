@@ -7,6 +7,7 @@
 class PShaderProgram;
 struct PSTransform;
 class PTexture;
+struct PSLight;
 
 struct PSVertexData
 {
@@ -39,7 +40,7 @@ public:
 	// Creating a mesh using vertex ad index data
 	bool CreateMesh(const std::vector<PSVertexData>& vertices, const std::vector<uint32_t>& indices);
 
-	void Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform);
+	void Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform, const TArray<TShared<PSLight>>& lights);
 
 	// Set the texture in the mesh
 	void SetTexture(const TShared<PTexture>& texture) { m_Texture = texture; }

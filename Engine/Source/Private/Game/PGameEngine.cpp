@@ -27,7 +27,7 @@ bool PGameEngine::Run()
 
 	GameLoop();
 
-	return true;
+	return true; 
 }
 
 void PGameEngine::DestroyObject(const TShared<PObject>& object)

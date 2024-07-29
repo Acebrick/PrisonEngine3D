@@ -140,26 +140,29 @@ void PModel::ImportModel(const PString& filePath)
 	// Set the scale to x1, y1, z1
 	aiMatrix4x4::Scaling({ 1.0f, 1.0f, 1.0f }, sceneTransform);
 
+	// Meshes count
+	PUi32 meshesCreated = 0;
+
 	// Find all meshes in the scene and fail if any of them fail
-	if (!FindAndImportMeshes(*scene->mRootNode, *scene, sceneTransform))
+	if (!FindAndImportMeshes(*scene->mRootNode, *scene, sceneTransform, &meshesCreated))
 	{
 		PDebug::Log("Model failed to convert ASSIMP scene: " + filePath, LT_ERROR);
 		return;
 	}
 
 	// Log the successful import of the model
-	PDebug::Log("Model successfully imported: " + filePath, LT_SUCCESS);
+	PDebug::Log("Model successfully imported with (" + std::to_string(meshesCreated) + ") meshes: " +  filePath, LT_SUCCESS);
 }
 
-void PModel::Render(const TShared<PShaderProgram>& shader)
+void PModel::Render(const TShared<PShaderProgram>& shader, const TArray<TShared<PSLight>>& lights)
 {
 	for (const auto& mesh : m_MeshStack)
 	{
-		mesh->Render(shader, m_Transform);
+		mesh->Render(shader, m_Transform, lights);
 	}
 }
 
-bool PModel::FindAndImportMeshes(const aiNode& node, const aiScene& scene, const aiMatrix4x4& parentTransform)
+bool PModel::FindAndImportMeshes(const aiNode& node, const aiScene& scene, const aiMatrix4x4& parentTransform, PUi32* meshesCreated)
 {
 	// Looping through all the meshes in the node
 	for (PUi32 i = 0; i < node.mNumMeshes; ++i)
@@ -266,6 +269,9 @@ bool PModel::FindAndImportMeshes(const aiNode& node, const aiScene& scene, const
 
 		// Add the new mesh to the mesh stack
 		m_MeshStack.push_back(std::move(pMesh));
+
+		// Count the meshes created
+		++*meshesCreated;
 	}
 
 	// Adding the relative transform to the parent transform
@@ -274,7 +280,7 @@ bool PModel::FindAndImportMeshes(const aiNode& node, const aiScene& scene, const
 	// Loop through all of the child nodes inside this node
 	for (PUi32 i = 0; i < node.mNumChildren; ++i)
 	{
-		if (!FindAndImportMeshes(*node.mChildren[i], scene, nodeRelTransform))
+		if (!FindAndImportMeshes(*node.mChildren[i], scene, nodeRelTransform, meshesCreated))
 		{
 			return false;
 		}

@@ -3,6 +3,7 @@
 #include "Math/PSTransform.h"
 #include "Graphics/PTexture.h"
 #include "Graphics/PSCamera.h"
+#include "Graphics/PSLight.h"
 
 // External Libs
 #include <GLEW/glew.h>
@@ -13,6 +14,10 @@
 #include <sstream>
 
 #define LGET_GLEW_ERROR reinterpret_cast<const char*>(glewGetErrorString(glGetError()));
+
+// Constant value for light amounts
+const PUi32 maxDirLights = 2;
+const PUi32 maxPointLights = 20;
 
 PShaderProgram::PShaderProgram()
 {
@@ -141,6 +146,65 @@ void PShaderProgram::RunTexture(const TShared<PTexture>& texture, const PUi32& s
 
 	// Update the shader
 	glUniform1i(varID, slot);
+}
+
+void PShaderProgram::SetLights(const TArray<TShared<PSLight>>& lights)
+{
+	PUi32 dirLights = 0;
+	PUi32 pointLights = 0;
+
+	int varID = 0;
+	// Loop through all of the lights and add them to the shader
+	for (PUi32 i = 0; i < lights.size(); ++i)
+	{
+		if (const TShared<PSDirLight> lightRef = std::dynamic_pointer_cast<PSDirLight>(lights[i]))
+		{
+			// Ignore the light if we have already maxed out
+			if (dirLights >= maxDirLights)
+			{
+				continue;
+			}
+
+			// Add a dirLight and use as index
+			PString lightIndexStr = "dirLights[" + std::to_string(dirLights) + "]";
+
+			// COLOUR
+			// Get the colour variable from the dir light struct in the shader
+			varID = glGetUniformLocation(m_ProgramID,
+				(lightIndexStr + ".colour").c_str());
+			
+			// Change the colour
+			glUniform3fv(varID, 1, glm::value_ptr(lightRef->colour));
+
+			// AMBIENT
+			// Get the ambient colour variable from the dir light struct in the shader
+			varID = glGetUniformLocation(m_ProgramID,
+				(lightIndexStr + ".ambient").c_str());
+
+			// Change the ambient colour
+			glUniform3fv(varID, 1, glm::value_ptr(lightRef->ambient));
+
+			// DIRECTION
+			// Get the direction variable from the fir light struct in the shader
+			varID = glGetUniformLocation(m_ProgramID,
+				(lightIndexStr + ".direction").c_str());
+
+			// Change the direction
+			glUniform3fv(varID, 1, glm::value_ptr(lightRef->direction));
+
+			// INTENSITY
+			// Get the intensity variable from the fir light struct in the shader
+			varID = glGetUniformLocation(m_ProgramID,
+				(lightIndexStr + ".intensity").c_str());
+
+			// Change the intensity
+			glUniform1f(varID, lightRef->intensity);
+
+			// Increase the dirLights count
+			++dirLights;
+
+		}
+	}
 }
 
 bool PShaderProgram::ImportShaderByType(const PString& filePath, PEShaderType shaderType)

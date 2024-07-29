@@ -15,6 +15,7 @@ enum PEShaderType : PUi8
 };
 
 struct PSTransform;
+struct PSLight;
 
 class PShaderProgram 
 {
@@ -40,6 +41,9 @@ public:
 
 	// Set a texture in the shader based on the slot
 	void RunTexture(const TShared<PTexture>& texture, const PUi32& slot);
+
+	// Set the lights in the shader
+	void SetLights(const TArray<TShared<PSLight>>& lights);
 
 private:
 	// Store the file paths

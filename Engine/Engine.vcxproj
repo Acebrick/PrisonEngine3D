@@ -116,6 +116,7 @@
     <ClInclude Include="Source\Public\Game\GameObjects\PObjectChild.h" />
     <ClInclude Include="Source\Public\Game\PGameEngine.h" />
     <ClInclude Include="Source\Public\Graphics\PSCamera.h" />
+    <ClInclude Include="Source\Public\Graphics\PSLight.h" />
     <ClInclude Include="Source\Public\Listeners\PInput.h" />
     <ClInclude Include="Source\Public\Listeners\PEvents.h" />
     <ClInclude Include="Source\Public\Math\PSTransform.h" />

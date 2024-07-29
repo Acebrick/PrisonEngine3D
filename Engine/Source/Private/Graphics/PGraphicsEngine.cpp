@@ -4,6 +4,7 @@
 #include "Math/PSTransform.h"
 #include "Graphics/PTexture.h"
 #include "Graphics/PSCamera.h"
+#include "Graphics/PSLight.h"
 
 // External Libs
 #include <GLEW/glew.h>
@@ -95,9 +96,14 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// DEBUG
 	m_Model = TMakeUnique<PModel>();
-	m_Model->ImportModel("Models/Lambo/Lambo.fbx");
-	m_Model->GetTransform().scale = glm::vec3(0.1f);
+	m_Model->ImportModel("Models/Axe/scene.gltf");
+	m_Model->GetTransform().scale = glm::vec3(1.0f);
 	m_Model->GetTransform().position.z = 100.0f;
+
+	TShared<PSDirLight> dirLight = TMakeShared<PSDirLight>();
+	dirLight->colour = glm::vec3(1.0f, 0.0f, 1.0f);
+	dirLight->direction = glm::vec3(0.0f, -1.0f, 0.0f);
+	m_Lights.push_back(dirLight);
 
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
@@ -119,9 +125,13 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Set the world transformations based on the camera
 	m_Shader->SetWorldTransform(m_Camera);
 
+	m_Model->GetTransform().rotation.x += 0.5f;
+	m_Model->GetTransform().rotation.y += 0.5f;
+	m_Model->GetTransform().rotation.z += 0.5f;
+
 	// Render custom graphics
 	// Models will update their own positions in the mesh based on the transform
-	m_Model->Render(m_Shader);
+	m_Model->Render(m_Shader, m_Lights);
 
 	// Presented the frame to the window
 	// Swapping the back buffer with the front buffer

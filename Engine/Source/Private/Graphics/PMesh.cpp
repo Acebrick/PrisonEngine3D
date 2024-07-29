@@ -9,12 +9,11 @@ PMesh::PMesh()
 {
 	m_VAO = m_VBO = m_EAO = 0;
 	m_MatTransform = glm::mat4(1.0f);
-	PDebug::Log("Mesh created");
 }
 
 PMesh::~PMesh()
 {
-	PDebug::Log("Mesh destroyed");
+
 }
 
 bool PMesh::CreateMesh(const std::vector<PSVertexData>& vertices, const std::vector<uint32_t>& indices)
@@ -129,13 +128,27 @@ bool PMesh::CreateMesh(const std::vector<PSVertexData>& vertices, const std::vec
 		(void*)(sizeof(float) * 6) // How many numbers to skip in bytes (skipping the position and colour values)
 	);
 
+	// Pass out the vertex data in separate formats
+	// NORMALS
+	glEnableVertexAttribArray(3);
+
+	// Set the texture coordinates of that data to the 3 index of the attribute array
+	glVertexAttribPointer(
+		3, // Location to store the data in the attribute array
+		3, // How many numbers to pass into the attribute array index
+		GL_FLOAT, // The type of data to store (only one per index)
+		GL_FALSE, // Should we normalise the values, generally no
+		sizeof(PSVertexData), // How big is each data array in a VertexData
+		(void*)(sizeof(float) * 8) // How many numbers to skip in bytes (skipping the position and colour values)
+	);
+
 	// Common practice to clear the VAO from the GPU
 	glBindVertexArray(0); // Set to 0 because there is no such thing as a 0 id
 
 	return true;
 }
 
-void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform)
+void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform, const TArray<TShared<PSLight>>& lights)
 {
 	// Does a texture exist
 	if (m_Texture)
@@ -149,6 +162,9 @@ void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransf
 
 	// Set the relative transform for the mesh in the shader
 	shader->SetMeshTransform(m_MatTransform);
+
+	// Set the lights in the shader for the mesh
+	shader->SetLights(lights);
 
 	// Binding this mesh as the active VAO
 	glBindVertexArray(m_VAO);

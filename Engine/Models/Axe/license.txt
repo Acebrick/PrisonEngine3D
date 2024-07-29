@@ -1,0 +1,11 @@
+Model Information:
+* title:	War Axe
+* source:	https://sketchfab.com/3d-models/war-axe-ce1620a69a5c4857bb7e33183bde70c5
+* author:	Hüseyin Demirci (https://sketchfab.com/Dudzy)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "War Axe" (https://sketchfab.com/3d-models/war-axe-ce1620a69a5c4857bb7e33183bde70c5) by Hüseyin Demirci (https://sketchfab.com/Dudzy) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
