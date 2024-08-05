@@ -6,6 +6,7 @@
 
 class PTexture;
 struct PSCamera;
+struct PSMaterial;
 
 // Enum to determine the typw of shader
 enum PEShaderType : PUi8
@@ -44,6 +45,9 @@ public:
 
 	// Set the lights in the shader
 	void SetLights(const TArray<TShared<PSLight>>& lights);
+
+	// Set the material in the shader
+	void SetMaterial(const TShared<PSMaterial>& material);
 
 private:
 	// Store the file paths

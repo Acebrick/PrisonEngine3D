@@ -33,8 +33,8 @@ struct PSPointLight : public PSLight
 	PSPointLight()
 	{
 		position = glm::vec3(0.0f);
-		linear = 0.1f;
-		quadratic = 0.035f;
+		linear = 0.045f;
+		quadratic = 0.0075f;
 	}
 
 	glm::vec3 position;

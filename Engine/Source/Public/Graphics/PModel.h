@@ -11,18 +11,13 @@ class PShaderProgram;
 struct aiScene;
 struct aiNode;
 struct PSLight;
+struct PSMaterial;
 
 class PModel
 {
 public:
 	PModel() = default;
 	~PModel() = default;
-	
-	// Create a poly model and add a texture to it
-	void MakePoly(const TShared<PTexture>& texture);
-
-	// Create a cube model and add a texture to it
-	void MakeCube(const TShared<PTexture>& texture);
 
 	// Import a 3D model from file
 	// Uses the ASSIMP import library, check docs to know file types accepted
@@ -34,6 +29,9 @@ public:
 
 	// Get the transform of the model
 	PSTransform& GetTransform() { return m_Transform; }
+
+	// Set a material by the slot number
+	void SetMaterialBySlot(unsigned int slot, const TShared<PSMaterial>& material);
 	
 private:
 	// Array of meshes
@@ -41,6 +39,9 @@ private:
 
 	// Transform for the model in 3D space
 	PSTransform m_Transform;
+
+	// Array of materials for the model
+	TArray<TShared<PSMaterial>> m_MaterialsStack;
 
 	// Find all of the meshes in a scene and convert them to a LMesh
 	bool FindAndImportMeshes(const aiNode& node, const aiScene& scene, 

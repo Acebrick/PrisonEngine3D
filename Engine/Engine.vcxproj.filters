@@ -101,5 +101,8 @@
     <ClInclude Include="Source\Public\Graphics\PSLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Public\Graphics\PSMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -9,6 +9,7 @@ PMesh::PMesh()
 {
 	m_VAO = m_VBO = m_EAO = 0;
 	m_MatTransform = glm::mat4(1.0f);
+	materialIndex = 0;
 }
 
 PMesh::~PMesh()
@@ -148,14 +149,10 @@ bool PMesh::CreateMesh(const std::vector<PSVertexData>& vertices, const std::vec
 	return true;
 }
 
-void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform, const TArray<TShared<PSLight>>& lights)
+void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform, const TArray<TShared<PSLight>>& lights, const TShared<PSMaterial> material)
 {
-	// Does a texture exist
-	if (m_Texture)
-	{
-		// Run the texture
-		shader->RunTexture(m_Texture, 0);
-	}
+	// Update the material in the shader
+	shader->SetMaterial(material);
 
 	// Update the transform of the mesh based on the model transform
 	shader->SetModelTransform(transform);

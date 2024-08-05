@@ -12,7 +12,8 @@
 #include <SDL/SDL_opengl.h>
 
 // Test mesh for debug
-TUnique<PModel> m_Model;
+TWeak<PModel> m_Model;
+TWeak<PSPointLight> m_PointLight;
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 {
@@ -95,15 +96,21 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	}
 
 	// DEBUG
-	m_Model = TMakeUnique<PModel>();
-	m_Model->ImportModel("Models/Axe/scene.gltf");
-	m_Model->GetTransform().scale = glm::vec3(1.0f);
-	m_Model->GetTransform().position.z = 100.0f;
+	m_Model = TMakeShared<PModel>();
+	m_Model.lock()->ImportModel("Models/Axe/scene.gltf");
+	m_Model.lock()->GetTransform().scale = glm::vec3(1.0f);
+	m_Model.lock()->GetTransform().position.z = 100.0f;
 
-	TShared<PSDirLight> dirLight = TMakeShared<PSDirLight>();
-	dirLight->colour = glm::vec3(1.0f, 0.0f, 1.0f);
-	dirLight->direction = glm::vec3(0.0f, -1.0f, 0.0f);
-	m_Lights.push_back(dirLight);
+	// Create the dir light
+	const auto& dirLight = CreateDirLight();
+
+	// Check if exists as a reference and change it
+	if (const auto& lightRef = dirLight.lock())
+	{
+		lightRef->colour = glm::vec3(1.0f, 1.0f, 0.0f);
+		lightRef->ambient = glm::vec3(0.3f);
+		lightRef->direction = glm::vec3(0.0f, -1.0f, 0.0f);
+	}
 
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
@@ -114,7 +121,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 {
 	// Set a background colour
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -125,15 +132,49 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Set the world transformations based on the camera
 	m_Shader->SetWorldTransform(m_Camera);
 
-	m_Model->GetTransform().rotation.x += 0.5f;
-	m_Model->GetTransform().rotation.y += 0.5f;
-	m_Model->GetTransform().rotation.z += 0.5f;
+	//m_Model->GetTransform().rotation.x += 0.5f;
+	//m_Model->GetTransform().rotation.y += 0.5f;
+	//m_Model->GetTransform().rotation.z += 0.5f;
+
+	//m_PointLight.lock()->position.z += 0.1f;
 
 	// Render custom graphics
 	// Models will update their own positions in the mesh based on the transform
-	m_Model->Render(m_Shader, m_Lights);
+	for (const auto& modelRef : m_Models)
+	{
+		modelRef->Render(m_Shader, m_Lights);
+	}
 
 	// Presented the frame to the window
 	// Swapping the back buffer with the front buffer
 	SDL_GL_SwapWindow(sdlWindow);
+}
+
+TWeak<PSPointLight> PGraphicsEngine::CreatePointLight()
+{
+	const auto& newLight = TMakeShared<PSPointLight>();
+	m_Lights.push_back(newLight);
+
+	return newLight;
+}
+
+TWeak<PSDirLight> PGraphicsEngine::CreateDirLight()
+{
+	const auto& newLight = TMakeShared<PSDirLight>();
+	m_Lights.push_back(newLight);
+
+	return newLight;
+}
+
+TWeak<PModel> PGraphicsEngine::ImportModel(const PString& path)
+{
+	const auto& newModel = TMakeShared<PModel>();
+	newModel->ImportModel(path);
+	m_Models.push_back(newModel);
+	return newModel;
+}
+
+TShared<PSMaterial> PGraphicsEngine::CreateMaterial()
+{
+	return TMakeShared<PSMaterial>();
 }

@@ -6,8 +6,8 @@
 
 class PShaderProgram;
 struct PSTransform;
-class PTexture;
 struct PSLight;
+struct PSMaterial;
 
 struct PSVertexData
 {
@@ -40,13 +40,14 @@ public:
 	// Creating a mesh using vertex ad index data
 	bool CreateMesh(const std::vector<PSVertexData>& vertices, const std::vector<uint32_t>& indices);
 
-	void Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform, const TArray<TShared<PSLight>>& lights);
-
-	// Set the texture in the mesh
-	void SetTexture(const TShared<PTexture>& texture) { m_Texture = texture; }
+	void Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform, 
+		const TArray<TShared<PSLight>>& lights, const TShared<PSMaterial> material);
 
 	// Set the transform of the mesh relative to the model
 	void SetRelativeTransform(const glm::mat4& transform) { m_MatTransform = transform; }
+
+	// The index for the material relative to the model
+	unsigned int materialIndex;
 
 private:
 	// Store the vertices
@@ -63,9 +64,6 @@ private:
 
 	// Store the ID for the element array object
 	uint32_t m_EAO;
-
-	// Texture for the mesh
-	TShared<PTexture> m_Texture;
 
 	// Relative transform of the mesh
 	glm::mat4 m_MatTransform;
