@@ -251,26 +251,33 @@ void PShaderProgram::SetMaterial(const TShared<PSMaterial>& material)
 		return;
 	}
 
-	// BASE COLOUR (DIFFUSE)
 	// The ID for the variable in the shader
 	int varID = 0;
 
-	// Bind the texture to the 0 index
-	material->m_BaseColourMap->BindTexture(0);
+	// BASE COLOUR (DIFFUSE)
+	if (material->m_BaseColourMap)
+	{
+		// Bind the texture to the 0 index
+		material->m_BaseColourMap->BindTexture(0);
 
-	// Get the base colour map id
-	varID = glGetUniformLocation(m_ProgramID, "material.baseColourMap");
+		// Get the base colour map id
+		varID = glGetUniformLocation(m_ProgramID, "material.baseColourMap");
 
-	// Update the shader
-	glUniform1i(varID, 0);
+		// Update the shader
+		glUniform1i(varID, 0);
+	}
 
 	// SPECULAR MAP
-	// Bind the texture to the 1 index
-	material->m_SpecularMap->BindTexture(1);
+	if (material->m_SpecularMap)
+	{
+		// Bind the texture to the 1 index
+		material->m_SpecularMap->BindTexture(1);
 
-	varID = glGetUniformLocation(m_ProgramID, "material.specularMap");
+		// Get the specular map id
+		varID = glGetUniformLocation(m_ProgramID, "material.specularMap");
 
-	glUniform1f(varID, 1);
+		glUniform1f(varID, 1);
+	}
 
 	// SHININESS
 	// Get the base colour map id

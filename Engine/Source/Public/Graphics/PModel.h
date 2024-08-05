@@ -16,7 +16,7 @@ struct PSMaterial;
 class PModel
 {
 public:
-	PModel() = default;
+	PModel() {  }
 	~PModel() = default;
 
 	// Import a 3D model from file

@@ -149,7 +149,7 @@ bool PMesh::CreateMesh(const std::vector<PSVertexData>& vertices, const std::vec
 	return true;
 }
 
-void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform, const TArray<TShared<PSLight>>& lights, const TShared<PSMaterial> material)
+void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform, const TArray<TShared<PSLight>>& lights, const TShared<PSMaterial>& material)
 {
 	// Update the material in the shader
 	shader->SetMaterial(material);

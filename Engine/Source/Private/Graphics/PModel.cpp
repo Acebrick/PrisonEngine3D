@@ -158,7 +158,7 @@ bool PModel::FindAndImportMeshes(const aiNode& node, const aiScene& scene, const
 		}
 
 		// Get the material index from the assimp mesh and set our mesh index to the same
-		pMesh->materialIndex = aMesh->mMaterialIndex;
+		pMesh->materialIndex = aMesh->mMaterialIndex; 
 
 		// Set the relative transformation for the mesh
 		aiMatrix4x4 relTransform = parentTransform * node.mTransformation;

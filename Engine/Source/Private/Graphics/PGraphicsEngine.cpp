@@ -84,7 +84,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// Create the camera
 	m_Camera = TMakeShared<PSCamera>();
-	m_Camera->transform.position.z = -5.0f;
+	m_Camera->transform.position.z = -25.0f;
 
 	// Create the texture object
 	TShared<PTexture> defaultTexture = TMakeShared<PTexture>();
@@ -96,10 +96,17 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	}
 
 	// DEBUG
-	m_Model = TMakeShared<PModel>();
-	m_Model.lock()->ImportModel("Models/Axe/scene.gltf");
-	m_Model.lock()->GetTransform().scale = glm::vec3(1.0f);
-	m_Model.lock()->GetTransform().position.z = 100.0f;
+	m_Model = ImportModel("Models/Axe/scene.gltf");
+
+	TShared<PTexture> tex = TMakeShared<PTexture>();
+	tex->LoadTexture("base colour", "Models/Axe/Textures/lambert2SG_baseColor.jpeg");
+	TShared<PSMaterial> mat = TMakeShared<PSMaterial>();
+	mat->m_BaseColourMap = tex;
+
+	m_Model.lock()->SetMaterialBySlot(0, mat);
+
+	// Making a second model
+	//ImportModel("Models/Axe/scene.gltf").lock()->GetTransform().position = glm::vec3(0.0f, 15.0f, 0.0f);
 
 	// Create the dir light
 	const auto& dirLight = CreateDirLight();
@@ -126,24 +133,24 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	//m_Model.lock()->GetTransform().rotation.x += 0.5f;
+	//m_Model.lock()->GetTransform().rotation.y += 0.5f;
+	//m_Model.lock()->GetTransform().rotation.z += 0.5f;
+
+	//m_PointLight.lock()->position.z += 0.1f;
+
 	// Activate the shader
 	m_Shader->Activate();
 
 	// Set the world transformations based on the camera
 	m_Shader->SetWorldTransform(m_Camera);
 
-	//m_Model->GetTransform().rotation.x += 0.5f;
-	//m_Model->GetTransform().rotation.y += 0.5f;
-	//m_Model->GetTransform().rotation.z += 0.5f;
-
-	//m_PointLight.lock()->position.z += 0.1f;
-
 	// Render custom graphics
 	// Models will update their own positions in the mesh based on the transform
 	for (const auto& modelRef : m_Models)
 	{
 		modelRef->Render(m_Shader, m_Lights);
-	}
+	} 
 
 	// Presented the frame to the window
 	// Swapping the back buffer with the front buffer

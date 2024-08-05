@@ -41,7 +41,7 @@ public:
 	bool CreateMesh(const std::vector<PSVertexData>& vertices, const std::vector<uint32_t>& indices);
 
 	void Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform, 
-		const TArray<TShared<PSLight>>& lights, const TShared<PSMaterial> material);
+		const TArray<TShared<PSLight>>& lights, const TShared<PSMaterial>& material);
 
 	// Set the transform of the mesh relative to the model
 	void SetRelativeTransform(const glm::mat4& transform) { m_MatTransform = transform; }

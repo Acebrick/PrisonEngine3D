@@ -40,9 +40,6 @@ public:
 	// Set the 3D coordinates for the model
 	void SetWorldTransform(const TShared<PSCamera>& camera);
 
-	// Set a texture in the shader based on the slot
-	void RunTexture(const TShared<PTexture>& texture, const PUi32& slot);
-
 	// Set the lights in the shader
 	void SetLights(const TArray<TShared<PSLight>>& lights);
 
