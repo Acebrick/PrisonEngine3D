@@ -80,12 +80,12 @@ void main() {
 		lightColour *= dirLights[i].intensity;
 
 		// Specular power algorithm, calculate the shininesse of the model
-		//float specPower = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-		//vec3 specular = specularColour * specPower;
-		//specular *= material.specularStrength;
+		float specPower = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
+		vec3 specular = specularColour * specPower;
+		specular *= material.specularStrength;
 
 		// Add our light values together to get the result
-		result += ambientLight + lightColour;
+		result += (ambientLight + lightColour + specular);
 	}
 
 	// POINT LIGHTS
@@ -124,12 +124,12 @@ void main() {
 		lightColour *= pointLights[i].intensity;
 
 		// Specular power algorithm, calculate the shininesse of the model
-		//float specPower = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-		//vec3 specular = specularColour * specPower;
-		//specular *= material.specularStrength;
+		float specPower = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
+		vec3 specular = specularColour * specPower;
+		specular *= material.specularStrength;
 
 		// Add our light values together to get the result
-		result += lightColour;
+		result += (lightColour + specular);
 	}
 
 	finalColour = vec4(result, 1.0f);

@@ -12,7 +12,7 @@
 #include <SDL/SDL_opengl.h>
 
 // Test mesh for debug
-TWeak<PModel> m_Model;
+TWeak<PModel> m_Throne;
 TWeak<PSPointLight> m_PointLight;
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
@@ -86,24 +86,23 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	m_Camera = TMakeShared<PSCamera>();
 	m_Camera->transform.position.z = -25.0f;
 
-	// Create the texture object
-	TShared<PTexture> defaultTexture = TMakeShared<PTexture>();
-
-	// Add the texture to the mesh if it successfully created
-	if (!defaultTexture->LoadTexture("Default Grid", "Textures/P_DefaultGrid.png"))
-	{
-		PDebug::Log("Graphics engine default texeture failed to load", LT_ERROR);
-	}
-
 	// DEBUG
-	m_Model = ImportModel("Models/Axe/scene.gltf");
 
+	// THRONE
+	m_Throne = ImportModel("Models/Throne/Throne.fbx");
+	m_Throne.lock()->GetTransform().position.z = 200.0f;
+	m_Throne.lock()->GetTransform().rotation.y = 180.0f;
+	// textures
 	TShared<PTexture> tex = TMakeShared<PTexture>();
-	tex->LoadTexture("base colour", "Models/Axe/Textures/lambert2SG_baseColor.jpeg");
+	tex->LoadTexture("Throne base colour", "Models/Throne/textures/RustedThrone_Base_Color.png");
+	TShared<PTexture> specTex = TMakeShared<PTexture>();
+	specTex->LoadTexture("Throne specular", "Models/Throne/textures/RustedThrone_Specular.png");
+	// materials
 	TShared<PSMaterial> mat = TMakeShared<PSMaterial>();
 	mat->m_BaseColourMap = tex;
+	mat->m_SpecularMap = specTex;
 
-	m_Model.lock()->SetMaterialBySlot(0, mat);
+	m_Throne.lock()->SetMaterialBySlot(0, mat);
 
 	// Making a second model
 	//ImportModel("Models/Axe/scene.gltf").lock()->GetTransform().position = glm::vec3(0.0f, 15.0f, 0.0f);
@@ -114,8 +113,8 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	// Check if exists as a reference and change it
 	if (const auto& lightRef = dirLight.lock())
 	{
-		lightRef->colour = glm::vec3(1.0f, 1.0f, 0.0f);
-		lightRef->ambient = glm::vec3(0.3f);
+		lightRef->colour = glm::vec3(1.0f, 1.0f, 1.0f);
+		lightRef->intensity = 1.0f;
 		lightRef->direction = glm::vec3(0.0f, -1.0f, 0.0f);
 	}
 

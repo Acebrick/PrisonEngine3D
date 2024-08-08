@@ -111,7 +111,7 @@ bool PModel::FindAndImportMeshes(const aiNode& node, const aiScene& scene, const
 			// Texture coordinates can have multiple sets
 			// The first array index is the set number [0]
 			// The second array index is the vertex data
-			if (aMesh->HasTextureCoords(j))
+			if (aMesh->HasTextureCoords(0))
 			{
 				vertex.m_TexCoords[0] = aMesh->mTextureCoords[0][j].x;
 				vertex.m_TexCoords[1] = aMesh->mTextureCoords[0][j].y;
