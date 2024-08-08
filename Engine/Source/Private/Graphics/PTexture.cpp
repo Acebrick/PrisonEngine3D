@@ -120,9 +120,9 @@ bool PTexture::LoadTexture(const PString& fileName, const PString& path)
 void PTexture::BindTexture(const PUi32& textureNumber)
 {
     // Make active texture for shader in slot 0
-    glActiveTexture(GL_TEXTURE0); 
+    glActiveTexture(GL_TEXTURE0 + textureNumber); 
 
-    glBindTexture(GL_TEXTURE_2D, textureNumber);
+    glBindTexture(GL_TEXTURE_2D, m_ID);
 }
 
 void PTexture::Unbind()

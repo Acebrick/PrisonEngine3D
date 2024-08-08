@@ -42,7 +42,7 @@ uniform PointLight pointLights[NUM_POINT_LIGHTS];
 out vec4 finalColour;
 
 void main() {
-	// final colour restult for the vertex
+	// final colour result for the vertex
 	//				   vec3(rgb), alpha
 	vec3 result = vec3(0.0f);
 
