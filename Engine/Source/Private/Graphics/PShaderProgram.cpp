@@ -19,6 +19,7 @@
 // Constant value for light amounts
 const PUi32 maxDirLights = 2;
 const PUi32 maxPointLights = 20;
+const PUi32 maxSpotLights = 20;
 
 PShaderProgram::PShaderProgram()
 {
@@ -131,6 +132,7 @@ void PShaderProgram::SetLights(const TArray<TShared<PSLight>>& lights)
 {
 	PUi32 dirLights = 0;
 	PUi32 pointLights = 0;
+	PUi32 spotLights = 0;
 	int varID = 0;
 
 	// Name of the variable array
@@ -240,6 +242,77 @@ void PShaderProgram::SetLights(const TArray<TShared<PSLight>>& lights)
 			// Increment the point light index
 			++pointLights;
 			
+		}
+
+		// SPOT LIGHTS
+		if (const TShared<PSSpotLight>& lightRef = std::dynamic_pointer_cast<PSSpotLight>(lights[i]))
+		{
+			if (spotLights >= maxSpotLights)
+				continue;
+
+			// Add a dirLight and use as index
+			lightIndexStr = "spotLights[" + std::to_string(spotLights) + "]";
+
+			// COLOUR
+			// Get the colour variable from the spot light struct in the shader
+			varID = glGetUniformLocation(m_ProgramID,
+				(lightIndexStr + ".colour").c_str());
+
+			// Change the colour
+			glUniform3fv(varID, 1, glm::value_ptr(lightRef->colour));
+
+			// DIRECTION
+			// Get the direction variable from the spot light struct in the shader
+			varID = glGetUniformLocation(m_ProgramID,
+				(lightIndexStr + ".direction").c_str());
+
+			// Change the direction
+			glUniform3fv(varID, 1, glm::value_ptr(lightRef->direction));
+
+			// POSITION
+			// Get the shader variable ID
+			varID = glGetUniformLocation(m_ProgramID,
+				(lightIndexStr + ".position").c_str());
+
+			// Update the shader value
+			glUniform3fv(varID, 1, glm::value_ptr(lightRef->position));
+
+			// RADIUS
+			// Get the variable ID
+			varID = glGetUniformLocation(m_ProgramID, (lightIndexStr + ".radius").c_str());
+
+			// Change the value
+			glUniform1f(varID, lightRef->radius);
+
+			// CONE SIZE
+			// Get the variable ID
+			varID = glGetUniformLocation(m_ProgramID, (lightIndexStr + ".coneSize").c_str());
+
+			// Change the value
+			glUniform1f(varID, lightRef->coneSize);
+
+			// INTENSITY
+			// Get the variable ID
+			varID = glGetUniformLocation(m_ProgramID, (lightIndexStr + ".intensity").c_str());
+
+			// Change the value
+			glUniform1f(varID, lightRef->intensity);
+
+			// LINEAR	
+			// Get the variable ID
+			varID = glGetUniformLocation(m_ProgramID, (lightIndexStr + ".linear").c_str());
+
+			// Change the value
+			glUniform1f(varID, lightRef->linear);
+
+			// QUADRATIC
+			// Get the variable ID
+			varID = glGetUniformLocation(m_ProgramID, (lightIndexStr + ".quadratic").c_str());
+
+			// Change the value
+			glUniform1f(varID, lightRef->quadratic);
+
+			++spotLights;
 		}
 	}
 }

@@ -10,6 +10,7 @@ struct PSLight;
 struct PSPointLight;
 struct PSDirLight;
 class PModel;
+struct PSSpotLight;
 
 class PGraphicsEngine
 {
@@ -31,6 +32,9 @@ public:
 
 	// Create a directional light and return a weak pointer
 	TWeak<PSDirLight> CreateDirLight();
+
+	// Create a spot light and return a weak pointer
+	TWeak<PSSpotLight> CreateSpotLight();
 
 	// Import a model and return a weak pointer
 	TWeak<PModel> ImportModel(const PString& path);

@@ -33,8 +33,8 @@ struct PSPointLight : public PSLight
 	PSPointLight()
 	{
 		position = glm::vec3(0.0f);
-		linear = 0.014f;
-		quadratic = 0.0007f;
+		linear = 0.045f;
+		quadratic = 0.0075f;
 	}
 
 	glm::vec3 position;
@@ -42,4 +42,29 @@ struct PSPointLight : public PSLight
 	// Fall off values for how far the lights can reach
 	float linear; 
 	float quadratic; 
+};
+
+struct PSSpotLight : public PSLight
+{
+	PSSpotLight()
+	{
+		position = glm::vec3(0.0f);
+		direction = glm::vec3(0.0f, 0.0f, 1.0f);
+
+		// 12.5 is the angle between the spotlights direction and the lights direction (direction of triangle face)
+		coneSize = 12.5f;
+
+		// The variable radius is storing the cosine value of the width to allow for direct value comparisons in the frag shader
+		radius = glm::cos(glm::radians(coneSize));
+
+		linear = 0.045f;
+		quadratic = 0.0075f;
+	}
+
+	glm::vec3 position;
+	glm::vec3 direction;
+	float radius;
+	float coneSize;
+	float linear;
+	float quadratic;
 };

@@ -32,11 +32,26 @@ struct PointLight {
 	 float quadratic;
 };
 
+struct SpotLight 
+{
+	vec3 colour;
+	vec3 position;
+	vec3 direction;
+	float radius;
+	float coneSize;
+	float linear;
+	float quadratic;
+	float intensity;
+};
+
 #define NUM_DIR_LIGHTS 2 // 2 = Number of available directional lights that can be used
 uniform DirLight dirLights[NUM_DIR_LIGHTS]; // Create a directional light array
 
 #define NUM_POINT_LIGHTS 20
 uniform PointLight pointLights[NUM_POINT_LIGHTS];
+
+#define NUM_SPOT_LIGHTS 20
+uniform SpotLight spotLights[NUM_SPOT_LIGHTS];
 
 // out = going out of the shader into something else
 out vec4 finalColour;
@@ -89,7 +104,7 @@ void main() {
 	}
 
 	// POINT LIGHTS
-		for (int i = 0; i < NUM_POINT_LIGHTS; ++i)
+	for (int i = 0; i < NUM_POINT_LIGHTS; ++i)
 	{
 		// Light direction from the point light to the vertex
 		vec3 lightDir = normalize(pointLights[i].position - fVertPos);
@@ -130,6 +145,66 @@ void main() {
 
 		// Add our light values together to get the result
 		result += (lightColour + specular);
+	}
+
+	// SPOT LIGHTS
+	for (int i = 0; i < NUM_SPOT_LIGHTS; ++i)
+	{
+		// Material light direction	
+		vec3 lightDir = normalize(spotLights[i].direction - fVertPos);
+
+		// Get the dot product between lightDir and the spot lights direction
+		float theta = dot(lightDir, normalize(-spotLights[i].direction));
+
+		// Check if the angle is greater than the spotLights radius
+		// If it is, then the fragment is outside the range of the spotlight
+		// NOTE: Theta value is the cosine value of the angle not the degrees value...
+		// ... Degrees(0) = Cosine(1.0) & Degrees(90) = Cosine(0.0), this is the reason for > and not <
+		if (theta > spotLights[i].radius)
+		{
+			// Get the reflection light value
+			vec3 reflectDir = reflect(-lightDir, fNormals);
+
+			// How much light should show colour based on direction of normal facing the light
+			float diff = max(dot(fNormals, lightDir), 0.0f);
+
+			// Distance between the lights position and vertex position
+			float distance = length(spotLights[i].position - fVertPos);
+
+			// Actual attenuation calculation
+			float attenCalc = 1.0f + spotLights[i].linear * distance + spotLights[i].quadratic * (distance * distance);
+
+			// Distance that the light can reach
+			// Value between 1 and 0 ---- 1 is full light, 0 is no light
+			float attenuation = 0.0f;
+		
+			// Ensure no division by 0
+			if (attenCalc != 0.0f)
+			{
+				attenuation = 1.0f / attenCalc;
+			}
+
+			// Light colour algorithm
+			// Adjusts how much colour you can see based on the normal direction
+			vec3 lightColour = spotLights[i].colour;
+			lightColour *= diff;
+			lightColour *= attenuation;
+			lightColour *= spotLights[i].intensity;
+
+			// Specular power algorithm, calculate the shininesse of the model
+			//float specPower = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
+			//vec3 specular = specularColour * specPower;
+			//specular *= material.specularStrength;
+			
+			// Add our light values together to get the result
+			result = (lightColour);
+		}
+		// Don't adjust fragments values because it's not within the spot lights radius
+		else
+		{
+			break;
+		}
+
 	}
 
 	finalColour = vec4(result, 1.0f);

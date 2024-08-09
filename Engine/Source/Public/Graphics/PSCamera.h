@@ -10,7 +10,7 @@ struct PSCamera
 		aspectRatio = 1.0f;
 		nearClip = 0.01f;
 		farClip = 10000.0f;
-		moveSpeed = 1.0f;
+		moveSpeed = 4.0f;
 		rotationSpeed = 1.5f;
 	}
 

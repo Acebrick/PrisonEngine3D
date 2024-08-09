@@ -17,6 +17,7 @@ TWeak<PModel> m_Dungeon;
 TWeak<PModel> m_Bludgeon;
 TWeak<PModel> m_Skull;
 TWeak<PSPointLight> m_PointLight;
+TWeak<PSSpotLight> m_SpotLight;
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 {
@@ -107,7 +108,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	m_Throne.lock()->SetMaterialBySlot(0, throneMat);
 
 	// DUNGEON
-	//m_Dungeon = ImportModel("Models/Dungeon/modularDungeon.fbx");
+	m_Dungeon = ImportModel("Models/Dungeon/modularDungeon.fbx");
 	TShared<PTexture> dungeonTex = TMakeShared<PTexture>();
 	TShared<PTexture> dungeonTex2 = TMakeShared<PTexture>();
 	TShared<PTexture> dungeonTex3 = TMakeShared<PTexture>();
@@ -135,9 +136,9 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	dungeonMat3->m_SpecularMap = dungeonSpecTex3;
 	dungeonMat3->shininess = 100.0f;
 	dungeonMat3->specularStrength = 0.1f;
-	//m_Dungeon.lock()->SetMaterialBySlot(0, dungeonMat);
-	//m_Dungeon.lock()->SetMaterialBySlot(1, dungeonMat2);
-	//m_Dungeon.lock()->SetMaterialBySlot(2, dungeonMat3);
+	m_Dungeon.lock()->SetMaterialBySlot(0, dungeonMat);
+	m_Dungeon.lock()->SetMaterialBySlot(1, dungeonMat2);
+	m_Dungeon.lock()->SetMaterialBySlot(2, dungeonMat3);
 
 	// SKULL
 	m_Skull = ImportModel("Models/Skull/scene.gltf");
@@ -152,8 +153,10 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// BLUDGEON
 	m_Bludgeon = ImportModel("Models/Bludgeon/Bludgeon.fbx");
-	m_Bludgeon.lock()->GetTransform().position.y = 50.0f;
+	m_Bludgeon.lock()->GetTransform().position.x = 40.0f;
+	m_Bludgeon.lock()->GetTransform().position.y = 70.0f;
 	m_Bludgeon.lock()->GetTransform().position.z = 30.0f;
+	m_Bludgeon.lock()->GetTransform().rotation.z = 90.0f;
 	TShared<PTexture> bludgeonTex = TMakeShared<PTexture>();
 	TShared<PTexture> bludgeonSpecTex = TMakeShared<PTexture>();
 	TShared<PSMaterial> bludgeonMat = CreateMaterial();
@@ -165,7 +168,13 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// POINT LIGHT
 	m_PointLight = CreatePointLight();
-	m_PointLight.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
+	if (const auto& lightRef = m_PointLight.lock())
+	{
+		m_PointLight.lock()->colour = glm::vec3(1.0f, 0.0f, 1.0f);
+	}
+	// SPOT LIGHT
+	m_SpotLight = CreateSpotLight();
+	m_SpotLight.lock()->colour = glm::vec3(1.0f, 0.0f, 1.0f);
 
 	// Making a second model
 	//ImportModel("Models/Axe/scene.gltf").lock()->GetTransform().position = glm::vec3(0.0f, 15.0f, 0.0f);
@@ -176,7 +185,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	// Check if exists as a reference and change it
 	if (const auto& lightRef = dirLight.lock())
 	{
-		lightRef->colour = glm::vec3(1.0f, 1.0f, 1.0f);
+		lightRef->colour = glm::vec3(0.0f, 0.0f, 1.0f);
 		lightRef->intensity = 0.1f;
 		lightRef->direction = glm::vec3(0.0f, -1.0f, 0.0f);
 	}
@@ -202,7 +211,7 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	{
 		skullZDir = -1.0f;
 	}
-	else if (m_Skull.lock()->GetTransform().position.z < 30) // Move forwards
+	else if (m_Skull.lock()->GetTransform().position.z < 40) // Move forwards
 	{
 		skullZDir = 1.0f;
 	}
@@ -214,20 +223,33 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	if (skullZDir == 1.0f)
 	{
 		m_Skull.lock()->GetTransform().rotation.x += 1.5f;
-		m_Skull.lock()->GetTransform().rotation.y += 0.75f;
-		m_Skull.lock()->GetTransform().rotation.z += 1.0f;
+		m_Skull.lock()->GetTransform().rotation.y += 1.0f;
+		m_PointLight.lock()->colour.r -= 1.0f;
 	}
 	// Reverse rotation to look cool
 	else
 	{
-		m_Skull.lock()->GetTransform().rotation.x -= 1.25f;
-		m_Skull.lock()->GetTransform().rotation.y -= 0.5f;
-		m_Skull.lock()->GetTransform().rotation.z -= 0.75f;
+		m_Skull.lock()->GetTransform().rotation.x -= 1.3f;
+		m_Skull.lock()->GetTransform().rotation.y -= 0.8f;
+		m_PointLight.lock()->colour.r += 1.0f;
+
 	}
 
 	// POINT LIGHT
 	m_PointLight.lock()->position = m_Skull.lock()->GetTransform().position;
 
+	// BLUDGEON
+	m_Bludgeon.lock()->GetTransform().rotation.y += 0.99f;
+
+	// SPOT LIGHT
+	//m_SpotLight.lock()->position.x += 1.0f;
+	m_SpotLight.lock()->position = m_Camera->transform.position;
+	m_SpotLight.lock()->direction = m_Camera->transform.Forward();
+
+	//PDebug::Log("X: " + std::to_string(m_SpotLight.lock()->position.x) +
+	//			"\nY: " + std::to_string(m_SpotLight.lock()->position.y) +
+	//			"\nZ: " + std::to_string(m_SpotLight.lock()->position.z));
+	
 	// Activate the shader
 	m_Shader->Activate();
 
@@ -257,6 +279,14 @@ TWeak<PSPointLight> PGraphicsEngine::CreatePointLight()
 TWeak<PSDirLight> PGraphicsEngine::CreateDirLight()
 {
 	const auto& newLight = TMakeShared<PSDirLight>();
+	m_Lights.push_back(newLight);
+
+	return newLight;
+}
+
+TWeak<PSSpotLight> PGraphicsEngine::CreateSpotLight()
+{
+	const auto& newLight = TMakeShared<PSSpotLight>();
 	m_Lights.push_back(newLight);
 
 	return newLight;
