@@ -38,7 +38,6 @@ struct SpotLight
 	vec3 position;
 	vec3 direction;
 	float radius;
-	float coneSize;
 	float linear;
 	float quadratic;
 	float intensity;
@@ -58,7 +57,6 @@ out vec4 finalColour;
 
 void main() {
 	// final colour result for the vertex
-	//				   vec3(rgb), alpha
 	vec3 result = vec3(0.0f);
 
 	// Base colour that the object starts at
@@ -150,8 +148,8 @@ void main() {
 	// SPOT LIGHTS
 	for (int i = 0; i < NUM_SPOT_LIGHTS; ++i)
 	{
-		// Material light direction	
-		vec3 lightDir = normalize(spotLights[i].direction - fVertPos);
+		// Light direction from the spot light to the vertex
+		vec3 lightDir = normalize(spotLights[i].position - fVertPos);
 
 		// Get the dot product between lightDir and the spot lights direction
 		float theta = dot(lightDir, normalize(-spotLights[i].direction));
@@ -166,7 +164,7 @@ void main() {
 			vec3 reflectDir = reflect(-lightDir, fNormals);
 
 			// How much light should show colour based on direction of normal facing the light
-			float diff = max(dot(fNormals, lightDir), 0.0f);
+			float diff = max(dot(fNormals, lightDir), 0.5f);
 
 			// Distance between the lights position and vertex position
 			float distance = length(spotLights[i].position - fVertPos);
@@ -192,19 +190,13 @@ void main() {
 			lightColour *= spotLights[i].intensity;
 
 			// Specular power algorithm, calculate the shininesse of the model
-			//float specPower = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-			//vec3 specular = specularColour * specPower;
-			//specular *= material.specularStrength;
+			float specPower = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
+			vec3 specular = specularColour * specPower;
+			specular *= material.specularStrength;
 			
 			// Add our light values together to get the result
-			result = (lightColour);
+			result += (lightColour + specular);
 		}
-		// Don't adjust fragments values because it's not within the spot lights radius
-		else
-		{
-			break;
-		}
-
 	}
 
 	finalColour = vec4(result, 1.0f);

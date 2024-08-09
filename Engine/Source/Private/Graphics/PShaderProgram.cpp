@@ -218,7 +218,7 @@ void PShaderProgram::SetLights(const TArray<TShared<PSLight>>& lights)
 			glUniform3fv(varID, 1, glm::value_ptr(lightRef->position));
 
 			// INTENSITY
-			// Get the intensity variable from the fir light struct in the shader
+			// Get the intensity variable from the dir light struct in the shader
 			varID = glGetUniformLocation(m_ProgramID,
 				(lightIndexStr + ".intensity").c_str());
 
@@ -261,14 +261,6 @@ void PShaderProgram::SetLights(const TArray<TShared<PSLight>>& lights)
 			// Change the colour
 			glUniform3fv(varID, 1, glm::value_ptr(lightRef->colour));
 
-			// DIRECTION
-			// Get the direction variable from the spot light struct in the shader
-			varID = glGetUniformLocation(m_ProgramID,
-				(lightIndexStr + ".direction").c_str());
-
-			// Change the direction
-			glUniform3fv(varID, 1, glm::value_ptr(lightRef->direction));
-
 			// POSITION
 			// Get the shader variable ID
 			varID = glGetUniformLocation(m_ProgramID,
@@ -277,19 +269,20 @@ void PShaderProgram::SetLights(const TArray<TShared<PSLight>>& lights)
 			// Update the shader value
 			glUniform3fv(varID, 1, glm::value_ptr(lightRef->position));
 
+			// DIRECTION
+			// Get the direction variable from the spot light struct in the shader
+			varID = glGetUniformLocation(m_ProgramID,
+				(lightIndexStr + ".direction").c_str());
+
+			// Change the direction
+			glUniform3fv(varID, 1, glm::value_ptr(lightRef->direction));
+
 			// RADIUS
 			// Get the variable ID
 			varID = glGetUniformLocation(m_ProgramID, (lightIndexStr + ".radius").c_str());
 
 			// Change the value
 			glUniform1f(varID, lightRef->radius);
-
-			// CONE SIZE
-			// Get the variable ID
-			varID = glGetUniformLocation(m_ProgramID, (lightIndexStr + ".coneSize").c_str());
-
-			// Change the value
-			glUniform1f(varID, lightRef->coneSize);
 
 			// INTENSITY
 			// Get the variable ID

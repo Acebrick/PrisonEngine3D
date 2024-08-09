@@ -18,6 +18,9 @@ TWeak<PModel> m_Bludgeon;
 TWeak<PModel> m_Skull;
 TWeak<PSPointLight> m_PointLight;
 TWeak<PSSpotLight> m_SpotLight;
+TWeak<PSSpotLight> m_SpotLight2;
+TWeak<PSSpotLight> m_SpotLight3;
+
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 {
@@ -142,8 +145,9 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// SKULL
 	m_Skull = ImportModel("Models/Skull/scene.gltf");
+	m_Skull.lock()->GetTransform().position.x = 400.0f;
 	m_Skull.lock()->GetTransform().position.y = 70.0f;
-	m_Skull.lock()->GetTransform().position.z = 50.0f;
+	m_Skull.lock()->GetTransform().position.z = 400.0f;
 	m_Skull.lock()->GetTransform().scale = glm::vec3(10.0f);
 	TShared<PTexture> skullTex = TMakeShared<PTexture>();
 	TShared<PSMaterial> skullMat = CreateMaterial();
@@ -166,29 +170,45 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	bludgeonMat->m_SpecularMap = bludgeonSpecTex;
 	m_Bludgeon.lock()->SetMaterialBySlot(0, bludgeonMat);
 
-	// POINT LIGHT
-	m_PointLight = CreatePointLight();
-	if (const auto& lightRef = m_PointLight.lock())
-	{
-		m_PointLight.lock()->colour = glm::vec3(1.0f, 0.0f, 1.0f);
-	}
-	// SPOT LIGHT
-	m_SpotLight = CreateSpotLight();
-	m_SpotLight.lock()->colour = glm::vec3(1.0f, 0.0f, 1.0f);
-
-	// Making a second model
-	//ImportModel("Models/Axe/scene.gltf").lock()->GetTransform().position = glm::vec3(0.0f, 15.0f, 0.0f);
-
 	// Create the dir light
 	const auto& dirLight = CreateDirLight();
 
 	// Check if exists as a reference and change it
 	if (const auto& lightRef = dirLight.lock())
 	{
-		lightRef->colour = glm::vec3(0.0f, 0.0f, 1.0f);
+		lightRef->colour = glm::vec3(1.0f, 1.0f, 1.0f);
 		lightRef->intensity = 0.1f;
 		lightRef->direction = glm::vec3(0.0f, -1.0f, 0.0f);
 	}
+
+	// POINT LIGHT
+	m_PointLight = CreatePointLight();
+	if (const auto& lightRef = m_PointLight.lock())
+	{
+		m_PointLight.lock()->colour = glm::vec3(1.0f, 0.5f, 0.0f);
+		m_PointLight.lock()->linear = 0.014;
+		m_PointLight.lock()->quadratic = 0.0007;
+	}
+
+	// SPOT LIGHT
+	m_SpotLight = CreateSpotLight();
+	if (const auto& lightRef = m_SpotLight.lock())
+	{
+		m_SpotLight.lock()->colour = glm::vec3(1.0f, 0.0f, 1.0f);
+		m_SpotLight.lock()->linear = 0.0014;
+		m_SpotLight.lock()->quadratic = 0.000007;
+	}
+	// SPOT LIGHT 2
+	m_SpotLight2 = CreateSpotLight();
+	if (const auto& lightRef = m_SpotLight2.lock())
+	{
+		m_SpotLight2.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
+		m_SpotLight2.lock()->linear = 0.0014;
+		m_SpotLight2.lock()->quadratic = 0.000007;
+	}
+
+	// Making a second model
+	//ImportModel("Models/Axe/scene.gltf").lock()->GetTransform().position = glm::vec3(0.0f, 15.0f, 0.0f);
 
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
@@ -204,36 +224,54 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// SKULL TRANSLATION & ROTATION
-	static float skullZDir = 1.0f;
+	static float skullXDir = 0.0f;
+	static float skullZDir = 0.0f;
+	static bool movingOnX = false;
 
-	if (m_Skull.lock()->GetTransform().position.z > 220.0f) // Move backwards
+	// Has the skull reached the top left corner
+	if (m_Skull.lock()->GetTransform().position.x >= 400.0f && 
+		m_Skull.lock()->GetTransform().position.z >= 400.0f) 
 	{
-		skullZDir = -1.0f;
+		// Go to right of room
+		skullXDir = -1.0f;
+		skullZDir = 0.0f;
+		m_Skull.lock()->GetTransform().rotation.y = 270.0f;
+		movingOnX = true;
 	}
-	else if (m_Skull.lock()->GetTransform().position.z < 40) // Move forwards
+	// Has the skull reached the top right corner 
+	else if (m_Skull.lock()->GetTransform().position.x <= -400.0f &&
+			m_Skull.lock()->GetTransform().position.z >= 400.0f)
 	{
-		skullZDir = 1.0f;
+		// Go to back of room
+		skullXDir = 0.0f;
+		skullZDir += -1.0f;
+		m_Skull.lock()->GetTransform().rotation.y = 180.0f;
+		movingOnX = false;
+	}
+	// Has the skull reached the bottom right corner 
+	else if (m_Skull.lock()->GetTransform().position.x <= -400.0f &&
+			m_Skull.lock()->GetTransform().position.z <= -400.0f)
+	{
+		// Go to left of room
+		skullXDir += 1.0f;
+		skullZDir = 0.0f;
+		m_Skull.lock()->GetTransform().rotation.y = 90.0f;
+		movingOnX = true;
+	}
+	// Has the skull reached the bottom left corner 
+	else if (m_Skull.lock()->GetTransform().position.x >= 400.0f &&
+			m_Skull.lock()->GetTransform().position.z <= -400.0f)
+	{
+		// Go to front of room
+		skullXDir = 0.0f;
+		skullZDir += 1.0f;
+		m_Skull.lock()->GetTransform().rotation.y = 0.0f;
+		movingOnX = false;
 	}
 
-	// Update the skulls position
+	// Translate skull
+	m_Skull.lock()->GetTransform().position.x += skullXDir;
 	m_Skull.lock()->GetTransform().position.z += skullZDir;
-
-	// Rotate
-	if (skullZDir == 1.0f)
-	{
-		m_Skull.lock()->GetTransform().rotation.x += 1.5f;
-		m_Skull.lock()->GetTransform().rotation.y += 1.0f;
-		m_PointLight.lock()->colour.r -= 1.0f;
-	}
-	// Reverse rotation to look cool
-	else
-	{
-		m_Skull.lock()->GetTransform().rotation.x -= 1.3f;
-		m_Skull.lock()->GetTransform().rotation.y -= 0.8f;
-		m_PointLight.lock()->colour.r += 1.0f;
-
-	}
 
 	// POINT LIGHT
 	m_PointLight.lock()->position = m_Skull.lock()->GetTransform().position;
@@ -241,15 +279,42 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// BLUDGEON
 	m_Bludgeon.lock()->GetTransform().rotation.y += 0.99f;
 
-	// SPOT LIGHT
-	//m_SpotLight.lock()->position.x += 1.0f;
-	m_SpotLight.lock()->position = m_Camera->transform.position;
-	m_SpotLight.lock()->direction = m_Camera->transform.Forward();
-
-	//PDebug::Log("X: " + std::to_string(m_SpotLight.lock()->position.x) +
-	//			"\nY: " + std::to_string(m_SpotLight.lock()->position.y) +
-	//			"\nZ: " + std::to_string(m_SpotLight.lock()->position.z));
+	// SPOT LIGHTS
+	// Lock the spot lights position/direction to the skull
+	if (movingOnX)
+	{
+		m_SpotLight.lock()->position.x = m_Skull.lock()->GetTransform().position.x;
+		m_SpotLight.lock()->position.y = m_Skull.lock()->GetTransform().position.y + 1;
+		m_SpotLight.lock()->position.z = m_Skull.lock()->GetTransform().position.z - 3;
+		m_SpotLight.lock()->direction.x = m_Skull.lock()->GetTransform().Forward().x;
+		m_SpotLight.lock()->direction.y = m_Skull.lock()->GetTransform().Forward().y;
+		m_SpotLight.lock()->direction.z = m_Skull.lock()->GetTransform().Forward().z - 0.03f;
+		m_SpotLight2.lock()->position.x = m_Skull.lock()->GetTransform().position.x;
+		m_SpotLight2.lock()->position.y = m_Skull.lock()->GetTransform().position.y + 1;
+		m_SpotLight2.lock()->position.z = m_Skull.lock()->GetTransform().position.z + 3;
+		m_SpotLight2.lock()->direction = m_Skull.lock()->GetTransform().Forward();
+		m_SpotLight2.lock()->direction.x = m_Skull.lock()->GetTransform().Forward().x;
+		m_SpotLight2.lock()->direction.y = m_Skull.lock()->GetTransform().Forward().y;
+		m_SpotLight2.lock()->direction.z = m_Skull.lock()->GetTransform().Forward().z + 0.03f;
+	}
+	else
+	{
+		m_SpotLight.lock()->position.x = m_Skull.lock()->GetTransform().position.x - 3;
+		m_SpotLight.lock()->position.y = m_Skull.lock()->GetTransform().position.y + 1;
+		m_SpotLight.lock()->position.z = m_Skull.lock()->GetTransform().position.z;
+		m_SpotLight.lock()->direction.x = m_Skull.lock()->GetTransform().Forward().x - 0.03f;
+		m_SpotLight.lock()->direction.y = m_Skull.lock()->GetTransform().Forward().y;
+		m_SpotLight.lock()->direction.z = m_Skull.lock()->GetTransform().Forward().z;
+		m_SpotLight2.lock()->position.x = m_Skull.lock()->GetTransform().position.x + 3;
+		m_SpotLight2.lock()->position.y = m_Skull.lock()->GetTransform().position.y + 1;
+		m_SpotLight2.lock()->position.z = m_Skull.lock()->GetTransform().position.z;
+		m_SpotLight2.lock()->direction = m_Skull.lock()->GetTransform().Forward();
+		m_SpotLight2.lock()->direction.x = m_Skull.lock()->GetTransform().Forward().x + 0.03f;
+		m_SpotLight2.lock()->direction.y = m_Skull.lock()->GetTransform().Forward().y;
+		m_SpotLight2.lock()->direction.z = m_Skull.lock()->GetTransform().Forward().z;
+	}
 	
+
 	// Activate the shader
 	m_Shader->Activate();
 
