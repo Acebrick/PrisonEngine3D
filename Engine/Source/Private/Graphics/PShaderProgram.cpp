@@ -279,10 +279,10 @@ void PShaderProgram::SetLights(const TArray<TShared<PSLight>>& lights)
 
 			// RADIUS
 			// Get the variable ID
-			varID = glGetUniformLocation(m_ProgramID, (lightIndexStr + ".radius").c_str());
+			varID = glGetUniformLocation(m_ProgramID, (lightIndexStr + ".cutOff").c_str());
 
 			// Change the value
-			glUniform1f(varID, lightRef->radius);
+			glUniform1f(varID, lightRef->cutOff);
 
 			// INTENSITY
 			// Get the variable ID

@@ -37,7 +37,7 @@ struct SpotLight
 	vec3 colour;
 	vec3 position;
 	vec3 direction;
-	float radius;
+	float cutOff;
 	float linear;
 	float quadratic;
 	float intensity;
@@ -67,6 +67,17 @@ void main() {
 
 	// Get the view direction
 	vec3 viewDir = normalize(fViewPos - fVertPos);
+
+	// Convert the fragments normals vector into an rgb equivalent to make normal maps readable
+	// Normal maps use colour to represent direction, eg blue facing +1 on Z, green +1 on Y etc...
+	// Normal vectors are between -1 an 1, adding the 0.5 adjusts the range to 0 and 1 for rgb
+	// eg. normalsMin/facedirection		-1 * 0.5 = -0.5, then -0.5 + 0.5 = 0	0 = No colour
+	// eg. normalsMax/facedirection		 1 * 0.5 =  0.5, then -0.5 + 0.5 = 1	1 = Full colour
+	vec3 rgb_Normal = fNormals * 0.5f + 0.5f;
+
+	// Opengl reads y/g values reversed
+	// This brings it back to normal to correctly read the normal maps
+	rgb_Normal.g = rgb_Normal.g * -1 + 1;
 
 	// DIRECTIONAL LIGHTS
 	for (int i = 0; i < NUM_DIR_LIGHTS; ++i)
@@ -158,7 +169,7 @@ void main() {
 		// If it is, then the fragment is outside the range of the spotlight
 		// NOTE: Theta value is the cosine value of the angle not the degrees value...
 		// ... Degrees(0) = Cosine(1.0) & Degrees(90) = Cosine(0.0), this is the reason for > and not <
-		if (theta > spotLights[i].radius)
+		if (theta > spotLights[i].cutOff)
 		{
 			// Get the reflection light value
 			vec3 reflectDir = reflect(-lightDir, fNormals);

@@ -19,7 +19,7 @@ TWeak<PModel> m_Skull;
 TWeak<PSPointLight> m_PointLight;
 TWeak<PSSpotLight> m_SpotLight;
 TWeak<PSSpotLight> m_SpotLight2;
-TWeak<PSSpotLight> m_SpotLight3;
+TWeak<PSSpotLight> m_Flashlight;
 
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
@@ -186,25 +186,35 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	if (const auto& lightRef = m_PointLight.lock())
 	{
 		m_PointLight.lock()->colour = glm::vec3(1.0f, 0.5f, 0.0f);
-		m_PointLight.lock()->linear = 0.014;
-		m_PointLight.lock()->quadratic = 0.0007;
+		m_PointLight.lock()->linear = 0.014f;
+		m_PointLight.lock()->quadratic = 0.0007f;
 	}
 
 	// SPOT LIGHT
 	m_SpotLight = CreateSpotLight();
 	if (const auto& lightRef = m_SpotLight.lock())
 	{
+		m_SpotLight.lock()->SetCutOff(7.5f);
 		m_SpotLight.lock()->colour = glm::vec3(1.0f, 0.0f, 1.0f);
-		m_SpotLight.lock()->linear = 0.0014;
-		m_SpotLight.lock()->quadratic = 0.000007;
+		m_SpotLight.lock()->linear = 0.0014f;
+		m_SpotLight.lock()->quadratic = 0.000007f;
 	}
 	// SPOT LIGHT 2
 	m_SpotLight2 = CreateSpotLight();
 	if (const auto& lightRef = m_SpotLight2.lock())
 	{
+		m_SpotLight2.lock()->SetCutOff(7.5f);
 		m_SpotLight2.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
-		m_SpotLight2.lock()->linear = 0.0014;
-		m_SpotLight2.lock()->quadratic = 0.000007;
+		m_SpotLight2.lock()->linear = 0.0014f;
+		m_SpotLight2.lock()->quadratic = 0.000007f;
+	}
+	
+	// FLASHLIGHT
+	m_Flashlight = CreateSpotLight();
+	if (const auto& lightRef = m_Flashlight.lock())
+	{
+		m_Flashlight.lock()->linear = 0.0014f;
+		m_Flashlight.lock()->quadratic = 0.000007f;
 	}
 
 	// Making a second model
@@ -313,7 +323,34 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 		m_SpotLight2.lock()->direction.y = m_Skull.lock()->GetTransform().Forward().y;
 		m_SpotLight2.lock()->direction.z = m_Skull.lock()->GetTransform().Forward().z;
 	}
+
+	// How fast the spotlights will change in size
+	static float radiusChangeRate = 0.05f;
+
+	// Stop increasing if size is reached
+	if (m_SpotLight.lock()->radius >= 7.5f)
+	{
+		// Decrease in size
+		radiusChangeRate = -0.05f;
+	}
+	// Stop decreasing if size is reached
+	else if (m_SpotLight.lock()->radius <= 2.0f)
+	{
+		// Increase in size
+		radiusChangeRate = 0.05f;
+	}
+
+	// Update the size of the spotlights
+	m_SpotLight.lock()->radius += radiusChangeRate;
+	m_SpotLight2.lock()->radius += radiusChangeRate;
+	// Apply the new size to the spotlights
+	m_SpotLight.lock()->SetCutOff(m_SpotLight2.lock()->radius);
+	m_SpotLight2.lock()->SetCutOff(m_SpotLight2.lock()->radius);
 	
+	// FLASHLIGHT
+	// Follow the camera's direction and position
+	m_Flashlight.lock()->position = m_Camera->transform.position;
+	m_Flashlight.lock()->direction = m_Camera->transform.Forward();
 
 	// Activate the shader
 	m_Shader->Activate();
