@@ -194,9 +194,9 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	// Check if exists as a reference and change it
 	if (const auto& lightRef = dirLight.lock())
 	{
-		lightRef->colour = glm::vec3(1.0f, 0.0f, 0.0f);
-		lightRef->intensity = 1.0f;
-		lightRef->direction = glm::vec3(0.0f, 1.0f, 0.0f);
+		lightRef->colour = glm::vec3(1.0f, 1.0f, 1.0f);
+		lightRef->intensity = 0.1f;
+		lightRef->direction = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	}
 
@@ -225,7 +225,8 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	m_SpotLight = CreateSpotLight();
 	if (const auto& lightRef = m_SpotLight.lock())
 	{
-		m_SpotLight.lock()->SetInnerCutOff(7.5f);
+		m_SpotLight.lock()->SetInnerCutOff(3.5f);
+		m_SpotLight.lock()->SetOuterCutOff(7.5f);
 		m_SpotLight.lock()->colour = glm::vec3(0.0f, 1.0f, 0.0f);
 		m_SpotLight.lock()->linear = 0.0014f;
 		m_SpotLight.lock()->quadratic = 0.000007f;
@@ -234,7 +235,8 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	m_SpotLight2 = CreateSpotLight();
 	if (const auto& lightRef = m_SpotLight2.lock())
 	{
-		m_SpotLight2.lock()->SetInnerCutOff(7.5f);
+		m_SpotLight2.lock()->SetInnerCutOff(3.5f);
+		m_SpotLight2.lock()->SetOuterCutOff(7.5f);
 		m_SpotLight2.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
 		m_SpotLight2.lock()->linear = 0.0014f;
 		m_SpotLight2.lock()->quadratic = 0.000007f;
@@ -249,18 +251,18 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	}
 
 	// NORMAL MAPPING TEST MODEL
-	//m_Wall = ImportModel("Models/Wall/scene.gltf");
-	//TShared<PTexture> wallTex = TMakeShared<PTexture>();
-	//TShared<PTexture> wallNormal = TMakeShared<PTexture>();
-	//TShared<PSMaterial> wallMat = TMakeShared<PSMaterial>();
-	//wallTex->LoadTexture("Wall diffuse", "Models/Wall/textures/Brick_Wall_02_baseColor.jpeg");
-	//wallNormal->LoadTexture("Wall normal", "Models/Wall/textures/Brick_Wall_02_normal.png");
-	//m_Wall.lock()->GetTransform().position.x = -400.0f;
-	//m_Wall.lock()->GetTransform().position.y = 20.0f;
-	//m_Wall.lock()->GetTransform().position.z = -50.0f;
-	//wallMat->m_BaseColourMap = wallTex;
-	//wallMat->m_NormalMap = wallNormal;
-	//m_Wall.lock()->SetMaterialBySlot(0, wallMat);
+	/*m_Wall = ImportModel("Models/Wall/scene.gltf");
+	TShared<PTexture> wallTex = TMakeShared<PTexture>();
+	TShared<PTexture> wallNormal = TMakeShared<PTexture>();
+	TShared<PSMaterial> wallMat = TMakeShared<PSMaterial>();
+	wallTex->LoadTexture("Wall diffuse", "Models/Wall/textures/Brick_Wall_02_baseColor.jpeg");
+	wallNormal->LoadTexture("Wall normal", "Models/Wall/textures/Brick_Wall_02_normal.png");
+	m_Wall.lock()->GetTransform().position.x = -400.0f;
+	m_Wall.lock()->GetTransform().position.y = 20.0f;
+	m_Wall.lock()->GetTransform().position.z = -50.0f;
+	wallMat->m_BaseColourMap = wallTex;
+	wallMat->m_NormalMap = wallNormal;
+	m_Wall.lock()->SetMaterialBySlot(0, wallMat);*/
 
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
@@ -385,28 +387,23 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	static float radiusChangeRate = 0.05f;
 
 	// Stop increasing if size is reached
-	if (m_SpotLight.lock()->innerDegrees >= 7.5f)
+	if (m_SpotLight.lock()->innerDegrees >= 3.5f)
 	{
 		// Decrease in size
 		radiusChangeRate = -0.05f;
 	}
 	// Stop decreasing if size is reached
-	else if (m_SpotLight.lock()->innerDegrees <= 2.0f)
+	else if (m_SpotLight.lock()->innerDegrees <= 0.5f)
 	{
 		// Increase in size
 		radiusChangeRate = 0.05f;
 	}
 
-	// Update the size of the spotlights
-	m_SpotLight.lock()->innerDegrees += radiusChangeRate;
-	m_SpotLight2.lock()->innerDegrees += radiusChangeRate;
-	
-
 	// Apply the new size to the spotlights
-	m_SpotLight.lock()->SetInnerCutOff(m_SpotLight2.lock()->innerDegrees);
-	m_SpotLight.lock()->SetOuterCutOff(m_SpotLight2.lock()->innerDegrees);
-	m_SpotLight2.lock()->SetInnerCutOff(m_SpotLight2.lock()->innerDegrees);
-	m_SpotLight2.lock()->SetOuterCutOff(m_SpotLight2.lock()->innerDegrees);
+	m_SpotLight.lock()->SetInnerCutOff(m_SpotLight.lock()->innerDegrees += radiusChangeRate);
+	m_SpotLight.lock()->SetOuterCutOff(m_SpotLight.lock()->outerDegrees += radiusChangeRate);
+	m_SpotLight2.lock()->SetInnerCutOff(m_SpotLight2.lock()->innerDegrees += radiusChangeRate);
+	m_SpotLight2.lock()->SetOuterCutOff(m_SpotLight2.lock()->outerDegrees += radiusChangeRate);
 	
 	// FLASHLIGHT
 	// Follow the camera's direction and position

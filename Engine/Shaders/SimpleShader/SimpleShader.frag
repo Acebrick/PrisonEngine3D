@@ -5,6 +5,7 @@ in vec2 fTexCoords;
 in vec3 fNormals;
 in vec3 fVertPos;
 in vec3 fViewPos;
+in mat3 fTBN;
 
 struct Material
 {
@@ -45,7 +46,7 @@ struct SpotLight
 	float outerCutOff;
 };
 
-#define NUM_DIR_LIGHTS 1 // 2 = Number of available directional lights that can be used
+#define NUM_DIR_LIGHTS 1 // 1 = Number of available directional lights that can be used
 uniform DirLight dirLights[NUM_DIR_LIGHTS]; // Create a directional light array
 
 #define NUM_POINT_LIGHTS 20
@@ -70,6 +71,7 @@ void main() {
 	// Get the view direction
 	vec3 viewDir = normalize(fViewPos - fVertPos);
 
+																	// NORMAL MAPPING ATTEMPT
 	// Normal map value
 	vec3 normalColour = texture(material.normalMap, fTexCoords).rgb;
 	
@@ -77,18 +79,20 @@ void main() {
 	// This brings it back to normal to correctly read the normal maps, I think???
 	// eg. if green is 0		0 * -1 =  0, then  0 + 1 = 1		green is now 1
 	// eg. if green is 1		1 * -1 = -1, then -1 + 1 = 0		green is now 0
-	normalColour.g = normalColour.g * -1.0f + 1.0f;
+	// equation -> normalColour.g = normalColour.g * -1.0f + 1.0f;
 
 	// Convert the values from an rgb range (0 to 1) to a normal vector range (-1 to 1)
-	normalColour = normalize(normalColour * 2.0f - 1.0f);
+	normalColour = normalColour * 2.0f - 1.0f;
+
+	//normalColour = normalize(fTBN * normalColour);
 
 	// Normal maps use colour to represent direction, eg blue facing +1 on Z, green +1 on Y etc...
-	// Normal vectors are between -1 an 1, adding multiplying and adding the 0.5 adjusts the range to 0 and 1 for rgb
+	// Normal vectors are between -1 an 1, multiplying and adding the 0.5 adjusts the range to 0 and 1 for rgb
 	// eg. normalsMin/faceDirection		-1 * 0.5 = -0.5, then -0.5 + 0.5 = 0	0 = No colour
 	// eg. normalsMax/faceDirection		 1 * 0.5 =  0.5, then -0.5 + 0.5 = 1	1 = Full colour
-	// normalColour = fNormals * 0.5f + 0.5f;
+	// equation -> normalColour = fNormals * 0.5f + 0.5f;
 
-	// DIRECTIONAL LIGHTS
+																	// DIRECTIONAL LIGHTS
 	for (int i = 0; i < NUM_DIR_LIGHTS; ++i)
 	{
 		// Material light direction
@@ -121,7 +125,7 @@ void main() {
 		result += (ambientLight + lightColour + specular);
 	}
 
-	// POINT LIGHTS
+																	// POINT LIGHTS
 	for (int i = 0; i < NUM_POINT_LIGHTS; ++i)
 	{
 		// Light direction from the point light to the vertex
@@ -165,7 +169,7 @@ void main() {
 		result += (lightColour + specular);
 	}
 
-	// SPOT LIGHTS
+																	// SPOT LIGHTS
 	for (int i = 0; i < NUM_SPOT_LIGHTS; ++i)
 	{
 		// Light direction from the spot light to the vertex
@@ -176,7 +180,7 @@ void main() {
 
 		// Check if the angle is greater than the spotLights outer cut off
 		// If it is, then the fragment is outside the range of the spotlight
-		// NOTE: Theta value is the cosine value of the angle not the degrees value...
+		// NOTE: outerCutOff value is the cosine value of the angle not the degrees value...
 		// ... Degrees(0) = Cosine(1.0) & Degrees(90) = Cosine(0.0), this is the reason for > and not <
 		if (theta > spotLights[i].outerCutOff)
 		{
@@ -185,8 +189,8 @@ void main() {
 
 			// Determine the intensity of the spot light between the inner and outer cut off
 			// Defaulting anything below/outside that range to 0 (no light/intensity) and 1 (full light/intensity) respectively
-			// Multiply this by the spot lights intensity in the struct so that it can still be changed outside of the fragment shader
-			float intensity = clamp((theta - spotLights[i].outerCutOff) / epsilon, 0.0f, 1.0f) * spotLights[i].intensity;
+			// Multiply this by the spot lights intensity in the SpotLights struct so that it can still be changed outside of the fragment shader
+			float fadeOutIntensity = clamp((theta - spotLights[i].outerCutOff) / epsilon, 0.0f, 1.0f) * spotLights[i].intensity;
 
 			// Get the reflection light value
 			vec3 reflectDir = reflect(-lightDir, fNormals);
@@ -215,7 +219,7 @@ void main() {
 			vec3 lightColour = spotLights[i].colour;
 			lightColour *= diff;
 			lightColour *= attenuation;
-			lightColour *= intensity;
+			lightColour *= fadeOutIntensity;
 
 			// Specular power algorithm, calculate the shininesse of the model
 			float specPower = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);

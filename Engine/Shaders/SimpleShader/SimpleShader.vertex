@@ -6,6 +6,8 @@ layout (location = 0) in vec3 vPosition;
 layout (location = 1) in vec3 vColour;
 layout (location = 2) in vec2 vTexCoords;
 layout (location = 3) in vec3 vNormals;
+layout (location = 4) in vec3 vTangents;
+layout (location = 5) in vec3 vBitangents;
 
 uniform mat4 mesh = mat4(1.0);
 uniform mat4 model = mat4(1.0);
@@ -17,6 +19,7 @@ out vec2 fTexCoords;
 out vec3 fNormals;
 out vec3 fVertPos;
 out vec3 fViewPos;
+out mat3 fTBN;
 
 void main() {
 	// Combine the model and mesh to get the correct relative position from the model
@@ -40,4 +43,10 @@ void main() {
 
 	// Get the view position
 	fViewPos = vec3(view * relPos * vec4(vPosition, 1.0f));
+	
+	vec3 T = normalize(vec3(model * vec4(vTangents,   0.0f)));
+    vec3 B = normalize(vec3(model * vec4(vBitangents, 0.0f)));
+    vec3 N = normalize(vec3(model * vec4(vNormals,    0.0f))); // Same as fNormals???
+
+	fTBN = mat3(T, B, N);
 }

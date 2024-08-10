@@ -122,6 +122,19 @@ bool PModel::FindAndImportMeshes(const aiNode& node, const aiScene& scene, const
 			vertex.m_Normal[1] = aMesh->mNormals[j].y;
 			vertex.m_Normal[2] = aMesh->mNormals[j].z;
 
+			if (aMesh->HasTangentsAndBitangents())
+			{
+				
+
+				vertex.m_Tangent[0] = aMesh->mTangents[j].x;
+				vertex.m_Tangent[1] = aMesh->mTangents[j].y;
+				vertex.m_Tangent[2] = aMesh->mTangents[j].z;
+
+				vertex.m_Bitangent[0] = aMesh->mBitangents[j].x;
+				vertex.m_Bitangent[1] = aMesh->mBitangents[j].y;
+				vertex.m_Bitangent[2] = aMesh->mBitangents[j].z;
+			}
+
 			// Add the data into our vertex array
 			meshVertices.push_back(vertex);
 		}
