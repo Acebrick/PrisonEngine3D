@@ -65,7 +65,7 @@ bool PTexture::LoadTexture(const PString& fileName, const PString& path)
     }
 
     // Bind the texture
-    // Tells open gl that we want ot use this texture
+    // Tells open gl that we want to use this texture
     glBindTexture(GL_TEXTURE_2D, m_ID);
 
     // Set some default parameters for the texture
@@ -100,6 +100,7 @@ bool PTexture::LoadTexture(const PString& fileName, const PString& path)
         GL_UNSIGNED_BYTE, // Type of data assed in
         data // The image data we got from stbi
     );
+
 
     // Genertae mip maps
     // Lower resolution versions of the texture (for when rendering images at an increasing distance)

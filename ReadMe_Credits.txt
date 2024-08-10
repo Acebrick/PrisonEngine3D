@@ -7,3 +7,5 @@
 "Skull downloadable" (https://skfb.ly/JrST) by martinjario is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
 "Concrete Wall" (https://skfb.ly/DBxM) by NguoiDaiViet is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+"Brick Wall Segment 02 Tilable" (https://skfb.ly/oQovx) by Biser Borislavov is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).

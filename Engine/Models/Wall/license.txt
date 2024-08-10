@@ -1,0 +1,11 @@
+Model Information:
+* title:	Brick Wall Segment 02 Tilable
+* source:	https://sketchfab.com/3d-models/brick-wall-segment-02-tilable-0ed3c29d985549bc9f661d3205ee0728
+* author:	Biser Borislavov (https://sketchfab.com/biserborislawow)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Brick Wall Segment 02 Tilable" (https://sketchfab.com/3d-models/brick-wall-segment-02-tilable-0ed3c29d985549bc9f661d3205ee0728) by Biser Borislavov (https://sketchfab.com/biserborislawow) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

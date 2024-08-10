@@ -45,7 +45,7 @@ struct SpotLight
 	float outerCutOff;
 };
 
-#define NUM_DIR_LIGHTS 2 // 2 = Number of available directional lights that can be used
+#define NUM_DIR_LIGHTS 1 // 2 = Number of available directional lights that can be used
 uniform DirLight dirLights[NUM_DIR_LIGHTS]; // Create a directional light array
 
 #define NUM_POINT_LIGHTS 20
@@ -70,24 +70,23 @@ void main() {
 	// Get the view direction
 	vec3 viewDir = normalize(fViewPos - fVertPos);
 
-	// Convert the fragments normals vector into an rgb equivalent to make normal maps readable
-	// Normal maps use colour to represent direction, eg blue facing +1 on Z, green +1 on Y etc...
-	// Normal vectors are between -1 an 1, adding multiplying and adding the 0.5 adjusts the range to 0 and 1 for rgb
-	// eg. normalsMin/faceDirection		-1 * 0.5 = -0.5, then -0.5 + 0.5 = 0	0 = No colour
-	// eg. normalsMax/faceDirection		 1 * 0.5 =  0.5, then -0.5 + 0.5 = 1	1 = Full colour
-	// vec3 rgb_Normal = fNormals * 0.5f + 0.5f;
-
+	// Normal map value
+	vec3 normalColour = texture(material.normalMap, fTexCoords).rgb;
+	
 	// Opengl reads y/g values reversed
 	// This brings it back to normal to correctly read the normal maps, I think???
 	// eg. if green is 0		0 * -1 =  0, then  0 + 1 = 1		green is now 1
 	// eg. if green is 1		1 * -1 = -1, then -1 + 1 = 0		green is now 0
-	// rgb_Normal.g = rgb_Normal.g * -1.0f + 1.0f;
+	normalColour.g = normalColour.g * -1.0f + 1.0f;
 
-	// Get the normal from an in range normal map
-	vec3 normal = texture(material.normalMap, fTexCoords).rgb;
+	// Convert the values from an rgb range (0 to 1) to a normal vector range (-1 to 1)
+	normalColour = normalize(normalColour * 2.0f - 1.0f);
 
-	// Normalize the vec3 to a range of -1 to 1 (reverse the colouring mentioned before)
-	normal = normalize(normal * 2.0f - 1.0f);
+	// Normal maps use colour to represent direction, eg blue facing +1 on Z, green +1 on Y etc...
+	// Normal vectors are between -1 an 1, adding multiplying and adding the 0.5 adjusts the range to 0 and 1 for rgb
+	// eg. normalsMin/faceDirection		-1 * 0.5 = -0.5, then -0.5 + 0.5 = 0	0 = No colour
+	// eg. normalsMax/faceDirection		 1 * 0.5 =  0.5, then -0.5 + 0.5 = 1	1 = Full colour
+	// normalColour = fNormals * 0.5f + 0.5f;
 
 	// DIRECTIONAL LIGHTS
 	for (int i = 0; i < NUM_DIR_LIGHTS; ++i)

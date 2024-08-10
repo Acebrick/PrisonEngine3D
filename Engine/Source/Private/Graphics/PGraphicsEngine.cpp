@@ -144,7 +144,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	dungeonSpecTex->LoadTexture("Dungeon brick wall specular", "Models/Dungeon/textures/brickWallSpecular.png");
 	dungeonSpecTex2->LoadTexture("Dungeon floor tiles specular", "Models/Dungeon/textures/floortilesSpecular.png");
 	dungeonSpecTex3->LoadTexture("Dungeon stone trim specular", "Models/Dungeon/textures/stonetrimSpecular.png");
-	dungoenNormTex->LoadTexture("Dungeon brick wall normal map", "Models/Dungoen/textures/brickwallNormal.png");
+	dungoenNormTex->LoadTexture("Dungeon brick wall normal map", "Models/Dungeon/textures/brickwallNormal.png");
 	dungeonMat->m_BaseColourMap = dungeonTex;
 	dungeonMat->m_SpecularMap = dungeonSpecTex;
 	dungeonMat->m_NormalMap = dungoenNormTex;
@@ -194,18 +194,10 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	// Check if exists as a reference and change it
 	if (const auto& lightRef = dirLight.lock())
 	{
-		lightRef->colour = glm::vec3(-0.75f, -0.75f, -0.75f);
-		lightRef->direction = glm::vec3(1.0f, 1.0f, 0.0f);
-	}
+		lightRef->colour = glm::vec3(1.0f, 0.0f, 0.0f);
+		lightRef->intensity = 1.0f;
+		lightRef->direction = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	// Create the dir light
-	const auto& dirLight2 = CreateDirLight();
-
-	// Check if exists as a reference and change it
-	if (const auto& lightRef = dirLight2.lock())
-	{
-		lightRef->colour = glm::vec3(-0.75f, -0.75f, -0.75f);
-		lightRef->direction = glm::vec3(-1.0f, -1.0f, -1.0f);
 	}
 
 	// POINT LIGHT
@@ -257,15 +249,15 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	}
 
 	// NORMAL MAPPING TEST MODEL
-	//m_Wall = ImportModel("Models/Test/scene.gltf");
+	//m_Wall = ImportModel("Models/Wall/scene.gltf");
 	//TShared<PTexture> wallTex = TMakeShared<PTexture>();
 	//TShared<PTexture> wallNormal = TMakeShared<PTexture>();
 	//TShared<PSMaterial> wallMat = TMakeShared<PSMaterial>();
-	//wallTex->LoadTexture("Wall diffuse", "Models/Test/brickwall.jpg");
-	//wallNormal->LoadTexture("Wall normal", "Models/Test/brickwall_normal.jpg");
-	//m_Wall.lock()->GetTransform().position.y = 10.0f;
+	//wallTex->LoadTexture("Wall diffuse", "Models/Wall/textures/Brick_Wall_02_baseColor.jpeg");
+	//wallNormal->LoadTexture("Wall normal", "Models/Wall/textures/Brick_Wall_02_normal.png");
+	//m_Wall.lock()->GetTransform().position.x = -400.0f;
+	//m_Wall.lock()->GetTransform().position.y = 20.0f;
 	//m_Wall.lock()->GetTransform().position.z = -50.0f;
-	//m_Wall.lock()->GetTransform().scale = glm::vec3(50.0f);
 	//wallMat->m_BaseColourMap = wallTex;
 	//wallMat->m_NormalMap = wallNormal;
 	//m_Wall.lock()->SetMaterialBySlot(0, wallMat);
