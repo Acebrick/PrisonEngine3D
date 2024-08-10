@@ -20,7 +20,20 @@ TWeak<PSPointLight> m_PointLight;
 TWeak<PSSpotLight> m_SpotLight;
 TWeak<PSSpotLight> m_SpotLight2;
 TWeak<PSSpotLight> m_Flashlight;
+TWeak<PModel> m_Wall;
 
+const std::vector<PSVertexData> vertexData = {
+	//   x      y	   z      r     g     b       tx    ty
+	{ {-0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 1 (top left)
+	{ { 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 2 (top right)
+	{ {-0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 3 (bot left) 
+	{ { 0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} } // vertex data 4 (bot right)
+};
+
+const std::vector<uint32_t> indexData = {
+	 0, 1, 2, // Triangle 1
+	 1, 2, 3  // Triangle 2
+};
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 {
@@ -92,7 +105,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	// Create the camera
 	m_Camera = TMakeShared<PSCamera>();
 	m_Camera->transform.position.y = 25.0f;
-	m_Camera->transform.position.z = -50.0f;
+	m_Camera->transform.position.z = -75.0f;
 
 	// DEBUG
 	// THRONE
@@ -118,6 +131,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	TShared<PTexture> dungeonSpecTex = TMakeShared<PTexture>();
 	TShared<PTexture> dungeonSpecTex2 = TMakeShared<PTexture>();
 	TShared<PTexture> dungeonSpecTex3 = TMakeShared<PTexture>();
+	TShared<PTexture> dungoenNormTex = TMakeShared<PTexture>();
 	TShared<PSMaterial> dungeonMat = CreateMaterial();
 	TShared<PSMaterial> dungeonMat2 = CreateMaterial();
 	TShared<PSMaterial> dungeonMat3 = CreateMaterial();
@@ -127,8 +141,10 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	dungeonSpecTex->LoadTexture("Dungeon brick wall specular", "Models/Dungeon/textures/brickWallSpecular.png");
 	dungeonSpecTex2->LoadTexture("Dungeon floor tiles specular", "Models/Dungeon/textures/floortilesSpecular.png");
 	dungeonSpecTex3->LoadTexture("Dungeon stone trim specular", "Models/Dungeon/textures/stonetrimSpecular.png");
+	dungoenNormTex->LoadTexture("Dungeon brick wall normal map", "Models/Dungoen/textures/brickwallNormal.png");
 	dungeonMat->m_BaseColourMap = dungeonTex;
 	dungeonMat->m_SpecularMap = dungeonSpecTex;
+	dungeonMat->m_NormalMap = dungoenNormTex;
 	dungeonMat->shininess = 100.0f;
 	dungeonMat->specularStrength = 0.1f;
 	dungeonMat2->m_BaseColourMap = dungeonTex2;
@@ -194,7 +210,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	m_SpotLight = CreateSpotLight();
 	if (const auto& lightRef = m_SpotLight.lock())
 	{
-		m_SpotLight.lock()->SetCutOff(7.5f);
+		m_SpotLight.lock()->SetInnerCutOff(7.5f);
 		m_SpotLight.lock()->colour = glm::vec3(1.0f, 0.0f, 1.0f);
 		m_SpotLight.lock()->linear = 0.0014f;
 		m_SpotLight.lock()->quadratic = 0.000007f;
@@ -203,7 +219,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	m_SpotLight2 = CreateSpotLight();
 	if (const auto& lightRef = m_SpotLight2.lock())
 	{
-		m_SpotLight2.lock()->SetCutOff(7.5f);
+		m_SpotLight2.lock()->SetInnerCutOff(7.5f);
 		m_SpotLight2.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
 		m_SpotLight2.lock()->linear = 0.0014f;
 		m_SpotLight2.lock()->quadratic = 0.000007f;
@@ -216,6 +232,20 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 		m_Flashlight.lock()->linear = 0.0014f;
 		m_Flashlight.lock()->quadratic = 0.000007f;
 	}
+
+	// NORMAL MAPPING TEST MODEL
+	m_Wall = ImportModel("Models/Test/scene.gltf");
+	TShared<PTexture> wallTex = TMakeShared<PTexture>();
+	TShared<PTexture> wallNormal = TMakeShared<PTexture>();
+	TShared<PSMaterial> wallMat = TMakeShared<PSMaterial>();
+	wallTex->LoadTexture("Wall diffuse", "Models/Test/brickwall.jpg");
+	wallNormal->LoadTexture("Wall normal", "Models/Test/brickwall_normal.jpg");
+	m_Wall.lock()->GetTransform().position.y = 10.0f;
+	m_Wall.lock()->GetTransform().position.z = -50.0f;
+	m_Wall.lock()->GetTransform().scale = glm::vec3(50.0f);
+	wallMat->m_BaseColourMap = wallTex;
+	wallMat->m_NormalMap = wallNormal;
+	m_Wall.lock()->SetMaterialBySlot(0, wallMat);
 
 	// Making a second model
 	//ImportModel("Models/Axe/scene.gltf").lock()->GetTransform().position = glm::vec3(0.0f, 15.0f, 0.0f);
@@ -328,24 +358,27 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	static float radiusChangeRate = 0.05f;
 
 	// Stop increasing if size is reached
-	if (m_SpotLight.lock()->radius >= 7.5f)
+	if (m_SpotLight.lock()->innerDegrees >= 7.5f)
 	{
 		// Decrease in size
 		radiusChangeRate = -0.05f;
 	}
 	// Stop decreasing if size is reached
-	else if (m_SpotLight.lock()->radius <= 2.0f)
+	else if (m_SpotLight.lock()->innerDegrees <= 2.0f)
 	{
 		// Increase in size
 		radiusChangeRate = 0.05f;
 	}
 
 	// Update the size of the spotlights
-	m_SpotLight.lock()->radius += radiusChangeRate;
-	m_SpotLight2.lock()->radius += radiusChangeRate;
+	m_SpotLight.lock()->innerDegrees += radiusChangeRate;
+	m_SpotLight2.lock()->innerDegrees += radiusChangeRate;
+
 	// Apply the new size to the spotlights
-	m_SpotLight.lock()->SetCutOff(m_SpotLight2.lock()->radius);
-	m_SpotLight2.lock()->SetCutOff(m_SpotLight2.lock()->radius);
+	m_SpotLight.lock()->SetInnerCutOff(m_SpotLight2.lock()->innerDegrees);
+	m_SpotLight.lock()->SetOuterCutOff(m_SpotLight2.lock()->innerDegrees);
+	m_SpotLight2.lock()->SetInnerCutOff(m_SpotLight2.lock()->innerDegrees);
+	m_SpotLight2.lock()->SetOuterCutOff(m_SpotLight2.lock()->innerDegrees);
 	
 	// FLASHLIGHT
 	// Follow the camera's direction and position

@@ -15,6 +15,9 @@ struct PSMaterial
 	// White means completely shiny (reflective > reflection of the light)
 	TShared<PTexture> m_SpecularMap;
 
+	// This is the bumpiness/depth of an object to give it a more 3D look
+	TShared<PTexture> m_NormalMap;
+
 	// Material properties
 	// Shininess of the material
 	float shininess = 32.0f;

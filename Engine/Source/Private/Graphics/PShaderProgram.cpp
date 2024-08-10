@@ -277,12 +277,19 @@ void PShaderProgram::SetLights(const TArray<TShared<PSLight>>& lights)
 			// Change the direction
 			glUniform3fv(varID, 1, glm::value_ptr(lightRef->direction));
 
-			// RADIUS
+			// CUTOFF
 			// Get the variable ID
 			varID = glGetUniformLocation(m_ProgramID, (lightIndexStr + ".cutOff").c_str());
 
 			// Change the value
 			glUniform1f(varID, lightRef->cutOff);
+
+			// OUTER CUTOFF
+			// Get the variable ID
+			varID = glGetUniformLocation(m_ProgramID, (lightIndexStr + ".outerCutOff").c_str());
+
+			// Change the value
+			glUniform1f(varID, lightRef->outerCutOff);
 
 			// INTENSITY
 			// Get the variable ID
@@ -343,6 +350,18 @@ void PShaderProgram::SetMaterial(const TShared<PSMaterial>& material)
 		varID = glGetUniformLocation(m_ProgramID, "material.specularMap");
 
 		glUniform1f(varID, 1);
+	}
+
+	// NORMAL MAP
+	if (material->m_NormalMap)
+	{
+		// Bind the texture to the 1 index
+		material->m_NormalMap->BindTexture(2);
+
+		// Get the specular map id
+		varID = glGetUniformLocation(m_ProgramID, "material.normalMap");
+
+		glUniform1f(varID, 2);
 	}
 
 	// SHININESS

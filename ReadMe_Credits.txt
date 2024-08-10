@@ -6,6 +6,4 @@
 
 "Skull downloadable" (https://skfb.ly/JrST) by martinjario is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
-"Torch" (https://skfb.ly/otvzB) by DJMaesen is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
-
-"Lord Inquisitor: Servo Skull" () by Erasmus is licensed under Creative Commons Attribution-NonCommercial (http://creativecommons.org/licenses/by-nc/4.0/).
+"Concrete Wall" (https://skfb.ly/DBxM) by NguoiDaiViet is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).

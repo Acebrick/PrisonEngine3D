@@ -10,6 +10,7 @@ struct Material
 {
 	sampler2D baseColourMap;
 	sampler2D specularMap;
+	sampler2D normalMap;
 	float shininess;
 	float specularStrength;
 };
@@ -41,6 +42,7 @@ struct SpotLight
 	float linear;
 	float quadratic;
 	float intensity;
+	float outerCutOff;
 };
 
 #define NUM_DIR_LIGHTS 2 // 2 = Number of available directional lights that can be used
@@ -70,14 +72,22 @@ void main() {
 
 	// Convert the fragments normals vector into an rgb equivalent to make normal maps readable
 	// Normal maps use colour to represent direction, eg blue facing +1 on Z, green +1 on Y etc...
-	// Normal vectors are between -1 an 1, adding the 0.5 adjusts the range to 0 and 1 for rgb
-	// eg. normalsMin/facedirection		-1 * 0.5 = -0.5, then -0.5 + 0.5 = 0	0 = No colour
-	// eg. normalsMax/facedirection		 1 * 0.5 =  0.5, then -0.5 + 0.5 = 1	1 = Full colour
-	vec3 rgb_Normal = fNormals * 0.5f + 0.5f;
+	// Normal vectors are between -1 an 1, adding multiplying and adding the 0.5 adjusts the range to 0 and 1 for rgb
+	// eg. normalsMin/faceDirection		-1 * 0.5 = -0.5, then -0.5 + 0.5 = 0	0 = No colour
+	// eg. normalsMax/faceDirection		 1 * 0.5 =  0.5, then -0.5 + 0.5 = 1	1 = Full colour
+	// vec3 rgb_Normal = fNormals * 0.5f + 0.5f;
 
 	// Opengl reads y/g values reversed
-	// This brings it back to normal to correctly read the normal maps
-	rgb_Normal.g = rgb_Normal.g * -1 + 1;
+	// This brings it back to normal to correctly read the normal maps, I think???
+	// eg. if green is 0		0 * -1 =  0, then  0 + 1 = 1		green is now 1
+	// eg. if green is 1		1 * -1 = -1, then -1 + 1 = 0		green is now 0
+	// rgb_Normal.g = rgb_Normal.g * -1.0f + 1.0f;
+
+	// Get the normal from an in range normal map
+	vec3 normal = texture(material.normalMap, fTexCoords).rgb;
+
+	// Normalize the vec3 to a range of -1 to 1 (reverse the colouring mentioned before)
+	normal = normalize(normal * 2.0f - 1.0f);
 
 	// DIRECTIONAL LIGHTS
 	for (int i = 0; i < NUM_DIR_LIGHTS; ++i)
@@ -109,7 +119,7 @@ void main() {
 		specular *= material.specularStrength;
 
 		// Add our light values together to get the result
-		result += (ambientLight + lightColour + specular);
+		result = (ambientLight + lightColour + specular);
 	}
 
 	// POINT LIGHTS
@@ -165,17 +175,24 @@ void main() {
 		// Get the dot product between lightDir and the spot lights direction
 		float theta = dot(lightDir, normalize(-spotLights[i].direction));
 
-		// Check if the angle is greater than the spotLights radius
+		// Check if the angle is greater than the spotLights outer cut off
 		// If it is, then the fragment is outside the range of the spotlight
 		// NOTE: Theta value is the cosine value of the angle not the degrees value...
 		// ... Degrees(0) = Cosine(1.0) & Degrees(90) = Cosine(0.0), this is the reason for > and not <
-		if (theta > spotLights[i].cutOff)
+		if (theta > spotLights[i].outerCutOff)
 		{
+			// Epsilon is the cosine value between the inner and outer cut off
+			float epsilon = (spotLights[i].cutOff - spotLights[i].outerCutOff);
+
+			// Determine the intensity of the spot light between the inner and outer cut off
+			// Defaulting anything below/outside that range to 0 (no light/intensity) and 1 (full light/intensity) respectively
+			float intensity = clamp((theta - spotLights[i].outerCutOff) / epsilon, 0.0f, 1.0f);
+
 			// Get the reflection light value
 			vec3 reflectDir = reflect(-lightDir, fNormals);
 
 			// How much light should show colour based on direction of normal facing the light
-			float diff = max(dot(fNormals, lightDir), 0.5f);
+			float diff = max(dot(fNormals, lightDir), 0.0f);
 
 			// Distance between the lights position and vertex position
 			float distance = length(spotLights[i].position - fVertPos);
@@ -198,7 +215,7 @@ void main() {
 			vec3 lightColour = spotLights[i].colour;
 			lightColour *= diff;
 			lightColour *= attenuation;
-			lightColour *= spotLights[i].intensity;
+			lightColour *= intensity;
 
 			// Specular power algorithm, calculate the shininesse of the model
 			float specPower = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
