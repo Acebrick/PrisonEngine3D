@@ -124,7 +124,66 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 
 			if (key == SDL_SCANCODE_E) // Up
 			{
-				m_CameraDirection.y += 1.0f;
+				m_CameraDirection.y += 1.0f;	
+			}
+
+			if (key == SDL_SCANCODE_F) // Toggle flashlight
+			{
+				m_GraphicsEngine->ToggleFlashlight();
+			}
+			
+			if (key == SDL_SCANCODE_1)
+			{
+				m_GraphicsEngine->IncreaseFlashlightRed();
+			}
+			if (key == SDL_SCANCODE_2)
+			{
+				m_GraphicsEngine->IncreaseFlashlightGreen();
+			}
+			if (key == SDL_SCANCODE_3)
+			{
+				m_GraphicsEngine->IncreaseFlashlightBlue();
+			}
+			if (key == SDL_SCANCODE_4)
+			{
+				m_GraphicsEngine->DecreaseFlashlightRed();
+			}
+			if (key == SDL_SCANCODE_5)
+			{
+				m_GraphicsEngine->DecreaseFlashlightGreen();
+			}
+			if (key == SDL_SCANCODE_6)
+			{
+				m_GraphicsEngine->DecreaseFlashlightBlue();
+			}
+
+			if (key == SDL_SCANCODE_I)
+			{
+				m_GraphicsEngine->IncreaseFlashlightInnerRadius();
+			}
+			
+			if (key == SDL_SCANCODE_O)
+			{
+				m_GraphicsEngine->IncreaseFlashlightOuterRadius();
+			}
+
+			if (key == SDL_SCANCODE_J)
+			{
+				m_GraphicsEngine->DecreaseFlashlightInnerRadius();
+			}
+			if (key == SDL_SCANCODE_K)
+			{
+				m_GraphicsEngine->DecreaseFlashlightOuterRadius();
+			}
+
+			if (key == SDL_SCANCODE_P)
+			{
+				m_GraphicsEngine->IncreaseFlashlightIntensity();
+			}
+
+			if (key == SDL_SCANCODE_L)
+			{
+				m_GraphicsEngine->DecreaseFlashlightIntensity();
 			}
 		});
 

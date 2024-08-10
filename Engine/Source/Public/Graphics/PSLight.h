@@ -50,26 +50,23 @@ struct PSSpotLight : public PSLight
 	{
 		position = glm::vec3(0.0f);
 		direction = glm::vec3(0.0f, 0.0f, 1.0f);
-		innerDegrees = 12.5f;	
+		innerDegrees = 8.75f;	
 		outerDegrees = 17.5f;
-
-		
 		cutOff = glm::cos(glm::radians(innerDegrees));
 		outerCutOff = glm::cos(glm::radians(outerDegrees));
-		linear = 0.045f;
-		quadratic = 0.0075f;
+		linear = 0.014f;
+		quadratic = 0.0007f;
 	}
 
 	glm::vec3 position;
 	glm::vec3 direction;
 
-	// The variable radius is storing the cosine value of the width to allow for direct value comparisons in the frag shader
-	// Radius is the angle between the spotlights direction and the lights direction (direction of triangle face)
+	// Stores the cosine value of the width to allow for direct value comparisons in the frag shader
 	float cutOff;
+	float outerCutOff;
 
 	float linear;
 	float quadratic;
-	float outerCutOff;
 
 	// This is the degrees of the angle of the inner spot light that will always have full intensity
 	// Determines the radius of the spot light that will hold maximum intensity
@@ -80,8 +77,16 @@ struct PSSpotLight : public PSLight
 	float outerDegrees;
 
 	// Set the size for the inner circle that always has maximum intensity
-	void SetInnerCutOff(float newRadius) { cutOff = glm::cos(glm::radians(newRadius)); }
+	void SetInnerCutOff(float newRadius) 
+	{ 
+		innerDegrees = newRadius;
+		cutOff = glm::cos(glm::radians(innerDegrees));
+	}
 
 	// Set the size for the spot light that light will reach 0 intensity
-	void SetOuterCutOff(float newRadius) { outerCutOff = glm::cos(glm::radians(newRadius)); }
+	void SetOuterCutOff(float newRadius) 
+	{ 
+		outerDegrees = newRadius;
+		outerCutOff = glm::cos(glm::radians(outerDegrees));
+	}
 };

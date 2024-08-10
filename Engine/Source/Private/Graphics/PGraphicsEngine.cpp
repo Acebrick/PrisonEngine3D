@@ -17,10 +17,13 @@ TWeak<PModel> m_Dungeon;
 TWeak<PModel> m_Bludgeon;
 TWeak<PModel> m_Skull;
 TWeak<PSPointLight> m_PointLight;
+TWeak<PSPointLight> m_PointLight2;
 TWeak<PSSpotLight> m_SpotLight;
 TWeak<PSSpotLight> m_SpotLight2;
 TWeak<PSSpotLight> m_Flashlight;
 TWeak<PModel> m_Wall;
+
+const double pi = 3.14159265358979323846;
 
 const std::vector<PSVertexData> vertexData = {
 	//   x      y	   z      r     g     b       tx    ty
@@ -173,7 +176,6 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// BLUDGEON
 	m_Bludgeon = ImportModel("Models/Bludgeon/Bludgeon.fbx");
-	m_Bludgeon.lock()->GetTransform().position.x = 40.0f;
 	m_Bludgeon.lock()->GetTransform().position.y = 70.0f;
 	m_Bludgeon.lock()->GetTransform().position.z = 30.0f;
 	m_Bludgeon.lock()->GetTransform().rotation.z = 90.0f;
@@ -192,9 +194,18 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	// Check if exists as a reference and change it
 	if (const auto& lightRef = dirLight.lock())
 	{
-		lightRef->colour = glm::vec3(1.0f, 1.0f, 1.0f);
-		lightRef->intensity = 0.1f;
-		lightRef->direction = glm::vec3(0.0f, -1.0f, 0.0f);
+		lightRef->colour = glm::vec3(-0.75f, -0.75f, -0.75f);
+		lightRef->direction = glm::vec3(1.0f, 1.0f, 0.0f);
+	}
+
+	// Create the dir light
+	const auto& dirLight2 = CreateDirLight();
+
+	// Check if exists as a reference and change it
+	if (const auto& lightRef = dirLight2.lock())
+	{
+		lightRef->colour = glm::vec3(-0.75f, -0.75f, -0.75f);
+		lightRef->direction = glm::vec3(-1.0f, -1.0f, -1.0f);
 	}
 
 	// POINT LIGHT
@@ -202,8 +213,20 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	if (const auto& lightRef = m_PointLight.lock())
 	{
 		m_PointLight.lock()->colour = glm::vec3(1.0f, 0.5f, 0.0f);
-		m_PointLight.lock()->linear = 0.014f;
-		m_PointLight.lock()->quadratic = 0.0007f;
+		m_PointLight.lock()->linear = 0.007f;
+		m_PointLight.lock()->quadratic = 0.0002f;
+	}
+
+	// POINT LIGHT 2
+	m_PointLight2 = CreatePointLight();
+	if (const auto& lightRef = m_PointLight2.lock())
+	{
+		m_PointLight2.lock()->position.x = 40.0f;
+		m_PointLight2.lock()->position.y = 70.0f;
+		m_PointLight2.lock()->position.z = 115.0f;
+		m_PointLight2.lock()->colour = glm::vec3(1.0f, 0.0f, 1.0f);
+		m_PointLight2.lock()->linear = 0.007f;
+		m_PointLight2.lock()->quadratic = 0.0002f;
 	}
 
 	// SPOT LIGHT
@@ -211,7 +234,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	if (const auto& lightRef = m_SpotLight.lock())
 	{
 		m_SpotLight.lock()->SetInnerCutOff(7.5f);
-		m_SpotLight.lock()->colour = glm::vec3(1.0f, 0.0f, 1.0f);
+		m_SpotLight.lock()->colour = glm::vec3(0.0f, 1.0f, 0.0f);
 		m_SpotLight.lock()->linear = 0.0014f;
 		m_SpotLight.lock()->quadratic = 0.000007f;
 	}
@@ -234,21 +257,18 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	}
 
 	// NORMAL MAPPING TEST MODEL
-	m_Wall = ImportModel("Models/Test/scene.gltf");
-	TShared<PTexture> wallTex = TMakeShared<PTexture>();
-	TShared<PTexture> wallNormal = TMakeShared<PTexture>();
-	TShared<PSMaterial> wallMat = TMakeShared<PSMaterial>();
-	wallTex->LoadTexture("Wall diffuse", "Models/Test/brickwall.jpg");
-	wallNormal->LoadTexture("Wall normal", "Models/Test/brickwall_normal.jpg");
-	m_Wall.lock()->GetTransform().position.y = 10.0f;
-	m_Wall.lock()->GetTransform().position.z = -50.0f;
-	m_Wall.lock()->GetTransform().scale = glm::vec3(50.0f);
-	wallMat->m_BaseColourMap = wallTex;
-	wallMat->m_NormalMap = wallNormal;
-	m_Wall.lock()->SetMaterialBySlot(0, wallMat);
-
-	// Making a second model
-	//ImportModel("Models/Axe/scene.gltf").lock()->GetTransform().position = glm::vec3(0.0f, 15.0f, 0.0f);
+	//m_Wall = ImportModel("Models/Test/scene.gltf");
+	//TShared<PTexture> wallTex = TMakeShared<PTexture>();
+	//TShared<PTexture> wallNormal = TMakeShared<PTexture>();
+	//TShared<PSMaterial> wallMat = TMakeShared<PSMaterial>();
+	//wallTex->LoadTexture("Wall diffuse", "Models/Test/brickwall.jpg");
+	//wallNormal->LoadTexture("Wall normal", "Models/Test/brickwall_normal.jpg");
+	//m_Wall.lock()->GetTransform().position.y = 10.0f;
+	//m_Wall.lock()->GetTransform().position.z = -50.0f;
+	//m_Wall.lock()->GetTransform().scale = glm::vec3(50.0f);
+	//wallMat->m_BaseColourMap = wallTex;
+	//wallMat->m_NormalMap = wallNormal;
+	//m_Wall.lock()->SetMaterialBySlot(0, wallMat);
 
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
@@ -264,9 +284,10 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	static float skullXDir = 0.0f;
-	static float skullZDir = 0.0f;
-	static bool movingOnX = false;
+	// SKULL
+	static float skullXDir = 0.0f; // Speed on x axis
+	static float skullZDir = 0.0f; // Speed on y axis
+	static bool movingOnX = false; // Determines what direction to move
 
 	// Has the skull reached the top left corner
 	if (m_Skull.lock()->GetTransform().position.x >= 400.0f && 
@@ -275,7 +296,9 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 		// Go to right of room
 		skullXDir = -1.0f;
 		skullZDir = 0.0f;
+		// Rotate to face moving direction
 		m_Skull.lock()->GetTransform().rotation.y = 270.0f;
+		// Set move direcion
 		movingOnX = true;
 	}
 	// Has the skull reached the top right corner 
@@ -285,7 +308,9 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 		// Go to back of room
 		skullXDir = 0.0f;
 		skullZDir += -1.0f;
+		// Rotate to face moving direction
 		m_Skull.lock()->GetTransform().rotation.y = 180.0f;
+		// Set move direcion
 		movingOnX = false;
 	}
 	// Has the skull reached the bottom right corner 
@@ -295,7 +320,9 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 		// Go to left of room
 		skullXDir += 1.0f;
 		skullZDir = 0.0f;
+		// Rotate to face moving direction
 		m_Skull.lock()->GetTransform().rotation.y = 90.0f;
+		// Set move direcion
 		movingOnX = true;
 	}
 	// Has the skull reached the bottom left corner 
@@ -305,7 +332,9 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 		// Go to front of room
 		skullXDir = 0.0f;
 		skullZDir += 1.0f;
+		// Rotate to face moving direction
 		m_Skull.lock()->GetTransform().rotation.y = 0.0f;
+		// Set move direcion
 		movingOnX = false;
 	}
 
@@ -314,8 +343,14 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	m_Skull.lock()->GetTransform().position.z += skullZDir;
 
 	// POINT LIGHT
+	// Lock the first point light to the skull moving around the room
 	m_PointLight.lock()->position = m_Skull.lock()->GetTransform().position;
 
+	// POINT LIGHT 2
+	// Circle around the throne
+	TranslateOffModelRotation(m_Throne.lock()->GetTransform().position.x, m_Throne.lock()->GetTransform().position.z,
+							1.0f, m_PointLight2.lock()->position.x, m_PointLight2.lock()->position.z);
+		
 	// BLUDGEON
 	m_Bludgeon.lock()->GetTransform().rotation.y += 0.99f;
 
@@ -373,6 +408,7 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Update the size of the spotlights
 	m_SpotLight.lock()->innerDegrees += radiusChangeRate;
 	m_SpotLight2.lock()->innerDegrees += radiusChangeRate;
+	
 
 	// Apply the new size to the spotlights
 	m_SpotLight.lock()->SetInnerCutOff(m_SpotLight2.lock()->innerDegrees);
@@ -438,4 +474,143 @@ TWeak<PModel> PGraphicsEngine::ImportModel(const PString& path)
 TShared<PSMaterial> PGraphicsEngine::CreateMaterial()
 {
 	return TMakeShared<PSMaterial>();
+}
+
+void PGraphicsEngine::TranslateOffModelRotation(float pointX, float pointZ, float degrees, float &objectX, float &objectZ)
+{
+	float newX = 0.0f;
+	float newZ = 0.0f;
+
+	float finalX = 0.0f;
+	float finalZ = 0.0f;
+
+	float radians = degrees * pi / 180;
+
+	// Translate
+	newX = objectX - pointX;
+	newZ = objectZ - pointZ;
+
+	// Rotate
+	finalX = (newX * cos(radians)) - (newZ * sin(radians));
+	finalZ = (newX * sin(radians)) + (newZ * cos(radians));
+
+	// Translate to final point
+	objectX = finalX + pointX;
+	objectZ = finalZ + pointZ;
+}
+
+void PGraphicsEngine::ToggleFlashlight()
+{
+	if (m_Flashlight.lock()->intensity > 0)
+		m_Flashlight.lock()->intensity = 0.0f;
+	else
+		m_Flashlight.lock()->intensity = 1.0f;
+}
+
+void PGraphicsEngine::IncreaseFlashlightRed()
+{
+	if (m_Flashlight.lock()->colour.r >= 1.0f)
+	{
+		return;
+	}
+
+	m_Flashlight.lock()->colour = glm::vec3(
+		m_Flashlight.lock()->colour.r + 0.1f,
+		m_Flashlight.lock()->colour.g,
+		m_Flashlight.lock()->colour.b);
+}
+
+void PGraphicsEngine::IncreaseFlashlightGreen()
+{
+	if (m_Flashlight.lock()->colour.r >= 1.0f)
+	{
+		return;
+	}
+
+	m_Flashlight.lock()->colour = glm::vec3(
+		m_Flashlight.lock()->colour.g,
+		m_Flashlight.lock()->colour.g + 0.1f,
+		m_Flashlight.lock()->colour.b);
+}
+
+void PGraphicsEngine::IncreaseFlashlightBlue()
+{
+	if (m_Flashlight.lock()->colour.b >= 1.0f)
+	{
+		return;
+	}
+
+	m_Flashlight.lock()->colour = glm::vec3(
+		m_Flashlight.lock()->colour.r,
+		m_Flashlight.lock()->colour.g,
+		m_Flashlight.lock()->colour.b + 0.1f);
+}
+
+void PGraphicsEngine::DecreaseFlashlightRed()
+{
+	if (m_Flashlight.lock()->colour.r <= 0.0f)
+	{
+		return;
+	}
+
+	m_Flashlight.lock()->colour = glm::vec3(
+		m_Flashlight.lock()->colour.r - 0.1f,
+		m_Flashlight.lock()->colour.g,
+		m_Flashlight.lock()->colour.b);
+}
+
+void PGraphicsEngine::DecreaseFlashlightGreen()
+{
+	if (m_Flashlight.lock()->colour.g <= 0.0f)
+	{
+		return;
+	}
+
+	m_Flashlight.lock()->colour = glm::vec3(
+		m_Flashlight.lock()->colour.r,
+		m_Flashlight.lock()->colour.g - 0.1f,
+		m_Flashlight.lock()->colour.b);
+}
+
+void PGraphicsEngine::DecreaseFlashlightBlue()
+{
+	if (m_Flashlight.lock()->colour.b <= 0.0f)
+	{
+		return;
+	}
+
+	m_Flashlight.lock()->colour = glm::vec3(
+		m_Flashlight.lock()->colour.r,
+		m_Flashlight.lock()->colour.g,
+		m_Flashlight.lock()->colour.b - 0.1f);
+}
+
+void PGraphicsEngine::IncreaseFlashlightInnerRadius()
+{
+	m_Flashlight.lock()->SetInnerCutOff(m_Flashlight.lock()->innerDegrees + 1);
+}
+
+void PGraphicsEngine::IncreaseFlashlightOuterRadius()
+{
+	m_Flashlight.lock()->SetOuterCutOff(m_Flashlight.lock()->outerDegrees + 1);
+}
+
+void PGraphicsEngine::DecreaseFlashlightInnerRadius()
+{
+	m_Flashlight.lock()->SetInnerCutOff(m_Flashlight.lock()->innerDegrees - 1);
+}
+
+void PGraphicsEngine::DecreaseFlashlightOuterRadius()
+{
+	m_Flashlight.lock()->SetOuterCutOff(m_Flashlight.lock()->outerDegrees - 1);
+}
+
+void PGraphicsEngine::IncreaseFlashlightIntensity()
+{
+	m_Flashlight.lock()->intensity += 0.1f;
+}
+
+void PGraphicsEngine::DecreaseFlashlightIntensity()
+{
+	m_Flashlight.lock()->intensity -= 0.1f;
 }

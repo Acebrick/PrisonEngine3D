@@ -119,7 +119,7 @@ void main() {
 		specular *= material.specularStrength;
 
 		// Add our light values together to get the result
-		result = (ambientLight + lightColour + specular);
+		result += (ambientLight + lightColour + specular);
 	}
 
 	// POINT LIGHTS
@@ -186,7 +186,8 @@ void main() {
 
 			// Determine the intensity of the spot light between the inner and outer cut off
 			// Defaulting anything below/outside that range to 0 (no light/intensity) and 1 (full light/intensity) respectively
-			float intensity = clamp((theta - spotLights[i].outerCutOff) / epsilon, 0.0f, 1.0f);
+			// Multiply this by the spot lights intensity in the struct so that it can still be changed outside of the fragment shader
+			float intensity = clamp((theta - spotLights[i].outerCutOff) / epsilon, 0.0f, 1.0f) * spotLights[i].intensity;
 
 			// Get the reflection light value
 			vec3 reflectDir = reflect(-lightDir, fNormals);
@@ -223,7 +224,7 @@ void main() {
 			specular *= material.specularStrength;
 			
 			// Add our light values together to get the result
-			result += (lightColour + specular);
+			result += (lightColour);
 		}
 	}
 

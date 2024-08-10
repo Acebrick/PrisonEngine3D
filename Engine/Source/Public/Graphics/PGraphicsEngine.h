@@ -42,6 +42,34 @@ public:
 	// Create a material for the engine
 	TShared<PSMaterial> CreateMaterial();
 
+	void TranslateOffModelRotation(float pointX, float pointZ, float degrees, float &objectX, float &objectZ);
+
+	void ToggleFlashlight();
+
+	void IncreaseFlashlightRed();
+
+	void IncreaseFlashlightGreen();
+
+	void IncreaseFlashlightBlue();
+
+	void DecreaseFlashlightRed();
+
+	void DecreaseFlashlightGreen();
+
+	void DecreaseFlashlightBlue();
+
+	void IncreaseFlashlightInnerRadius();
+
+	void IncreaseFlashlightOuterRadius();
+
+	void DecreaseFlashlightInnerRadius();
+
+	void DecreaseFlashlightOuterRadius();
+
+	void IncreaseFlashlightIntensity();
+
+	void DecreaseFlashlightIntensity();
+
 private:
 	// Storing memory location for open gl context
 	SDL_GLContext m_SDLGLContext;
