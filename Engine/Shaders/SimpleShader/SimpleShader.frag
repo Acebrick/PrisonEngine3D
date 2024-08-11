@@ -84,7 +84,8 @@ void main() {
 	// Convert the values from an rgb range (0 to 1) to a normal vector range (-1 to 1)
 	normalColour = normalColour * 2.0f - 1.0f;
 
-	//normalColour = normalize(fTBN * normalColour);
+	// Apply the normalColour to work in tangent space, uncomment to test
+	// normalColour = normalize(fTBN * normalColour);
 
 	// Normal maps use colour to represent direction, eg blue facing +1 on Z, green +1 on Y etc...
 	// Normal vectors are between -1 an 1, multiplying and adding the 0.5 adjusts the range to 0 and 1 for rgb

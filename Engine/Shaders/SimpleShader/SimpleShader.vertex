@@ -44,8 +44,8 @@ void main() {
 	fViewPos = vec3(view * relPos * vec4(vPosition, 1.0f));
 	
 	// NORMAL TEST
-	vec3 tangent = normalize(vec3(model * vec4(vTangents, 0.0f)));
-	vec3 normalTest = normalize(vec3(model * vec4(vNormals, 0.0f)));
-	vec3 bitangent = cross(fNormals, tangent);
-	fTBN = mat3(tangent, bitangent, normalTest);
+	// Tangent already normalized when getting from ASSIMP?
+	//vec3 tangent = normalize(vec3(model * vec4(vTangents, 0.0f)));
+	vec3 bitangent = cross(fNormals, vTangents);
+	fTBN = mat3(vTangents, bitangent, fNormals);
 }
