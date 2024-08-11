@@ -209,9 +209,9 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	// Check if exists as a reference and change it
 	if (const auto& lightRef = dirLight.lock())
 	{
-		lightRef->colour = glm::vec3(1.0f, 1.0f, 1.0f);
+		lightRef->colour = glm::vec3(1.0f, 0.0f, 0.0f);
 		lightRef->intensity = 0.1f;
-		lightRef->direction = glm::vec3(0.0f, 0.0f, 0.0f);
+		lightRef->direction = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	}
 
@@ -266,18 +266,18 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	}
 
 	// NORMAL MAPPING TEST MODEL
-	m_Wall = ImportModel("Models/Wall/scene.gltf");
-	TShared<PTexture> wallTex = TMakeShared<PTexture>();
-	TShared<PTexture> wallNormal = TMakeShared<PTexture>();
-	TShared<PSMaterial> wallMat = TMakeShared<PSMaterial>();
-	wallTex->LoadTexture("Wall diffuse", "Models/Wall/textures/Brick_Wall_02_baseColor.jpeg");
-	wallNormal->LoadTexture("Wall normal", "Models/Wall/textures/Brick_Wall_02_normal.png");
-	m_Wall.lock()->GetTransform().position.x = -400.0f;
-	m_Wall.lock()->GetTransform().position.y = 20.0f;
-	m_Wall.lock()->GetTransform().position.z = -50.0f;
-	wallMat->m_BaseColourMap = wallTex;
-	wallMat->m_NormalMap = wallNormal;
-	m_Wall.lock()->SetMaterialBySlot(0, wallMat);
+	//m_Wall = ImportModel("Models/Wall/scene.gltf");
+	//TShared<PTexture> wallTex = TMakeShared<PTexture>();
+	//TShared<PTexture> wallNormal = TMakeShared<PTexture>();
+	//TShared<PSMaterial> wallMat = TMakeShared<PSMaterial>();
+	//wallTex->LoadTexture("Wall diffuse", "Models/Wall/textures/Brick_Wall_02_baseColor.jpeg");
+	//wallNormal->LoadTexture("Wall normal", "Models/Wall/textures/Brick_Wall_02_normal.png");
+	//m_Wall.lock()->GetTransform().position.x = -400.0f;
+	//m_Wall.lock()->GetTransform().position.y = 20.0f;
+	//m_Wall.lock()->GetTransform().position.z = -50.0f;
+	//wallMat->m_BaseColourMap = wallTex;
+	//wallMat->m_NormalMap = wallNormal;
+	//m_Wall.lock()->SetMaterialBySlot(0, wallMat);
 
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
