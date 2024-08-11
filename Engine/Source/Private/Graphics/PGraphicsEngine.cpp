@@ -118,12 +118,15 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	// textures
 	TShared<PTexture> throneTex = TMakeShared<PTexture>();
 	TShared<PTexture> throneSpecTex = TMakeShared<PTexture>();
+	TShared<PTexture> throneNormTex = TMakeShared<PTexture>();
 	throneTex->LoadTexture("Throne base colour", "Models/Throne/textures/RustedThrone_Base_Color.png");
 	throneSpecTex->LoadTexture("Throne specular", "Models/Throne/textures/RustedThrone_Specular.png");
+	throneNormTex->LoadTexture("Throne normal", "Models/Throne/textures/RustedThrone_Normal_OpenGL.png");
 	// materials
 	TShared<PSMaterial> throneMat = TMakeShared<PSMaterial>();
 	throneMat->m_BaseColourMap = throneTex;
 	throneMat->m_SpecularMap = throneSpecTex;
+	throneMat->m_NormalMap = throneNormTex;
 	m_Throne.lock()->SetMaterialBySlot(0, throneMat);
 
 	// DUNGEON
@@ -135,6 +138,8 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	TShared<PTexture> dungeonSpecTex2 = TMakeShared<PTexture>();
 	TShared<PTexture> dungeonSpecTex3 = TMakeShared<PTexture>();
 	TShared<PTexture> dungoenNormTex = TMakeShared<PTexture>();
+	TShared<PTexture> dungoenNormTex2 = TMakeShared<PTexture>();
+	TShared<PTexture> dungoenNormTex3 = TMakeShared<PTexture>();
 	TShared<PSMaterial> dungeonMat = CreateMaterial();
 	TShared<PSMaterial> dungeonMat2 = CreateMaterial();
 	TShared<PSMaterial> dungeonMat3 = CreateMaterial();
@@ -145,6 +150,8 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	dungeonSpecTex2->LoadTexture("Dungeon floor tiles specular", "Models/Dungeon/textures/floortilesSpecular.png");
 	dungeonSpecTex3->LoadTexture("Dungeon stone trim specular", "Models/Dungeon/textures/stonetrimSpecular.png");
 	dungoenNormTex->LoadTexture("Dungeon brick wall normal map", "Models/Dungeon/textures/brickwallNormal.png");
+	dungoenNormTex2->LoadTexture("Dungeon floor tiles normal map", "Models/Dungeon/textures/floortilesNormal.png");
+	dungoenNormTex3->LoadTexture("Dungeon stone trim normal map", "Models/Dungeon/textures/stonetrimNormal.png");
 	dungeonMat->m_BaseColourMap = dungeonTex;
 	dungeonMat->m_SpecularMap = dungeonSpecTex;
 	dungeonMat->m_NormalMap = dungoenNormTex;
@@ -152,10 +159,12 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	dungeonMat->specularStrength = 0.1f;
 	dungeonMat2->m_BaseColourMap = dungeonTex2;
 	dungeonMat2->m_SpecularMap = dungeonSpecTex2;
+	dungeonMat->m_NormalMap = dungoenNormTex2;
 	dungeonMat2->shininess = 100.0f;
 	dungeonMat2->specularStrength = 0.1f;
 	dungeonMat3->m_BaseColourMap = dungeonTex3;
 	dungeonMat3->m_SpecularMap = dungeonSpecTex3;
+	dungeonMat->m_NormalMap = dungoenNormTex3;
 	dungeonMat3->shininess = 100.0f;
 	dungeonMat3->specularStrength = 0.1f;
 	m_Dungeon.lock()->SetMaterialBySlot(0, dungeonMat);
@@ -170,8 +179,11 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	m_Skull.lock()->GetTransform().scale = glm::vec3(10.0f);
 	TShared<PTexture> skullTex = TMakeShared<PTexture>();
 	TShared<PSMaterial> skullMat = CreateMaterial();
+	TShared<PTexture> skullNormTex = TMakeShared<PTexture>();
 	skullTex->LoadTexture("Skull base colour", "Models/Skull/textures/defaultMat_baseColor.jpeg");
+	skullNormTex->LoadTexture("Skull normal", "Models/Skull/textures/defaultMat_normal.jpeg");
 	skullMat->m_BaseColourMap = skullTex;
+	skullMat->m_NormalMap = skullNormTex;
 	m_Skull.lock()->SetMaterialBySlot(0, skullMat);
 
 	// BLUDGEON
@@ -181,11 +193,14 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	m_Bludgeon.lock()->GetTransform().rotation.z = 90.0f;
 	TShared<PTexture> bludgeonTex = TMakeShared<PTexture>();
 	TShared<PTexture> bludgeonSpecTex = TMakeShared<PTexture>();
+	TShared<PTexture> bludgeonNormTex = TMakeShared<PTexture>();
 	TShared<PSMaterial> bludgeonMat = CreateMaterial();
 	bludgeonTex->LoadTexture("Bludgeon base colour", "Models/Bludgeon/textures/Bludgeon_BaseColor.png");
 	bludgeonSpecTex->LoadTexture("Bludgeon specular", "Models/Bludgeon/textures/Bludgeon_Specular.png");
+	bludgeonNormTex->LoadTexture("Bludgeon normal", "Models/Bludgeon/textures/Bludgeon_Normal.png");
 	bludgeonMat->m_BaseColourMap = bludgeonTex;
 	bludgeonMat->m_SpecularMap = bludgeonSpecTex;
+	bludgeonMat->m_NormalMap = bludgeonNormTex;
 	m_Bludgeon.lock()->SetMaterialBySlot(0, bludgeonMat);
 
 	// Create the dir light
@@ -251,7 +266,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	}
 
 	// NORMAL MAPPING TEST MODEL
-	/*m_Wall = ImportModel("Models/Wall/scene.gltf");
+	m_Wall = ImportModel("Models/Wall/scene.gltf");
 	TShared<PTexture> wallTex = TMakeShared<PTexture>();
 	TShared<PTexture> wallNormal = TMakeShared<PTexture>();
 	TShared<PSMaterial> wallMat = TMakeShared<PSMaterial>();
@@ -262,7 +277,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	m_Wall.lock()->GetTransform().position.z = -50.0f;
 	wallMat->m_BaseColourMap = wallTex;
 	wallMat->m_NormalMap = wallNormal;
-	m_Wall.lock()->SetMaterialBySlot(0, wallMat);*/
+	m_Wall.lock()->SetMaterialBySlot(0, wallMat);
 
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);

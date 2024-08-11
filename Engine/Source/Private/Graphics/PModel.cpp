@@ -124,15 +124,10 @@ bool PModel::FindAndImportMeshes(const aiNode& node, const aiScene& scene, const
 
 			if (aMesh->HasTangentsAndBitangents())
 			{
-				
-
-				vertex.m_Tangent[0] = aMesh->mTangents[j].x;
-				vertex.m_Tangent[1] = aMesh->mTangents[j].y;
-				vertex.m_Tangent[2] = aMesh->mTangents[j].z;
-
-				vertex.m_Bitangent[0] = aMesh->mBitangents[j].x;
-				vertex.m_Bitangent[1] = aMesh->mBitangents[j].y;
-				vertex.m_Bitangent[2] = aMesh->mBitangents[j].z;
+				// This requires scene component to be changed which ruins everything
+				//vertex.m_Tangent[0] = aMesh->mTangents[j].x;
+				//vertex.m_Tangent[1] = aMesh->mTangents[j].y;
+				//vertex.m_Tangent[2] = aMesh->mTangents[j].z;
 			}
 
 			// Add the data into our vertex array

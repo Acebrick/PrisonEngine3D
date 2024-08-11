@@ -188,7 +188,7 @@ void main() {
 			float epsilon = (spotLights[i].cutOff - spotLights[i].outerCutOff);
 
 			// Determine the intensity of the spot light between the inner and outer cut off
-			// Defaulting anything below/outside that range to 0 (no light/intensity) and 1 (full light/intensity) respectively
+			// Defaulting anything below/above that range to 0 (no light/intensity) and 1 (full light/intensity) respectively
 			// Multiply this by the spot lights intensity in the SpotLights struct so that it can still be changed outside of the fragment shader
 			float fadeOutIntensity = clamp((theta - spotLights[i].outerCutOff) / epsilon, 0.0f, 1.0f) * spotLights[i].intensity;
 
