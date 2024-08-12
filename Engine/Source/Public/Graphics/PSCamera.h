@@ -1,5 +1,7 @@
 #pragma once
 #include "Math/PSTransform.h"
+#include "Game/PGameEngine.h"
+#include "Game/GameObjects/MyObjects/Bludgeon.h"
 
 struct PSCamera
 {
@@ -17,6 +19,8 @@ struct PSCamera
 	// Rotate the camera based on the rotation passed in
 	void Rotate(glm::vec3 rotation, glm::vec3 scale = glm::vec3(1.0f))
 	{
+		float oldYRot = transform.rotation.y;
+
 		if (glm::length(rotation) != 0.0f)
 			rotation = glm::normalize(rotation);
 
@@ -28,6 +32,15 @@ struct PSCamera
 		if (transform.rotation.x > 89.9f)
 			transform.rotation.x = 89.9f;
 
+		if (oldYRot != transform.rotation.y)
+		{
+			if (const auto& bludgeonRef = PGameEngine::GetGameEngine()->GetBludgeon().lock())
+			{
+				bludgeonRef->TranslateOffModelRotation(transform.position.x, transform.position.z, -(transform.rotation.y - oldYRot),
+						bludgeonRef->GetTransform().position.x, bludgeonRef->GetTransform().position.z);
+				bludgeonRef->GetTransform().rotation.y = transform.rotation.y;
+			}
+		}
 	}
 
 	// Translate the camera based on the translation passed in
@@ -42,6 +55,18 @@ struct PSCamera
 			moveDir = glm::normalize(moveDir);
 
 		transform.position += moveDir * scale * moveSpeed;
+
+		if (const auto& bludgeonRef = PGameEngine::GetGameEngine()->GetBludgeon().lock())
+		{
+			if (moveDir != glm::vec3(0.0f))
+			{
+				bludgeonRef->GetTransform().position.x += moveDir.x * scale.x * moveSpeed;
+				bludgeonRef->GetTransform().position.z += moveDir.z * scale.z * moveSpeed;
+			}
+		}
+
+		// Apply constraint to the movement on the y axis
+		transform.position.y = 200.0f;
 	}
 
 	// Zoom in the fov based on the amount added

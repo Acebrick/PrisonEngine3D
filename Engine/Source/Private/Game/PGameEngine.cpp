@@ -1,7 +1,12 @@
 #include "Game/PGameEngine.h"
+#include "Game/GameObjects/PWorldObject.h"
+#include "Game/GameObjects/MyObjects/Player.h"
 
-// DEBUG
-#include "Game/GameObjects/PObjectChild.h"
+// CUSTOM
+#include "Game/GameObjects/MyObjects/Throne.h"
+#include "Game/GameObjects/MyObjects/Dungeon.h"
+#include "Game/GameObjects/MyObjects/Skull.h"
+#include "Game/GameObjects/MyObjects/Bludgeon.h"
 
 PGameEngine* PGameEngine::GetGameEngine()
 {
@@ -33,6 +38,11 @@ bool PGameEngine::Run()
 void PGameEngine::DestroyObject(const TShared<PObject>& object)
 {
 	m_ObjectsPendingDestroy.push_back(object);
+}
+
+TUnique<PGraphicsEngine>& PGameEngine::GetGraphics()
+{
+	return m_Window->GetGraphics();
 }
 
 PGameEngine::PGameEngine()
@@ -92,7 +102,24 @@ void PGameEngine::Start()
 	// Register the window inputs
 	m_Window->RegisterInput(m_Input);
 
-	CreateObject<PObjectChild>().lock()->SetLifeTime(5.0f);
+	// Create world objects
+	if (const auto& throne = CreateObject<Throne>().lock())
+	{
+		throne->GetTransform().position.z = 200.0f;
+		throne->GetTransform().rotation.y = 180.0f;
+	}
+	CreateObject<Player>();
+	CreateObject<Dungeon>();
+
+	if (const auto& skull = CreateObject<Skull>().lock())
+	{
+		skull->GetTransform().position.x = 800.0f;
+		skull->GetTransform().position.y = 300.0f;
+		skull->GetTransform().position.z = 800.0f;
+		skull->GetTransform().scale = glm::vec3(50.0f);
+	}
+
+	m_Bludgeon = CreateObject<Bludgeon>();	
 }
 
 void PGameEngine::GameLoop()
@@ -146,6 +173,31 @@ void PGameEngine::Tick()
 	for (const auto& pObjectRef : m_ObjectStack)
 	{
 		pObjectRef->Tick(DeltaTimeF());
+
+		// Check the object is a world object, otherwise skip logic
+		if (const auto& woRef = std::dynamic_pointer_cast<PWorldObject>(pObjectRef))
+		{
+			// Check the object has collisions
+			if (woRef->HasCollisions())
+			{
+				// Loop through all objects to test against
+				for (const auto& otherObj : m_ObjectStack)
+				{
+					// Test if the other object is also a world object
+					if (const auto& otherWoRef = std::dynamic_pointer_cast<PWorldObject>(otherObj))
+					{
+						if (!otherWoRef->HasCollisions())
+						{
+							continue;
+						}
+
+						// If all is good, test if the collisions are overlapping
+						woRef->TestCollision(otherWoRef);
+					}
+				}
+			}
+		}
+
 		pObjectRef->PostTick(DeltaTimeF());
 	}
 }

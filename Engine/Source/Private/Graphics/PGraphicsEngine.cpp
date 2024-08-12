@@ -11,19 +11,6 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_opengl.h>
 
-// Test mesh for debug
-TWeak<PModel> m_Throne;
-TWeak<PModel> m_Dungeon;
-TWeak<PModel> m_Bludgeon;
-TWeak<PModel> m_Skull;
-TWeak<PSPointLight> m_PointLight;
-TWeak<PSPointLight> m_PointLight2;
-TWeak<PSSpotLight> m_SpotLight;
-TWeak<PSSpotLight> m_SpotLight2;
-TWeak<PSSpotLight> m_Flashlight;
-TWeak<PModel> m_Wall;
-
-const double pi = 3.14159265358979323846;
 
 const std::vector<PSVertexData> vertexData = {
 	//   x      y	   z      r     g     b       tx    ty
@@ -107,114 +94,21 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// Create the camera
 	m_Camera = TMakeShared<PSCamera>();
-	m_Camera->transform.position.y = 25.0f;
+	m_Camera->transform.position.y = 200.0f;
 	m_Camera->transform.position.z = -75.0f;
 
-	// DEBUG
-	// THRONE
-	m_Throne = ImportModel("Models/Throne/Throne.fbx");
-	m_Throne.lock()->GetTransform().position.z = 200.0f;
-	m_Throne.lock()->GetTransform().rotation.y = 180.0f;
-	// textures
-	TShared<PTexture> throneTex = TMakeShared<PTexture>();
-	TShared<PTexture> throneSpecTex = TMakeShared<PTexture>();
-	TShared<PTexture> throneNormTex = TMakeShared<PTexture>();
-	throneTex->LoadTexture("Throne base colour", "Models/Throne/textures/RustedThrone_Base_Color.png");
-	throneSpecTex->LoadTexture("Throne specular", "Models/Throne/textures/RustedThrone_Specular.png");
-	throneNormTex->LoadTexture("Throne normal", "Models/Throne/textures/RustedThrone_Normal_OpenGL.png");
-	// materials
-	TShared<PSMaterial> throneMat = TMakeShared<PSMaterial>();
-	throneMat->m_BaseColourMap = throneTex;
-	throneMat->m_SpecularMap = throneSpecTex;
-	throneMat->m_NormalMap = throneNormTex;
-	m_Throne.lock()->SetMaterialBySlot(0, throneMat);
+	//TShared<PTexture> defaultTexture = TMakeShared<PTexture>();
 
-	// DUNGEON
-	m_Dungeon = ImportModel("Models/Dungeon/modularDungeon.fbx");
-	TShared<PTexture> dungeonTex = TMakeShared<PTexture>();
-	TShared<PTexture> dungeonTex2 = TMakeShared<PTexture>();
-	TShared<PTexture> dungeonTex3 = TMakeShared<PTexture>();
-	TShared<PTexture> dungeonSpecTex = TMakeShared<PTexture>();
-	TShared<PTexture> dungeonSpecTex2 = TMakeShared<PTexture>();
-	TShared<PTexture> dungeonSpecTex3 = TMakeShared<PTexture>();
-	TShared<PTexture> dungoenNormTex = TMakeShared<PTexture>();
-	TShared<PTexture> dungoenNormTex2 = TMakeShared<PTexture>();
-	TShared<PTexture> dungoenNormTex3 = TMakeShared<PTexture>();
-	TShared<PSMaterial> dungeonMat = CreateMaterial();
-	TShared<PSMaterial> dungeonMat2 = CreateMaterial();
-	TShared<PSMaterial> dungeonMat3 = CreateMaterial();
-	dungeonTex->LoadTexture("Dungeon brick wall colour", "Models/Dungeon/textures/brickwallcolor.png");
-	dungeonTex2->LoadTexture("Dungeon floor tiles colour", "Models/Dungeon/textures/floortilesColor.png");
-	dungeonTex3->LoadTexture("Dungeon stone trim colour", "Models/Dungeon/textures/stonetrimColor.png");
-	dungeonSpecTex->LoadTexture("Dungeon brick wall specular", "Models/Dungeon/textures/brickWallSpecular.png");
-	dungeonSpecTex2->LoadTexture("Dungeon floor tiles specular", "Models/Dungeon/textures/floortilesSpecular.png");
-	dungeonSpecTex3->LoadTexture("Dungeon stone trim specular", "Models/Dungeon/textures/stonetrimSpecular.png");
-	dungoenNormTex->LoadTexture("Dungeon brick wall normal map", "Models/Dungeon/textures/brickwallNormal.png");
-	dungoenNormTex2->LoadTexture("Dungeon floor tiles normal map", "Models/Dungeon/textures/floortilesNormal.png");
-	dungoenNormTex3->LoadTexture("Dungeon stone trim normal map", "Models/Dungeon/textures/stonetrimNormal.png");
-	dungeonMat->m_BaseColourMap = dungeonTex;
-	dungeonMat->m_SpecularMap = dungeonSpecTex;
-	dungeonMat->m_NormalMap = dungoenNormTex;
-	dungeonMat->shininess = 100.0f;
-	dungeonMat->specularStrength = 0.1f;
-	dungeonMat2->m_BaseColourMap = dungeonTex2;
-	dungeonMat2->m_SpecularMap = dungeonSpecTex2;
-	dungeonMat->m_NormalMap = dungoenNormTex2;
-	dungeonMat2->shininess = 100.0f;
-	dungeonMat2->specularStrength = 0.1f;
-	dungeonMat3->m_BaseColourMap = dungeonTex3;
-	dungeonMat3->m_SpecularMap = dungeonSpecTex3;
-	dungeonMat->m_NormalMap = dungoenNormTex3;
-	dungeonMat3->shininess = 100.0f;
-	dungeonMat3->specularStrength = 0.1f;
-	m_Dungeon.lock()->SetMaterialBySlot(0, dungeonMat);
-	m_Dungeon.lock()->SetMaterialBySlot(1, dungeonMat2);
-	m_Dungeon.lock()->SetMaterialBySlot(2, dungeonMat3);
+	//if (!defaultTexture->LoadTexture("Default grid", "Textures/P_DefaultGrid.png"))
+	//{
+	//	PDebug::Log("Graphics engine default texture failed to load", LT_ERROR);
+	//}
 
-	// SKULL
-	m_Skull = ImportModel("Models/Skull/scene.gltf");
-	m_Skull.lock()->GetTransform().position.x = 400.0f;
-	m_Skull.lock()->GetTransform().position.y = 70.0f;
-	m_Skull.lock()->GetTransform().position.z = 400.0f;
-	m_Skull.lock()->GetTransform().scale = glm::vec3(10.0f);
-	TShared<PTexture> skullTex = TMakeShared<PTexture>();
-	TShared<PSMaterial> skullMat = CreateMaterial();
-	TShared<PTexture> skullNormTex = TMakeShared<PTexture>();
-	skullTex->LoadTexture("Skull base colour", "Models/Skull/textures/defaultMat_baseColor.jpeg");
-	skullNormTex->LoadTexture("Skull normal", "Models/Skull/textures/defaultMat_normal.jpeg");
-	skullMat->m_BaseColourMap = skullTex;
-	skullMat->m_NormalMap = skullNormTex;
-	m_Skull.lock()->SetMaterialBySlot(0, skullMat);
+	//m_DefaultMaterial = TMakeShared<PSMaterial>();
 
-	// BLUDGEON
-	m_Bludgeon = ImportModel("Models/Bludgeon/Bludgeon.fbx");
-	m_Bludgeon.lock()->GetTransform().position.y = 70.0f;
-	m_Bludgeon.lock()->GetTransform().position.z = 30.0f;
-	m_Bludgeon.lock()->GetTransform().rotation.z = 90.0f;
-	TShared<PTexture> bludgeonTex = TMakeShared<PTexture>();
-	TShared<PTexture> bludgeonSpecTex = TMakeShared<PTexture>();
-	TShared<PTexture> bludgeonNormTex = TMakeShared<PTexture>();
-	TShared<PSMaterial> bludgeonMat = CreateMaterial();
-	bludgeonTex->LoadTexture("Bludgeon base colour", "Models/Bludgeon/textures/Bludgeon_BaseColor.png");
-	bludgeonSpecTex->LoadTexture("Bludgeon specular", "Models/Bludgeon/textures/Bludgeon_Specular.png");
-	bludgeonNormTex->LoadTexture("Bludgeon normal", "Models/Bludgeon/textures/Bludgeon_Normal.png");
-	bludgeonMat->m_BaseColourMap = bludgeonTex;
-	bludgeonMat->m_SpecularMap = bludgeonSpecTex;
-	bludgeonMat->m_NormalMap = bludgeonNormTex;
-	m_Bludgeon.lock()->SetMaterialBySlot(0, bludgeonMat);
+	//m_DefaultMaterial->m_BaseColourMap = defaultTexture;
 
-	// Create the dir light
-	const auto& dirLight = CreateDirLight();
-
-	// Check if exists as a reference and change it
-	if (const auto& lightRef = dirLight.lock())
-	{
-		lightRef->colour = glm::vec3(1.0f, 0.0f, 0.0f);
-		lightRef->intensity = 0.1f;
-		lightRef->direction = glm::vec3(0.0f, 1.0f, 0.0f);
-
-	}
-
+	/*
 	// POINT LIGHT
 	m_PointLight = CreatePointLight();
 	if (const auto& lightRef = m_PointLight.lock())
@@ -278,6 +172,20 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	//wallMat->m_BaseColourMap = wallTex;
 	//wallMat->m_NormalMap = wallNormal;
 	//m_Wall.lock()->SetMaterialBySlot(0, wallMat);
+	*/
+
+	// Create the dir light
+	const auto& dirLight = CreateDirLight();
+
+	// Check if exists as a reference and change it
+	if (const auto& lightRef = dirLight.lock())
+	{
+		lightRef->colour = glm::vec3(1.0f, 1.0f, 1.0f);
+		lightRef->intensity = 1.0f;
+		lightRef->direction = glm::vec3(0.0f, 1.0f, 0.0f);
+		lightRef->ambient = glm::vec3(0.5f);
+
+}
 
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);
@@ -293,63 +201,10 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// SKULL
-	static float skullXDir = 0.0f; // Speed on x axis
-	static float skullZDir = 0.0f; // Speed on y axis
-	static bool movingOnX = false; // Determines what direction to move
 
-	// Has the skull reached the top left corner
-	if (m_Skull.lock()->GetTransform().position.x >= 400.0f && 
-		m_Skull.lock()->GetTransform().position.z >= 400.0f) 
-	{
-		// Go to right of room
-		skullXDir = -1.0f;
-		skullZDir = 0.0f;
-		// Rotate to face moving direction
-		m_Skull.lock()->GetTransform().rotation.y = 270.0f;
-		// Set move direcion
-		movingOnX = true;
-	}
-	// Has the skull reached the top right corner 
-	else if (m_Skull.lock()->GetTransform().position.x <= -400.0f &&
-			m_Skull.lock()->GetTransform().position.z >= 400.0f)
-	{
-		// Go to back of room
-		skullXDir = 0.0f;
-		skullZDir += -1.0f;
-		// Rotate to face moving direction
-		m_Skull.lock()->GetTransform().rotation.y = 180.0f;
-		// Set move direcion
-		movingOnX = false;
-	}
-	// Has the skull reached the bottom right corner 
-	else if (m_Skull.lock()->GetTransform().position.x <= -400.0f &&
-			m_Skull.lock()->GetTransform().position.z <= -400.0f)
-	{
-		// Go to left of room
-		skullXDir += 1.0f;
-		skullZDir = 0.0f;
-		// Rotate to face moving direction
-		m_Skull.lock()->GetTransform().rotation.y = 90.0f;
-		// Set move direcion
-		movingOnX = true;
-	}
-	// Has the skull reached the bottom left corner 
-	else if (m_Skull.lock()->GetTransform().position.x >= 400.0f &&
-			m_Skull.lock()->GetTransform().position.z <= -400.0f)
-	{
-		// Go to front of room
-		skullXDir = 0.0f;
-		skullZDir += 1.0f;
-		// Rotate to face moving direction
-		m_Skull.lock()->GetTransform().rotation.y = 0.0f;
-		// Set move direcion
-		movingOnX = false;
-	}
-
-	// Translate skull
-	m_Skull.lock()->GetTransform().position.x += skullXDir;
-	m_Skull.lock()->GetTransform().position.z += skullZDir;
+	
+	/* SKULL
+	
 
 	// POINT LIGHT
 	// Lock the first point light to the skull moving around the room
@@ -424,6 +279,7 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Follow the camera's direction and position
 	m_Flashlight.lock()->position = m_Camera->transform.position;
 	m_Flashlight.lock()->direction = m_Camera->transform.Forward();
+	*/
 
 	// Activate the shader
 	m_Shader->Activate();
@@ -433,9 +289,15 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 
 	// Render custom graphics
 	// Models will update their own positions in the mesh based on the transform
-	for (const auto& modelRef : m_Models)
+	for (int i = m_Models.size() - 1; i >= 0; --i)
 	{
-		modelRef->Render(m_Shader, m_Lights);
+		// Checking if the reference still exists
+		if (const auto& modelRef = m_Models[i].lock())
+			// Render if there is a reference
+			modelRef->Render(m_Shader, m_Lights);
+		else
+			// Erasing from the array if there is no reference
+			m_Models.erase(m_Models.begin() + i);
 	} 
 
 	// Presented the frame to the window
@@ -467,10 +329,10 @@ TWeak<PSSpotLight> PGraphicsEngine::CreateSpotLight()
 	return newLight;
 }
 
-TWeak<PModel> PGraphicsEngine::ImportModel(const PString& path)
+TShared<PModel> PGraphicsEngine::ImportModel(const PString& path)
 {
 	const auto& newModel = TMakeShared<PModel>();
-	newModel->ImportModel(path);
+	newModel->ImportModel(path, m_DefaultMaterial);
 	m_Models.push_back(newModel);
 	return newModel;
 }
@@ -480,29 +342,8 @@ TShared<PSMaterial> PGraphicsEngine::CreateMaterial()
 	return TMakeShared<PSMaterial>();
 }
 
-void PGraphicsEngine::TranslateOffModelRotation(float pointX, float pointZ, float degrees, float &objectX, float &objectZ)
-{
-	float newX = 0.0f;
-	float newZ = 0.0f;
 
-	float finalX = 0.0f;
-	float finalZ = 0.0f;
-
-	float radians = degrees * pi / 180;
-
-	// Translate
-	newX = objectX - pointX;
-	newZ = objectZ - pointZ;
-
-	// Rotate
-	finalX = (newX * cos(radians)) - (newZ * sin(radians));
-	finalZ = (newX * sin(radians)) + (newZ * cos(radians));
-
-	// Translate to final point
-	objectX = finalX + pointX;
-	objectZ = finalZ + pointZ;
-}
-
+/*
 void PGraphicsEngine::ToggleFlashlight()
 {
 	if (m_Flashlight.lock()->intensity > 0)
@@ -618,3 +459,4 @@ void PGraphicsEngine::DecreaseFlashlightIntensity()
 {
 	m_Flashlight.lock()->intensity -= 0.1f;
 }
+*/

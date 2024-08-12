@@ -2,7 +2,7 @@
 #include "EngineTypes.h"
 #include "Game/PGameEngine.h"
 
-				// Can use shared_from_this() as replacement for this keyword for shared pointers
+				// Can use shared_from_this() as replacement for "this" keyword for shared pointers
 class PObject : public std::enable_shared_from_this<PObject>
 {
 public:

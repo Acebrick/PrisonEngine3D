@@ -99,6 +99,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ExternalLibs\Includes\STB_IMAGE\stb_image.cpp" />
+    <ClCompile Include="Source\Private\Game\GameObjects\MyObjects\Bludgeon.cpp" />
+    <ClCompile Include="Source\Private\Game\GameObjects\MyObjects\Player.cpp" />
+    <ClCompile Include="Source\Private\Game\GameObjects\MyObjects\Skull.cpp" />
     <ClCompile Include="Source\Private\Game\GameObjects\PObject.cpp" />
     <ClCompile Include="Source\Private\Game\PGameEngine.cpp" />
     <ClCompile Include="Source\Private\Graphics\PGraphicsEngine.cpp" />
@@ -108,18 +111,28 @@
     <ClCompile Include="Source\Private\Listeners\PInput.cpp" />
     <ClCompile Include="Source\Private\PWindow.cpp" />
     <ClCompile Include="Source\Private\Graphics\PTexture.cpp" />
+    <ClCompile Include="Source\Private\Game\GameObjects\PWorldObject.cpp" />
+    <ClCompile Include="Source\Private\Game\GameObjects\MyObjects\Throne.cpp" />
+    <ClCompile Include="Source\Private\Game\GameObjects\MyObjects\Dungeon.cpp" />
     <ClCompile Include="Source\Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ExternalLibs\Includes\STB_IMAGE\stb_image.h" />
+    <ClInclude Include="Source\Public\Game\GameObjects\MyObjects\Bludgeon.h" />
+    <ClInclude Include="Source\Public\Game\GameObjects\MyObjects\Dungeon.h" />
+    <ClInclude Include="Source\Public\Game\GameObjects\MyObjects\Player.h" />
+    <ClInclude Include="Source\Public\Game\GameObjects\MyObjects\Skull.h" />
+    <ClInclude Include="Source\Public\Game\GameObjects\MyObjects\Throne.h" />
     <ClInclude Include="Source\Public\Game\GameObjects\PObject.h" />
-    <ClInclude Include="Source\Public\Game\GameObjects\PObjectChild.h" />
+    <ClInclude Include="Source\Public\Game\GameObjects\PWorldObject.h" />
     <ClInclude Include="Source\Public\Game\PGameEngine.h" />
     <ClInclude Include="Source\Public\Graphics\PSCamera.h" />
     <ClInclude Include="Source\Public\Graphics\PSLight.h" />
     <ClInclude Include="Source\Public\Graphics\PSMaterial.h" />
     <ClInclude Include="Source\Public\Listeners\PInput.h" />
     <ClInclude Include="Source\Public\Listeners\PEvents.h" />
+    <ClInclude Include="Source\Public\Math\PSBox.h" />
+    <ClInclude Include="Source\Public\Math\PSCollision.h" />
     <ClInclude Include="Source\Public\Math\PSTransform.h" />
     <ClInclude Include="Source\Public\Debug\PDebug.h" />
     <ClInclude Include="Source\Public\EngineTypes.h" />

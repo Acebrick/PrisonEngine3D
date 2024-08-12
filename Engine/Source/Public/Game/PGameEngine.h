@@ -7,6 +7,7 @@
 #include <SDL/SDL.h>
 
 class PObject;
+class Bludgeon;
 
 class PGameEngine 
 {
@@ -42,6 +43,11 @@ public:
 	// Mark an object for destroy
 	// All game objects destroy functions will automatically run this
 	void DestroyObject(const TShared<PObject>& object);
+
+	// Get the graphics engine for the game
+	TUnique<PGraphicsEngine>& GetGraphics();
+
+	TWeak<Bludgeon> GetBludgeon() { return m_Bludgeon; }
 
 private:
 	// Constructor and destructor are private to ensure we can only have 1 game engine
@@ -96,4 +102,7 @@ private:
 
 	// Store all objects that have been marked for destroy
 	TArray<TShared<PObject>> m_ObjectsPendingDestroy;
+
+	// Store the bludgeon (not ideal but just an easy way for inputs without having to dynamic_cast through objectStack)
+	TWeak<Bludgeon> m_Bludgeon;
 };

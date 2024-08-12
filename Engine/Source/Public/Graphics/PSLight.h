@@ -20,7 +20,7 @@ struct PSDirLight : public PSLight
 {
 	PSDirLight()
 	{
-		ambient = glm::vec3(0.01f);
+		ambient = glm::vec3(0.1f);
 		direction = glm::vec3(0.0f);
 	}
 

@@ -11,6 +11,7 @@ struct PSPointLight;
 struct PSDirLight;
 class PModel;
 struct PSSpotLight;
+class Bludgeon;
 
 class PGraphicsEngine
 {
@@ -37,12 +38,10 @@ public:
 	TWeak<PSSpotLight> CreateSpotLight();
 
 	// Import a model and return a weak pointer
-	TWeak<PModel> ImportModel(const PString& path);
+	TShared<PModel> ImportModel(const PString& path);
 
 	// Create a material for the engine
 	TShared<PSMaterial> CreateMaterial();
-
-	void TranslateOffModelRotation(float pointX, float pointZ, float degrees, float &objectX, float &objectZ);
 
 	void ToggleFlashlight();
 
@@ -83,5 +82,8 @@ private:
 	TArray<TShared<PSLight>> m_Lights;
 
 	// Stores all of the models in the engine
-	TArray<TShared<PModel>> m_Models;
+	TArray<TWeak<PModel>> m_Models;
+
+	// Default material for all models
+	TShared<PSMaterial> m_DefaultMaterial;	
 };

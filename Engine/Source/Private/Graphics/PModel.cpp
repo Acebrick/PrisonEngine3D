@@ -6,7 +6,7 @@
 #include <ASSIMP/postprocess.h>
 #include <ASSIMP/mesh.h>
 
-void PModel::ImportModel(const PString& filePath)
+void PModel::ImportModel(const PString& filePath, const TShared<PSMaterial>& defaultMaterial)
 {
 	// Create an assimp importer
 	Assimp::Importer importer;
@@ -49,6 +49,12 @@ void PModel::ImportModel(const PString& filePath)
 	// Set the material stack size to the amount of materials on the model
 	m_MaterialsStack.resize(scene->mNumMaterials);
 
+	// Set all materials to the dewfault material
+	for (auto& materialRef : m_MaterialsStack)
+	{
+		materialRef = defaultMaterial;
+	}
+
 	// Log the successful import of the model
 	PDebug::Log("Model successfully imported with (" + std::to_string(meshesCreated) + ") meshes: " +  filePath, LT_SUCCESS);
 }
@@ -57,7 +63,7 @@ void PModel::Render(const TShared<PShaderProgram>& shader, const TArray<TShared<
 {
 	for (const auto& mesh : m_MeshStack)
 	{
-		mesh->Render(shader, m_Transform, lights, m_MaterialsStack[mesh->materialIndex]);
+		mesh->Render(shader, m_Transform + m_Offset, lights, m_MaterialsStack[mesh->materialIndex]);
 	}
 }
 

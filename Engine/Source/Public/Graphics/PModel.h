@@ -21,7 +21,7 @@ public:
 
 	// Import a 3D model from file
 	// Uses the ASSIMP import library, check docs to know file types accepted
-	void ImportModel(const PString& filePath);
+	void ImportModel(const PString& filePath, const TShared<PSMaterial>& defaultMaterial);
 
 	// Render all of the meshes within the model
 	// Transform of mesges will be based on the models transform
@@ -32,6 +32,9 @@ public:
 
 	// Set a material by the slot number
 	void SetMaterialBySlot(unsigned int slot, const TShared<PSMaterial>& material);
+
+	// Transform offset
+	PSTransform m_Offset;
 	
 private:
 	// Array of meshes
