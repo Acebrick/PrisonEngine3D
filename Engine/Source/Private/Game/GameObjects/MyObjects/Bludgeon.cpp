@@ -8,13 +8,13 @@
 Bludgeon::Bludgeon()
 {
 	m_BludgeonOffset = glm::vec3(-25.0f, 0.0f, 50.0f);
-	isSwinging = false;
+	m_IsSwinging = false;
+	m_SwingTime = 1.0f;
 }
 
-void Bludgeon::SwingBludgeon()
+void Bludgeon::ToggleIsSwinging()
 {
-	if (!isSwinging)
-		isSwinging = true;
+	m_IsSwinging = true;
 }
 
 void Bludgeon::OnStart()
@@ -32,7 +32,7 @@ void Bludgeon::OnStart()
 		bludgeonMat->m_SpecularMap = bludgeonSpecTex;
 		bludgeonMat->m_NormalMap = bludgeonNormTex;
 		modelRef->SetMaterialBySlot(0, bludgeonMat);
-		modelRef->GetTransform().scale = glm::vec3(0.25f);
+		modelRef->GetTransform().scale = glm::vec3(2.0f);
 		GetTransform().position = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock()->transform.position + m_BludgeonOffset;
 	}
 }
@@ -41,9 +41,33 @@ void Bludgeon::OnTick(float deltaTime)
 {
 	if (const auto& camRef = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock())
 	{
+		if (!m_IsSwinging)
+		{
+			GetTransform().position.y = camRef->transform.position.y;
+			GetTransform().rotation.x = 0.0f;
+			GetTransform().rotation.z = 0.0f;
+			m_StopSwingingTime = m_LifeTimeTimer + m_SwingTime;
+		}
+		
+		else
+		{		
+			if (m_StopSwingingTime >= m_LifeTimeTimer)
+			{
+				GetTransform().position.y = camRef->transform.position.y - 50.0f;
 
+				if (camRef->transform.Forward().z >= 0)
+				{
+					GetTransform().rotation.x = 90.0f;
+					GetTransform().rotation.z = 90.0f * -camRef->transform.Forward().x;
+				}
+				else
+				{
+					GetTransform().rotation.x = -90.0f;
+					GetTransform().rotation.z = 90.0f * -camRef->transform.Forward().x;
+				}
+			}
+			else
+				m_IsSwinging = false;
+		}
 	}
-
-
-	
 }

@@ -7,6 +7,7 @@
 #include "Game/GameObjects/MyObjects/Dungeon.h"
 #include "Game/GameObjects/MyObjects/Skull.h"
 #include "Game/GameObjects/MyObjects/Bludgeon.h"
+#include "Game/GameObjects/MyObjects/Torch.h"
 
 PGameEngine* PGameEngine::GetGameEngine()
 {
@@ -120,6 +121,20 @@ void PGameEngine::Start()
 	}
 
 	m_Bludgeon = CreateObject<Bludgeon>();	
+	
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = -410.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = -330.0f;
+	}
+
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = 410.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = -330.0f;
+	}
 }
 
 void PGameEngine::GameLoop()

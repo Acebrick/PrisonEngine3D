@@ -27,7 +27,6 @@ void Throne::OnStart()
 		modelRef->SetMaterialBySlot(0, throneMat);
 	}
 	AddCollision({ GetTransform().position, glm::vec3(130.0f, 205.0f, 100.0f) });
-	//SetLifeTime(5.0f);
 }
 
 void Throne::OnTick(float deltaTime)

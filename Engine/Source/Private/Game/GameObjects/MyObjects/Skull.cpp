@@ -4,6 +4,7 @@
 #include "Graphics/PModel.h"
 #include "Graphics/PGraphicsEngine.h"
 #include "Graphics/PSLight.h"
+#include "Graphics/PSCamera.h"
 
 Skull::Skull()
 {
@@ -25,23 +26,17 @@ void Skull::OnStart()
 	}
 
 	// Create lights
-	m_LeftEye = PGameEngine::GetGameEngine()->GetGraphics()->CreateSpotLight();
-	m_RightEye = PGameEngine::GetGameEngine()->GetGraphics()->CreateSpotLight();
+	m_Eye = PGameEngine::GetGameEngine()->GetGraphics()->CreateSpotLight();
 	m_HoverLight = PGameEngine::GetGameEngine()->GetGraphics()->CreatePointLight();
 
 	// Set the light values
-	if (const auto& leftEye = m_LeftEye.lock())
+	if (const auto& eye = m_Eye.lock())
 	{
-		if (const auto& rightEye = m_RightEye.lock())
-		{
-			rightEye->colour = leftEye->colour = glm::vec3(0.0f, 1.0f, 0.0f);
-			leftEye->SetInnerCutOff(3.5f);
-			rightEye->SetInnerCutOff(3.5f);	
-			leftEye->SetOuterCutOff(5.0f);
-			rightEye->SetOuterCutOff(5.0f);
-			rightEye->linear = leftEye->linear = 0.00014f;
-			rightEye->quadratic = leftEye->quadratic = 0.00000007f;
-		}
+			eye->colour = glm::vec3(0.0f, 1.0f, 0.0f);
+			eye->SetInnerCutOff(5.0f);
+			eye->SetOuterCutOff(10.0f);
+			eye->linear = 0.00014f;
+			eye->quadratic = 0.00000007f;
 	}
 	if (const auto& hoverLight = m_HoverLight.lock())
 	{
@@ -54,7 +49,46 @@ void Skull::OnStart()
 void Skull::OnTick(float deltaTime)
 {
 	PWorldObject::OnTick(deltaTime);
-	
+
+	if (const auto& hoverLight = m_HoverLight.lock())
+	{
+		hoverLight->position = GetTransform().position + m_HoverLightOffset;
+	}
+
+	if (const auto& eye = m_Eye.lock())
+	{
+		eye->position = GetTransform().position;
+		eye->direction = GetTransform().Forward();
+	}
+
+	if (const auto& camRef = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock())
+	{
+		// Check if the distance between the skull and the player is less than 800
+		if (glm::distance(GetTransform().position, camRef->transform.position) < 400.0f)
+		{
+			m_Eye.lock()->colour = m_HoverLight.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
+
+			// Chase the player
+			glm::vec3 distance = GetTransform().position - camRef->transform.position;
+			GetTransform().position.x -= glm::normalize(distance).x * movementSpeed * deltaTime;
+			GetTransform().position.z -= glm::normalize(distance).z * movementSpeed * deltaTime;
+
+			if ((glm::normalize(distance).x > 0 && (glm::normalize(distance).z > 0) || (glm::normalize(distance).x > 0 && glm::normalize(distance).z < 0)))
+			{
+				GetTransform().rotation.y = -(glm::normalize(distance).z * 90.0f + 90.0f);
+			}
+			else
+				GetTransform().rotation.y = (glm::normalize(distance).z * 90.0f + 90.0f);
+		}
+		else
+		{
+			PatrolSquare(deltaTime);
+		}
+	}
+}
+
+void Skull::PatrolSquare(float deltaTime)
+{
 	// Has the skull reached the top left corner
 	if (GetTransform().position.x >= 800.0f &&
 		GetTransform().position.z >= 800.0f)
@@ -64,8 +98,6 @@ void Skull::OnTick(float deltaTime)
 		skullZDir = 0.0f;
 		// Rotate to face moving direction
 		GetTransform().rotation.y = 270.0f;
-		// Set move direcion
-		movingOnX = true;
 	}
 	// Has the skull reached the top right corner 
 	else if (GetTransform().position.x <= -800.0f &&
@@ -76,8 +108,6 @@ void Skull::OnTick(float deltaTime)
 		skullZDir += -1.0f;
 		// Rotate to face moving direction
 		GetTransform().rotation.y = 180.0f;
-		// Set move direcion
-		movingOnX = false;
 	}
 	// Has the skull reached the bottom right corner 
 	else if (GetTransform().position.x <= -800.0f &&
@@ -88,8 +118,6 @@ void Skull::OnTick(float deltaTime)
 		skullZDir = 0.0f;
 		// Rotate to face moving direction
 		GetTransform().rotation.y = 90.0f;
-		// Set move direcion
-		movingOnX = true;
 	}
 	// Has the skull reached the bottom left corner 
 	else if (GetTransform().position.x >= 800.0f &&
@@ -100,59 +128,17 @@ void Skull::OnTick(float deltaTime)
 		skullZDir += 1.0f;
 		// Rotate to face moving direction
 		GetTransform().rotation.y = 0.0f;
-		// Set move direcion
-		movingOnX = false;
 	}
 
 	// Translate skull
 	GetTransform().position.x += skullXDir * movementSpeed * deltaTime;
 	GetTransform().position.z += skullZDir * movementSpeed * deltaTime;
+
 	
-	if (const auto& hoverLight = m_HoverLight.lock())
-	{
-		hoverLight->position = GetTransform().position + m_HoverLightOffset;
-	}
-
-	if (const auto& leftEye = m_LeftEye.lock())
-	{
-		if (const auto& rightEye = m_RightEye.lock())
-		{
-			if (movingOnX)
-			{
-				leftEye->position.x = GetTransform().position.x;
-				leftEye->position.y = GetTransform().position.y + 1;
-				leftEye->position.z = GetTransform().position.z - 3;
-				leftEye->direction.x = GetTransform().Forward().x;
-				leftEye->direction.y = GetTransform().Forward().y;
-				leftEye->direction.z = GetTransform().Forward().z - 0.03f;
-				rightEye->position.x = GetTransform().position.x;
-				rightEye->position.y = GetTransform().position.y + 1;
-				rightEye->position.z = GetTransform().position.z + 3;
-				rightEye->direction.x = GetTransform().Forward().x;
-				rightEye->direction.y = GetTransform().Forward().y;
-				rightEye->direction.z = GetTransform().Forward().z + 0.03f;
-			}
-			else
-			{
-				leftEye->position.x = GetTransform().position.x - 3;
-				leftEye->position.y = GetTransform().position.y + 1;
-				leftEye->position.z = GetTransform().position.z;
-				leftEye->direction.x = GetTransform().Forward().x - 0.03f;
-				leftEye->direction.y = GetTransform().Forward().y;
-				leftEye->direction.z = GetTransform().Forward().z;
-				rightEye->position.x = GetTransform().position.x + 3;
-				rightEye->position.y = GetTransform().position.y + 1;
-				rightEye->position.z = GetTransform().position.z;
-				rightEye->direction.x = GetTransform().Forward().x + 0.03f;
-				rightEye->direction.y = GetTransform().Forward().y;
-				rightEye->direction.z = GetTransform().Forward().z;
-			}
-		}
-	}
-
-	//GetTransform().position.x += 1.0f * deltaTime;
 }
 
-void Skull::CircleRoom()
+void Skull::ChasePlayer(float deltaTime)
 {
+
+
 }

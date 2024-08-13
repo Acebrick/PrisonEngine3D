@@ -59,6 +59,10 @@ uniform SpotLight spotLights[NUM_SPOT_LIGHTS];
 out vec4 finalColour;
 
 void main() {
+	// Don't render any fragments with less than 0.1 transparency, not working??
+	if (texture(material.baseColourMap, fTexCoords).a < 0.1f)
+		discard;
+
 	// final colour result for the vertex
 	vec3 result = vec3(0.0f);
 
@@ -71,7 +75,7 @@ void main() {
 	// Get the view direction
 	vec3 viewDir = normalize(fViewPos - fVertPos);
 
-																	// NORMAL MAPPING ATTEMPT
+														// NORMAL MAPPING ATTEMPT
 	// Normal map value
 	vec3 normalColour = texture(material.normalMap, fTexCoords).rgb;
 	
@@ -109,7 +113,7 @@ void main() {
 
 		// Ambient algorithm
 		// Minimum light value
-		vec3 ambientLight = baseColour * dirLights[i].ambient;
+		vec3 ambientLight = baseColour.rgb * dirLights[i].ambient;
 
 		// Light colour algorithm
 		// Adjusts how much colour you can see based on the normal direction
@@ -235,5 +239,8 @@ void main() {
 		}
 	}
 
+
 	finalColour = vec4(result, 1.0f);
+
+	
 }

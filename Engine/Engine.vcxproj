@@ -102,6 +102,7 @@
     <ClCompile Include="Source\Private\Game\GameObjects\MyObjects\Bludgeon.cpp" />
     <ClCompile Include="Source\Private\Game\GameObjects\MyObjects\Player.cpp" />
     <ClCompile Include="Source\Private\Game\GameObjects\MyObjects\Skull.cpp" />
+    <ClCompile Include="Source\Private\Game\GameObjects\MyObjects\Torch.cpp" />
     <ClCompile Include="Source\Private\Game\GameObjects\PObject.cpp" />
     <ClCompile Include="Source\Private\Game\PGameEngine.cpp" />
     <ClCompile Include="Source\Private\Graphics\PGraphicsEngine.cpp" />
@@ -123,6 +124,7 @@
     <ClInclude Include="Source\Public\Game\GameObjects\MyObjects\Player.h" />
     <ClInclude Include="Source\Public\Game\GameObjects\MyObjects\Skull.h" />
     <ClInclude Include="Source\Public\Game\GameObjects\MyObjects\Throne.h" />
+    <ClInclude Include="Source\Public\Game\GameObjects\MyObjects\Torch.h" />
     <ClInclude Include="Source\Public\Game\GameObjects\PObject.h" />
     <ClInclude Include="Source\Public\Game\GameObjects\PWorldObject.h" />
     <ClInclude Include="Source\Public\Game\PGameEngine.h" />

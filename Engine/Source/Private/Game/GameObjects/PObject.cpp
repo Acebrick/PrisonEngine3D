@@ -3,7 +3,6 @@
 PObject::PObject()
 {
 	m_PendingDestroy = false;
-	m_LifeTime = 0.0f;
 	m_LifeTimeTimer = 0.0f;
 
 	PDebug::Log("PObject created");
@@ -23,15 +22,7 @@ void PObject::Tick(float deltaTime)
 {
 	OnTick(deltaTime);
 
-	if (m_LifeTime > 0.0f)
-	{
-		// Countdown the lifetime timer
-		m_LifeTimeTimer -= deltaTime;
-
-		// When the timer hits 0 destroy the object
-		if (m_LifeTimeTimer <= 0.0f)
-			Destroy();
-	}
+	m_LifeTimeTimer += deltaTime;
 }
 
 void PObject::PostTick(float deltaTime)

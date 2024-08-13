@@ -108,56 +108,14 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	//m_DefaultMaterial->m_BaseColourMap = defaultTexture;
 
-	/*
-	// POINT LIGHT
-	m_PointLight = CreatePointLight();
-	if (const auto& lightRef = m_PointLight.lock())
-	{
-		m_PointLight.lock()->colour = glm::vec3(1.0f, 0.5f, 0.0f);
-		m_PointLight.lock()->linear = 0.007f;
-		m_PointLight.lock()->quadratic = 0.0002f;
-	}
-
-	// POINT LIGHT 2
-	m_PointLight2 = CreatePointLight();
-	if (const auto& lightRef = m_PointLight2.lock())
-	{
-		m_PointLight2.lock()->position.x = 40.0f;
-		m_PointLight2.lock()->position.y = 70.0f;
-		m_PointLight2.lock()->position.z = 115.0f;
-		m_PointLight2.lock()->colour = glm::vec3(1.0f, 0.0f, 1.0f);
-		m_PointLight2.lock()->linear = 0.007f;
-		m_PointLight2.lock()->quadratic = 0.0002f;
-	}
-
-	// SPOT LIGHT
-	m_SpotLight = CreateSpotLight();
-	if (const auto& lightRef = m_SpotLight.lock())
-	{
-		m_SpotLight.lock()->SetInnerCutOff(3.5f);
-		m_SpotLight.lock()->SetOuterCutOff(7.5f);
-		m_SpotLight.lock()->colour = glm::vec3(0.0f, 1.0f, 0.0f);
-		m_SpotLight.lock()->linear = 0.0014f;
-		m_SpotLight.lock()->quadratic = 0.000007f;
-	}
-	// SPOT LIGHT 2
-	m_SpotLight2 = CreateSpotLight();
-	if (const auto& lightRef = m_SpotLight2.lock())
-	{
-		m_SpotLight2.lock()->SetInnerCutOff(3.5f);
-		m_SpotLight2.lock()->SetOuterCutOff(7.5f);
-		m_SpotLight2.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
-		m_SpotLight2.lock()->linear = 0.0014f;
-		m_SpotLight2.lock()->quadratic = 0.000007f;
-	}
 	
 	// FLASHLIGHT
-	m_Flashlight = CreateSpotLight();
-	if (const auto& lightRef = m_Flashlight.lock())
-	{
-		m_Flashlight.lock()->linear = 0.0014f;
-		m_Flashlight.lock()->quadratic = 0.000007f;
-	}
+	//m_Flashlight = CreateSpotLight();
+	//if (const auto& lightRef = m_Flashlight.lock())
+	//{
+	//	m_Flashlight.lock()->linear = 0.0014f;
+	//	m_Flashlight.lock()->quadratic = 0.000007f;
+	//}
 
 	// NORMAL MAPPING TEST MODEL
 	//m_Wall = ImportModel("Models/Wall/scene.gltf");
@@ -172,7 +130,6 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	//wallMat->m_BaseColourMap = wallTex;
 	//wallMat->m_NormalMap = wallNormal;
 	//m_Wall.lock()->SetMaterialBySlot(0, wallMat);
-	*/
 
 	// Create the dir light
 	const auto& dirLight = CreateDirLight();
@@ -183,9 +140,9 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 		lightRef->colour = glm::vec3(1.0f, 1.0f, 1.0f);
 		lightRef->intensity = 1.0f;
 		lightRef->direction = glm::vec3(0.0f, 1.0f, 0.0f);
-		lightRef->ambient = glm::vec3(0.5f);
+		lightRef->ambient = glm::vec3(0.1f);
 
-}
+	}
 
 	// Log the success of the graphics engine
 	PDebug::Log("Successfully initialised graphics engine", LT_SUCCESS);

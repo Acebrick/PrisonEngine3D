@@ -24,7 +24,7 @@ void Player::OnTick(float deltaTime)
 		GetTransform().position = camRef->transform.position;
 	}
 
-	/*PDebug::Log("X: " + std::to_string(GetTransform().position.x) + 
-				"Y: " + std::to_string(GetTransform().position.y) + 
-				"Z: " + std::to_string(GetTransform().position.z));*/
+	//PDebug::Log("X: " + std::to_string(GetTransform().position.x) + 
+	//			"Y: " + std::to_string(GetTransform().position.y) + 
+	//			"Z: " + std::to_string(GetTransform().position.z));
 }

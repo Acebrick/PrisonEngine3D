@@ -15,11 +15,13 @@ protected:
 	void OnTick(float deltaTime) override;
 
 private:
-	void CircleRoom();
+	void PatrolSquare(float deltaTime);
+
+	void ChasePlayer(float deltaTime);
 
 	// Variables for skulls circling room
 	// TO DO: CLEAN THIS UP IF TIME PERMITS, NOT IMPORTANT
-	float skullXDir = -1.0f; // Speed on x axis
+	float skullXDir = 1.0f; // Speed on x axis
 	float skullZDir = 0.0f; // Speed on y axis
 	bool movingOnX = false; // Determines what direction to move
 
@@ -28,8 +30,7 @@ private:
 	bool isPatrolling = true;
 
 	// Lights attached to the skull
-	TWeak<PSSpotLight> m_LeftEye;
-	TWeak<PSSpotLight> m_RightEye;
+	TWeak<PSSpotLight> m_Eye;
 	TWeak<PSPointLight> m_HoverLight;
 
 	// Offsets for lights attached to the skull

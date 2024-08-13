@@ -193,7 +193,7 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 			{
 				if (const auto& bludgeonRef = PGameEngine::GetGameEngine()->GetBludgeon().lock())
 				{
-					bludgeonRef->SwingBludgeon();
+					bludgeonRef->ToggleIsSwinging();
 				}
 			}
 		});

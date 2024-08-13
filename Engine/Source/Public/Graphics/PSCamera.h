@@ -36,9 +36,8 @@ struct PSCamera
 		{
 			if (const auto& bludgeonRef = PGameEngine::GetGameEngine()->GetBludgeon().lock())
 			{
-				bludgeonRef->TranslateOffModelRotation(transform.position.x, transform.position.z, -(transform.rotation.y - oldYRot),
+					bludgeonRef->TranslateOffModelRotation(transform.position.x, transform.position.z, -(transform.rotation.y - oldYRot),
 						bludgeonRef->GetTransform().position.x, bludgeonRef->GetTransform().position.z);
-				bludgeonRef->GetTransform().rotation.y = transform.rotation.y;
 			}
 		}
 	}
@@ -65,8 +64,12 @@ struct PSCamera
 			}
 		}
 
+		//PDebug::Log( "\tX: " + std::to_string(transform.Forward().x) +
+		//	"\tY: " + std::to_string(transform.Forward().y) +
+		//	"\tZ: " + std::to_string(transform.Forward().z));
+		
 		// Apply constraint to the movement on the y axis
-		transform.position.y = 200.0f;
+		transform.position.y = 350.0f;
 	}
 
 	// Zoom in the fov based on the amount added
