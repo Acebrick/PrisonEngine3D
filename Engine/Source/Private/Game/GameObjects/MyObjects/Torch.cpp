@@ -24,13 +24,13 @@ void Torch::OnStart()
 
 	if (const auto& lightRef = PGameEngine::GetGameEngine()->GetGraphics()->CreatePointLight().lock())
 	{
-		if (GetTransform().rotation.y == 0)
-			lightRef->position = GetTransform().position + glm::vec3(0.0f, 150.0f, 50.0f);
-		else if (GetTransform().rotation.y == 180)
-			lightRef->position = GetTransform().position + glm::vec3(0.0f, 150.0f, -50.0f);
-		else if (GetTransform().rotation.y == 90)
+		//if (GetTransform().rotation.y == 0)
+		//	lightRef->position = GetTransform().position + glm::vec3(0.0f, 150.0f, 50.0f);
+		//else if (GetTransform().rotation.y == 180)
+		//	lightRef->position = GetTransform().position + glm::vec3(0.0f, 150.0f, -50.0f);
+		if (GetTransform().rotation.y == 90)
 			lightRef->position = GetTransform().position + glm::vec3(50.0f, 150.0f, 0.0f);
-		else if (GetTransform().rotation.y == 270)
+		else if (GetTransform().rotation.y == -90)
 			lightRef->position = GetTransform().position + glm::vec3(-50.0f, 150.0f, 0.0f);
 
 		lightRef->colour = glm::vec3(1.0f, 0.5f, 0.0f);

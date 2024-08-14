@@ -104,36 +104,135 @@ void PGameEngine::Start()
 	m_Window->RegisterInput(m_Input);
 
 	// Create world objects
-	if (const auto& throne = CreateObject<Throne>().lock())
-	{
-		throne->GetTransform().position.z = 200.0f;
-		throne->GetTransform().rotation.y = 180.0f;
-	}
+	
 	CreateObject<Player>();
 	CreateObject<Dungeon>();
 
-	if (const auto& skull = CreateObject<Skull>().lock())
-	{
-		skull->GetTransform().position.x = 800.0f;
-		skull->GetTransform().position.y = 300.0f;
-		skull->GetTransform().position.z = 800.0f;
-		skull->GetTransform().scale = glm::vec3(50.0f);
-	}
+	//if (const auto& skull = CreateObject<Skull>().lock())
+	//{
+	//	skull->GetTransform().position.x = 800.0f;
+	//	skull->GetTransform().position.y = 300.0f;
+	//	skull->GetTransform().position.z = 800.0f;
+	//	skull->GetTransform().scale = glm::vec3(50.0f);
+	//}
 
 	m_Bludgeon = CreateObject<Bludgeon>();	
 	
+	// SECOND LAST ROOM - 0,0,0 COORDS
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
-		torchRef->GetTransform().position.x = -410.0f;
+		torchRef->GetTransform().position.x = -330.0f;
 		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = -330.0f;
+		torchRef->GetTransform().position.z = -400.0f;
+		torchRef->GetTransform().rotation.y = 90.0f;
+	}
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = 330.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = -400.0f;
+		torchRef->GetTransform().rotation.y = -90.0f;
+	}
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = -330.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = 400.0f;
+		torchRef->GetTransform().rotation.y = 90.0f;
+	}
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = 330.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = 400.0f;
+		torchRef->GetTransform().rotation.y = -90.0f;
+	}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 410.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = -320.0f;
+	//}
+
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 410.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = 320.0f;
+	//	torchRef->GetTransform().rotation.y = 180.0f;
+	//}
+
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = -410.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = 320.0f;
+	//	torchRef->GetTransform().rotation.y = 180.0f;
+	//}
+
+	// PASSAGE TO FINAL ROOM
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = -330.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = 2395.0f;
+		torchRef->GetTransform().rotation.y = 90.0f;
+	}
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = 330.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = 2395.0f;
+		torchRef->GetTransform().rotation.y = -90.0f;
+	}
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = -330.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = 3195.0f;
+		torchRef->GetTransform().rotation.y = 90.0f;
+	}
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = 330.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = 3195.0f;
+		torchRef->GetTransform().rotation.y = -90.0f;
 	}
 
+	// FINAL ROOM
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
-		torchRef->GetTransform().position.x = 410.0f;
+		torchRef->GetTransform().position.x = -330.0f;
 		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = -330.0f;
+		torchRef->GetTransform().position.z = 5200.0f;
+		torchRef->GetTransform().rotation.y = 90.0f;
+	}
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = 330.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = 5200.0f;
+		torchRef->GetTransform().rotation.y = -90.0f;
+	}
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = -330.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = 6000.0f;
+		torchRef->GetTransform().rotation.y = 90.0f;
+	}
+	if (const auto& torchRef = CreateObject<Torch>().lock())
+	{
+		torchRef->GetTransform().position.x = 330.0f;
+		torchRef->GetTransform().position.y = 200.0f;
+		torchRef->GetTransform().position.z = 6000.0f;
+		torchRef->GetTransform().rotation.y = -90.0f;
+	}
+	if (const auto& throne = CreateObject<Throne>().lock())
+	{
+		throne->GetTransform().position.z = 6500.0f;
+		throne->GetTransform().rotation.y = 180.0f;
 	}
 }
 

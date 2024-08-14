@@ -12,7 +12,7 @@ struct PSCamera
 		aspectRatio = 1.0f;
 		nearClip = 0.01f;
 		farClip = 10000.0f;
-		moveSpeed = 4.0f;
+		moveSpeed = 40.0f;
 		rotationSpeed = 1.5f;
 	}
 
@@ -63,7 +63,9 @@ struct PSCamera
 				bludgeonRef->GetTransform().position.z += moveDir.z * scale.z * moveSpeed;
 			}
 		}
-
+		PDebug::Log( "\tX: " + std::to_string(transform.position.x) +
+			"\tY: " + std::to_string(transform.position.y) +
+			"\tZ: " + std::to_string(transform.position.z));
 		//PDebug::Log( "\tX: " + std::to_string(transform.Forward().x) +
 		//	"\tY: " + std::to_string(transform.Forward().y) +
 		//	"\tZ: " + std::to_string(transform.Forward().z));

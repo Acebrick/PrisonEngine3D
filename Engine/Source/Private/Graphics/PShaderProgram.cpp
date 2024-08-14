@@ -18,7 +18,7 @@
 
 // Constant value for light amounts
 const PUi32 maxDirLights = 2;
-const PUi32 maxPointLights = 20;
+const PUi32 maxPointLights = 100;
 const PUi32 maxSpotLights = 20;
 
 PShaderProgram::PShaderProgram()

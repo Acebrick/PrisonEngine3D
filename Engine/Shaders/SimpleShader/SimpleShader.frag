@@ -49,7 +49,7 @@ struct SpotLight
 #define NUM_DIR_LIGHTS 1 // 1 = Number of available directional lights that can be used
 uniform DirLight dirLights[NUM_DIR_LIGHTS]; // Create a directional light array
 
-#define NUM_POINT_LIGHTS 20
+#define NUM_POINT_LIGHTS 100
 uniform PointLight pointLights[NUM_POINT_LIGHTS];
 
 #define NUM_SPOT_LIGHTS 20
