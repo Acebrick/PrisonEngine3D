@@ -23,4 +23,6 @@ private:
 	bool m_IsSwinging;
 	float m_StopSwingingTime;
 	float m_SwingTime;
+
+	TWeak<PSCollision> collisionBounds;
 };

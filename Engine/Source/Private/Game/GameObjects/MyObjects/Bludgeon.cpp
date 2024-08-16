@@ -35,6 +35,14 @@ void Bludgeon::OnStart()
 		modelRef->GetTransform().scale = glm::vec3(2.0f);
 		GetTransform().position = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock()->transform.position + m_BludgeonOffset;
 	}
+
+	collisionBounds = AddCollision({ GetTransform().position, glm::vec3(100.0f, 10.0f, 100.0f) }).lock();
+
+	if (const auto& colRef = collisionBounds.lock())
+	{
+		colRef->type = PECollisionType::NONE;
+		colRef->tag = "Bludgeon";
+	}
 }
 
 void Bludgeon::OnTick(float deltaTime)
@@ -53,21 +61,28 @@ void Bludgeon::OnTick(float deltaTime)
 		{		
 			if (m_StopSwingingTime >= m_LifeTimeTimer)
 			{
+				collisionBounds.lock()->type = PECollisionType::ALL;
+				
 				GetTransform().position.y = camRef->transform.position.y - 50.0f;
 
 				if (camRef->transform.Forward().z >= 0)
 				{
+					// Model rotation
 					GetTransform().rotation.x = 90.0f;
 					GetTransform().rotation.z = 90.0f * -camRef->transform.Forward().x;
 				}
 				else
 				{
+					// Model rotation
 					GetTransform().rotation.x = -90.0f;
 					GetTransform().rotation.z = 90.0f * -camRef->transform.Forward().x;
 				}
 			}
 			else
+			{
+				collisionBounds.lock()->type = PECollisionType::NONE;
 				m_IsSwinging = false;
+			}
 		}
 	}
 }

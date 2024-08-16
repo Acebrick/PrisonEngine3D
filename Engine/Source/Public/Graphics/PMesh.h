@@ -48,6 +48,9 @@ public:
 	void Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransform& transform, 
 		const TArray<TShared<PSLight>>& lights, const TShared<PSMaterial>& material);
 
+	// Draw a wireframe of a mesh
+	void WireRender(const TShared<PShaderProgram>& shader, const PSTransform& transform);
+
 	// Set the transform of the mesh relative to the model
 	void SetRelativeTransform(const glm::mat4& transform) { m_MatTransform = transform; }
 

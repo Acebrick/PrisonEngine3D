@@ -12,6 +12,7 @@ struct PSDirLight;
 class PModel;
 struct PSSpotLight;
 class Bludgeon;
+struct PSCollision;
 
 class PGraphicsEngine
 {
@@ -43,31 +44,34 @@ public:
 	// Create a material for the engine
 	TShared<PSMaterial> CreateMaterial();
 
-	void ToggleFlashlight();
+	// Create a collision mesh to be rendered as a wireframe
+	void CreateCollisionMesh(const TWeak<PSCollision>& col);
 
-	void IncreaseFlashlightRed();
+	//void ToggleFlashlight();
 
-	void IncreaseFlashlightGreen();
+	//void IncreaseFlashlightRed();
 
-	void IncreaseFlashlightBlue();
+	//void IncreaseFlashlightGreen();
 
-	void DecreaseFlashlightRed();
+	//void IncreaseFlashlightBlue();
 
-	void DecreaseFlashlightGreen();
+	//void DecreaseFlashlightRed();
 
-	void DecreaseFlashlightBlue();
+	//void DecreaseFlashlightGreen();
 
-	void IncreaseFlashlightInnerRadius();
+	//void DecreaseFlashlightBlue();
 
-	void IncreaseFlashlightOuterRadius();
+	//void IncreaseFlashlightInnerRadius();
 
-	void DecreaseFlashlightInnerRadius();
+	//void IncreaseFlashlightOuterRadius();
 
-	void DecreaseFlashlightOuterRadius();
+	//void DecreaseFlashlightInnerRadius();
 
-	void IncreaseFlashlightIntensity();
+	//void DecreaseFlashlightOuterRadius();
 
-	void DecreaseFlashlightIntensity();
+	//void IncreaseFlashlightIntensity();
+
+	//void DecreaseFlashlightIntensity();
 
 private:
 	// Storing memory location for open gl context
@@ -76,6 +80,9 @@ private:
 	// Store the shader for trhe engine
 	TShared<PShaderProgram> m_Shader;
 
+	// Store the wireframe shader
+	TShared<PShaderProgram> m_WireShader;
+
 	// Store the camera
 	TShared<PSCamera> m_Camera;
 
@@ -83,6 +90,8 @@ private:
 
 	// Stores all of the models in the engine
 	TArray<TWeak<PModel>> m_Models;
+
+	TArray<TWeak<PSCollision>> m_Collisions;
 
 	// Default material for all models
 	TShared<PSMaterial> m_DefaultMaterial;	

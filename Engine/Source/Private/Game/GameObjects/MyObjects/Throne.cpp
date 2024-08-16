@@ -26,7 +26,11 @@ void Throne::OnStart()
 		throneMat->m_NormalMap = throneNormTex;
 		modelRef->SetMaterialBySlot(0, throneMat);
 	}
-	AddCollision({ GetTransform().position, glm::vec3(130.0f, 205.0f, 100.0f) });
+	
+	if (const auto& colRef = AddCollision({ GetTransform().position + glm::vec3(0.0f, 150.0f, 0.0f), glm::vec3(150.0f, 350.0f, 150.0f)}, true).lock())
+	{
+		colRef->type = PECollisionType::ALL;
+	}
 }
 
 void Throne::OnTick(float deltaTime)

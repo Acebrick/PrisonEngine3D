@@ -9,6 +9,9 @@
 Skull::Skull()
 {
 	m_HoverLightOffset = glm::vec3(0.0f, -250.0f, 0.0f);
+	movementSpeed = 500.0f;
+	isPatrolling = true;
+	isAlive = true;
 }
 
 void Skull::OnStart()
@@ -23,6 +26,7 @@ void Skull::OnStart()
 		skullMat->m_BaseColourMap = skullTex;
 		skullMat->m_NormalMap = skullNormTex;
 		modelRef->SetMaterialBySlot(0, skullMat);
+		GetTransform().scale = glm::vec3(50.0f);
 	}
 
 	// Create lights
@@ -44,6 +48,11 @@ void Skull::OnStart()
 		hoverLight->linear = 0.007f;
 		hoverLight->quadratic = 0.000002f;
 	}
+
+	if (const auto& colRef = AddCollision({ GetTransform().position, GetTransform().scale}).lock())
+	{
+		colRef->type = PECollisionType::ALL;
+	}
 }
 
 void Skull::OnTick(float deltaTime)
@@ -63,27 +72,41 @@ void Skull::OnTick(float deltaTime)
 
 	if (const auto& camRef = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock())
 	{
-		// Check if the distance between the skull and the player is less than 800
-		if (glm::distance(GetTransform().position, camRef->transform.position) < 400.0f)
+		if (isPatrolling)
 		{
-			m_Eye.lock()->colour = m_HoverLight.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
-
-			// Chase the player
-			glm::vec3 distance = GetTransform().position - camRef->transform.position;
-			GetTransform().position.x -= glm::normalize(distance).x * movementSpeed * deltaTime;
-			GetTransform().position.z -= glm::normalize(distance).z * movementSpeed * deltaTime;
-
-			if ((glm::normalize(distance).x > 0 && (glm::normalize(distance).z > 0) || (glm::normalize(distance).x > 0 && glm::normalize(distance).z < 0)))
+			// Check if the distance between the skull and the player is less than 400
+			if (glm::distance(GetTransform().position, camRef->transform.position) < 400.0f)
 			{
-				GetTransform().rotation.y = -(glm::normalize(distance).z * 90.0f + 90.0f);
+				isPatrolling = false;
 			}
-			else
-				GetTransform().rotation.y = (glm::normalize(distance).z * 90.0f + 90.0f);
+
+			PatrolSquare(deltaTime);
+		}
+		else if (isAlive)
+		{
+			ChasePlayer(deltaTime);
 		}
 		else
 		{
-			PatrolSquare(deltaTime);
+			if (GetTransform().position.y >= 50.0f)
+			{
+				GetTransform().position.y -= 500.0f * deltaTime;
+				GetTransform().rotation += 500.0f * deltaTime;
+			}
+			else
+			{
+				m_Eye.lock()->intensity = 0.0f;
+				m_HoverLight.lock()->intensity = 0.0f;
+			}
 		}
+	}
+}
+
+void Skull::OnOverlap(const TShared<PWorldObject>& other, const TShared<PSCollision>& otherCol)
+{
+	if (otherCol->tag == "Bludgeon" && otherCol->type != PECollisionType::NONE)
+	{
+		isAlive = false;
 	}
 }
 
@@ -139,6 +162,20 @@ void Skull::PatrolSquare(float deltaTime)
 
 void Skull::ChasePlayer(float deltaTime)
 {
+	m_Eye.lock()->colour = m_HoverLight.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
 
+	if (const auto& camRef = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock())
+	{
+		// Chase the player
+		glm::vec3 distance = GetTransform().position - camRef->transform.position;
+		GetTransform().position.x -= glm::normalize(distance).x * movementSpeed * deltaTime;
+		GetTransform().position.z -= glm::normalize(distance).z * movementSpeed * deltaTime;
 
+		if ((glm::normalize(distance).x > 0 && (glm::normalize(distance).z > 0) || (glm::normalize(distance).x > 0 && glm::normalize(distance).z < 0)))
+		{
+			GetTransform().rotation.y = -(glm::normalize(distance).z * 90.0f + 90.0f);
+		}
+		else
+			GetTransform().rotation.y = (glm::normalize(distance).z * 90.0f + 90.0f);
+	}
 }

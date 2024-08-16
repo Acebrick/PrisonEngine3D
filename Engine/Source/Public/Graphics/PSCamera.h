@@ -12,7 +12,7 @@ struct PSCamera
 		aspectRatio = 1.0f;
 		nearClip = 0.01f;
 		farClip = 10000.0f;
-		moveSpeed = 40.0f;
+		moveSpeed = 750.0f;
 		rotationSpeed = 1.5f;
 	}
 
@@ -53,14 +53,23 @@ struct PSCamera
 		if (glm::length(moveDir) != 0.0f)
 			moveDir = glm::normalize(moveDir);
 
-		transform.position += moveDir * scale * moveSpeed;
+		glm::vec3 direction = moveDir * scale;
+
+		float deltaTime = 1.0f;
+
+		if (const auto& ge = PGameEngine::GetGameEngine())
+		{
+			deltaTime = ge->DeltaTimeF();
+		}
+
+		transform.position += direction * moveSpeed * deltaTime;
 
 		if (const auto& bludgeonRef = PGameEngine::GetGameEngine()->GetBludgeon().lock())
 		{
 			if (moveDir != glm::vec3(0.0f))
 			{
-				bludgeonRef->GetTransform().position.x += moveDir.x * scale.x * moveSpeed;
-				bludgeonRef->GetTransform().position.z += moveDir.z * scale.z * moveSpeed;
+				bludgeonRef->GetTransform().position.x += moveDir.x * scale.x * moveSpeed * deltaTime;
+				bludgeonRef->GetTransform().position.z += moveDir.z * scale.z * moveSpeed * deltaTime;
 			}
 		}
 		PDebug::Log( "\tX: " + std::to_string(transform.position.x) +
