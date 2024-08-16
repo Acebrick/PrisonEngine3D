@@ -110,7 +110,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 
 	// Create the camera
 	m_Camera = TMakeShared<PSCamera>();
-	m_Camera->transform.position = glm::vec3(5820.0f, 350.0f, -3860.0f);
+	m_Camera->transform.position = glm::vec3(5800.0f, 350.0f, -2800.0f);
 
 	//TShared<PTexture> defaultTexture = TMakeShared<PTexture>();
 

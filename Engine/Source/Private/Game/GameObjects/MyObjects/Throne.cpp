@@ -16,9 +16,9 @@ void Throne::OnStart()
 		TShared<PTexture> throneTex = TMakeShared<PTexture>();
 		TShared<PTexture> throneSpecTex = TMakeShared<PTexture>();
 		TShared<PTexture> throneNormTex = TMakeShared<PTexture>();
-		throneTex->LoadTexture("Throne base colour", "Models/Throne/textures/RustedThrone_Base_Color.png");
-		throneSpecTex->LoadTexture("Throne specular", "Models/Throne/textures/RustedThrone_Specular.png");
-		throneNormTex->LoadTexture("Throne normal", "Models/Throne/textures/RustedThrone_Normal_OpenGL.png");
+		throneTex->LoadTexture("Throne base colour", "Models/Throne/LowResTex/RustedThrone_Base_Color.png");
+		throneSpecTex->LoadTexture("Throne specular", "Models/Throne/LowResTex/RustedThrone_Specular.png");
+		throneNormTex->LoadTexture("Throne normal", "Models/Throne/LowResTex/RustedThrone_Normal_OpenGL.png");
 		// materials
 		TShared<PSMaterial> throneMat = TMakeShared<PSMaterial>();
 		throneMat->m_BaseColourMap = throneTex;
@@ -27,7 +27,7 @@ void Throne::OnStart()
 		modelRef->SetMaterialBySlot(0, throneMat);
 	}
 	
-	if (const auto& colRef = AddCollision({ GetTransform().position + glm::vec3(0.0f, 150.0f, 0.0f), glm::vec3(150.0f, 350.0f, 150.0f)}, true).lock())
+	if (const auto& colRef = AddCollision({ GetTransform().position + glm::vec3(0.0f, 150.0f, 0.0f), glm::vec3(150.0f, 350.0f, 150.0f)}).lock())
 	{
 		colRef->type = PECollisionType::ALL;
 	}
@@ -44,6 +44,6 @@ void Throne::OnOverlap(const TShared<PWorldObject>& other, const TShared<PSColli
 {
 	if (otherCol->type == PECollisionType::PLAYER)
 	{
-		PDebug::Log("Colliding with throne");
+		PDebug::Log("YOU WIN");
 	}
 }

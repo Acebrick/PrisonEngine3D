@@ -72,9 +72,9 @@ struct PSCamera
 				bludgeonRef->GetTransform().position.z += moveDir.z * scale.z * moveSpeed * deltaTime;
 			}
 		}
-		PDebug::Log( "\tX: " + std::to_string(transform.position.x) +
-			"\tY: " + std::to_string(transform.position.y) +
-			"\tZ: " + std::to_string(transform.position.z));
+		//PDebug::Log( "\tX: " + std::to_string(transform.position.x) +
+		//	"\tY: " + std::to_string(transform.position.y) +
+		//	"\tZ: " + std::to_string(transform.position.z));
 		//PDebug::Log( "\tX: " + std::to_string(transform.Forward().x) +
 		//	"\tY: " + std::to_string(transform.Forward().y) +
 		//	"\tZ: " + std::to_string(transform.Forward().z));

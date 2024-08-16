@@ -109,15 +109,16 @@ void PGameEngine::Start()
 	CreateObject<Dungeon>();
 	
 
-	if (const auto& skull = CreateObject<Skull>().lock())
-	{
-		skull->GetTransform().position.x = 0.0f;
-		skull->GetTransform().position.y = 300.0f;
-		skull->GetTransform().position.z = 800.0f;
-	}
+	
 
 	m_Bludgeon = CreateObject<Bludgeon>();	
 	// FIRST ROOM
+	if (const auto& skull = CreateObject<Skull>().lock())
+	{
+		skull->GetTransform().position = glm::vec3(5850.0f, 300.0f, 3650.0f);
+		skull->SetIsCircling();
+		skull->SetupPatrol(glm::vec3(6650.0f, 0.0f, -2000.0f), glm::vec3(0.0f), -1.0f, 0.0f);
+	}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = 5470.0f;
@@ -178,6 +179,11 @@ void PGameEngine::Start()
 	}
 
 	// PASSAGE TO SECOND ROOM
+	if (const auto& skull = CreateObject<Skull>().lock())
+	{
+		skull->GetTransform().position = glm::vec3(3000.0f, 300.0f, 0.0f);
+		skull->SetupPatrol(glm::vec3(3000.0f, 0.0f, 1100.0f), glm::vec3(3000.0f, 0.0f, -1100.0f), 0.0f, -1.0f);
+	}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = 1805.0f;
@@ -259,6 +265,18 @@ void PGameEngine::Start()
 	}
 
 	// SECOND LAST ROOM - 0,0,0 COORDS LOCATION
+	if (const auto& skull = CreateObject<Skull>().lock())
+	{
+		skull->GetTransform().position = glm::vec3(0.0f, 300.0f, 800.0f);
+		skull->SetIsCircling();
+		skull->SetupPatrol(glm::vec3(800.0f, 0.0f, 800.0f), glm::vec3(0.0f), -1.0f, 0.0f);
+	}
+	if (const auto& skull = CreateObject<Skull>().lock())
+	{
+		skull->GetTransform().position = glm::vec3(0.0f, 300.0f, -800.0f);
+		skull->SetIsCircling();
+		skull->SetupPatrol(glm::vec3(800.0f, 0.0f, 800.0f), glm::vec3(0.0f), -1.0f, 0.0f);
+	}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = -330.0f;
@@ -319,6 +337,18 @@ void PGameEngine::Start()
 	}
 
 	// FINAL ROOM
+	if (const auto& skull = CreateObject<Skull>().lock())
+	{
+		skull->GetTransform().position = glm::vec3(0.0f, 300.0f, 800.0f);
+		skull->SetIsCircling();
+		skull->SetupPatrol(glm::vec3(785.0f, 0.0f, 6395.0f), glm::vec3(0.0f), -1.0f, 0.0f);
+	}
+	if (const auto& skull = CreateObject<Skull>().lock())
+	{
+		skull->GetTransform().position = glm::vec3(0.0f, 300.0f, 4795.0f);
+		skull->SetIsCircling();
+		skull->SetupPatrol(glm::vec3(785.0f, 0.0f, 6395.0f), glm::vec3(0.0f), -1.0f, 0.0f);
+	}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = -330.0f;
