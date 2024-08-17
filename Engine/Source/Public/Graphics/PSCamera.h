@@ -12,7 +12,7 @@ struct PSCamera
 		aspectRatio = 1.0f;
 		nearClip = 0.01f;
 		farClip = 10000.0f;
-		moveSpeed = 4.0f;
+		moveSpeed = 750.0f;
 		rotationSpeed = 1.5f;
 	}
 
@@ -38,7 +38,7 @@ struct PSCamera
 			{
 				bludgeonRef->TranslateOffModelRotation(transform.position.x, transform.position.z, -(transform.rotation.y - oldYRot),
 						bludgeonRef->GetTransform().position.x, bludgeonRef->GetTransform().position.z);
-				bludgeonRef->GetTransform().rotation.y = transform.rotation.y;
+				//bludgeonRef->GetTransform().rotation.y = transform.rotation.y;
 			}
 		}
 	}
@@ -54,19 +54,28 @@ struct PSCamera
 		if (glm::length(moveDir) != 0.0f)
 			moveDir = glm::normalize(moveDir);
 
-		transform.position += moveDir * scale * moveSpeed;
+		glm::vec3 direction = moveDir * scale;
+
+		float deltaTime = 1.0f;
+
+		if (const auto& ge = PGameEngine::GetGameEngine())
+		{
+			deltaTime = ge->DeltaTimeF();
+		}
+
+		transform.position += direction * moveSpeed * deltaTime;
 
 		if (const auto& bludgeonRef = PGameEngine::GetGameEngine()->GetBludgeon().lock())
 		{
 			if (moveDir != glm::vec3(0.0f))
 			{
-				bludgeonRef->GetTransform().position.x += moveDir.x * scale.x * moveSpeed;
-				bludgeonRef->GetTransform().position.z += moveDir.z * scale.z * moveSpeed;
+				bludgeonRef->GetTransform().position.x += moveDir.x * scale.x * moveSpeed * deltaTime;
+				bludgeonRef->GetTransform().position.z += moveDir.z * scale.z * moveSpeed * deltaTime;
 			}
 		}
 
 		// Apply constraint to the movement on the y axis
-		transform.position.y = 200.0f;
+		transform.position.y = 350.0f;
 	}
 
 	// Zoom in the fov based on the amount added

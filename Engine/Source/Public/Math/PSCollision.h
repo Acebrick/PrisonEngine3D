@@ -6,8 +6,11 @@ enum class PECollisionType
 {
 	ALL,
 	COLLECTIBLE,
-	PLAYER
+	PLAYER,
+	NONE
 };
+
+class PMesh;
 
 struct PSCollision
 {
@@ -27,7 +30,10 @@ struct PSCollision
 
 	// Collision type
 	PECollisionType type;
-	 
+
+	// Store the debug mesh
+	TShared<PMesh> debugMesh;
+
 	// Custom tag for detection
 	PString tag;
 

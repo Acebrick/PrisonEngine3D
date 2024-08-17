@@ -4,10 +4,26 @@
 #include "Graphics/PModel.h"
 #include "Graphics/PGraphicsEngine.h"
 #include "Graphics/PSLight.h"
+#include "Graphics/PSCamera.h"
 
 Skull::Skull()
 {
 	m_HoverLightOffset = glm::vec3(0.0f, -250.0f, 0.0f);
+	movementSpeed = 500.0f;
+	isPatrolling = true;
+	isAlive = true;
+	isCircling = false;
+	patrolPointA = glm::vec3(0.0f);
+	patrolPointB = glm::vec3(0.0f);
+	roomLength = 1600.0f;
+}
+
+void Skull::SetupPatrol(glm::vec3 patrolPointA, glm::vec3 patrolPointB, float xDir, float zDir)
+{
+	this->patrolPointA = patrolPointA;
+	this->patrolPointB = patrolPointB;
+	skullXDir = xDir;
+	skullZDir = zDir;
 }
 
 void Skull::OnStart()
@@ -16,143 +32,200 @@ void Skull::OnStart()
 	{
 		TShared<PTexture> skullTex = TMakeShared<PTexture>();
 		TShared<PSMaterial> skullMat = TMakeShared<PSMaterial>();
-		TShared<PTexture> skullNormTex = TMakeShared<PTexture>();
-		skullTex->LoadTexture("Skull base colour", "Models/Skull/textures/defaultMat_baseColor.jpeg");
-		skullNormTex->LoadTexture("Skull normal", "Models/Skull/textures/defaultMat_normal.jpeg");
+		//TShared<PTexture> skullNormTex = TMakeShared<PTexture>();
+		skullTex->LoadTexture("Skull base colour", "Models/Skull/LowResTex/defaultMat_baseColor.png");
+		//skullNormTex->LoadTexture("Skull normal", "Models/Skull/LowResTex/defaultMat_normal.png");
 		skullMat->m_BaseColourMap = skullTex;
-		skullMat->m_NormalMap = skullNormTex;
+		//skullMat->m_NormalMap = skullNormTex;
+		skullMat->shininess = 1.0f;
+		skullMat->specularStrength = 0.01f;
 		modelRef->SetMaterialBySlot(0, skullMat);
+		GetTransform().scale = glm::vec3(50.0f);
 	}
 
 	// Create lights
-	m_LeftEye = PGameEngine::GetGameEngine()->GetGraphics()->CreateSpotLight();
-	m_RightEye = PGameEngine::GetGameEngine()->GetGraphics()->CreateSpotLight();
-	m_HoverLight = PGameEngine::GetGameEngine()->GetGraphics()->CreatePointLight();
+	m_Eye = PGameEngine::GetGameEngine()->GetGraphics()->CreateSpotLight();
+	//m_HoverLight = PGameEngine::GetGameEngine()->GetGraphics()->CreatePointLight();
 
 	// Set the light values
-	if (const auto& leftEye = m_LeftEye.lock())
+	if (const auto& eye = m_Eye.lock())
 	{
-		if (const auto& rightEye = m_RightEye.lock())
-		{
-			rightEye->colour = leftEye->colour = glm::vec3(0.0f, 1.0f, 0.0f);
-			leftEye->SetInnerCutOff(3.5f);
-			rightEye->SetInnerCutOff(3.5f);	
-			leftEye->SetOuterCutOff(5.0f);
-			rightEye->SetOuterCutOff(5.0f);
-			rightEye->linear = leftEye->linear = 0.00014f;
-			rightEye->quadratic = leftEye->quadratic = 0.00000007f;
-		}
+		eye->colour = glm::vec3(0.0f, 1.0f, 0.0f);
+		eye->SetInnerCutOff(5.0f);
+		eye->SetOuterCutOff(10.0f);
+		eye->linear = 0.00014f;
+		eye->quadratic = 0.00000007f;
 	}
-	if (const auto& hoverLight = m_HoverLight.lock())
+	//if (const auto& hoverLight = m_HoverLight.lock())
+	//{
+	//	hoverLight->colour = glm::vec3(0.0f, 1.0f, 0.0f);
+	//	hoverLight->linear = 0.007f;
+	//	hoverLight->quadratic = 0.000002f;
+	//}
+
+	if (const auto& colRef = AddCollision({ GetTransform().position, GetTransform().scale }).lock())
 	{
-		hoverLight->colour = glm::vec3(0.0f, 1.0f, 0.0f);
-		hoverLight->linear = 0.007f;
-		hoverLight->quadratic = 0.000002f;
+		colRef->type = PECollisionType::ALL;
 	}
 }
 
 void Skull::OnTick(float deltaTime)
 {
 	PWorldObject::OnTick(deltaTime);
-	
+
+	//if (const auto& hoverLight = m_HoverLight.lock())
+	//{
+	//	hoverLight->position = GetTransform().position + m_HoverLightOffset;
+	//}
+
+	if (const auto& eye = m_Eye.lock())
+	{
+		eye->position = GetTransform().position;
+		eye->direction = GetTransform().Forward();
+	}
+
+	if (const auto& camRef = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock())
+	{
+		if (isPatrolling) // If skull is alive and patrolling
+		{
+			// Check if the distance between the skull and the player is less than 600
+			if (glm::distance(GetTransform().position, camRef->transform.position) < 600.0f)
+			{
+				isPatrolling = false;
+			}
+
+			// Run the appropriate patrol function
+			if (isCircling)
+				PatrolSquare(deltaTime);
+			else
+				PatrolPoints(deltaTime);
+
+			// Translate skull
+			GetTransform().position.x += skullXDir * movementSpeed * deltaTime;
+			GetTransform().position.z += skullZDir * movementSpeed * deltaTime;
+
+		}
+		else if (isAlive) // If skull is alive and player is found
+		{
+			ChasePlayer(deltaTime);
+		}
+		else // If skull has been killed
+		{
+			if (GetTransform().position.y >= 50.0f)
+			{
+				// Fall down to the ground
+				GetTransform().position.y -= 500.0f * deltaTime;
+
+				// Rotate on every axis
+				GetTransform().rotation += 500.0f * deltaTime;
+			}
+			else
+			{
+				// When the skull hits the ground, delete the attached lights
+				//m_HoverLight.lock()->~PSPointLight();
+				m_Eye.lock()->~PSSpotLight();
+			}
+		}
+	}
+}
+
+void Skull::OnOverlap(const TShared<PWorldObject>& other, const TShared<PSCollision>& otherCol)
+{
+	if (otherCol->tag == "Bludgeon" && otherCol->type != PECollisionType::NONE)
+	{
+		isAlive = false;
+	}
+}
+
+void Skull::PatrolSquare(float deltaTime)
+{
 	// Has the skull reached the top left corner
-	if (GetTransform().position.x >= 800.0f &&
-		GetTransform().position.z >= 800.0f)
+	if (GetTransform().position.x >= patrolPointA.x &&
+		GetTransform().position.z >= patrolPointA.z)
 	{
 		// Go to right of room
 		skullXDir = -1.0f;
 		skullZDir = 0.0f;
 		// Rotate to face moving direction
 		GetTransform().rotation.y = 270.0f;
-		// Set move direcion
-		movingOnX = true;
 	}
 	// Has the skull reached the top right corner 
-	else if (GetTransform().position.x <= -800.0f &&
-		GetTransform().position.z >= 800.0f)
+	else if (GetTransform().position.x <= patrolPointA.x - roomLength &&
+		GetTransform().position.z >= patrolPointA.z)
 	{
 		// Go to back of room
 		skullXDir = 0.0f;
-		skullZDir += -1.0f;
+		skullZDir = -1.0f;
 		// Rotate to face moving direction
 		GetTransform().rotation.y = 180.0f;
-		// Set move direcion
-		movingOnX = false;
 	}
 	// Has the skull reached the bottom right corner 
-	else if (GetTransform().position.x <= -800.0f &&
-		GetTransform().position.z <= -800.0f)
+	else if (GetTransform().position.x <= patrolPointA.x - roomLength &&
+		GetTransform().position.z <= patrolPointA.z - roomLength)
 	{
 		// Go to left of room
-		skullXDir += 1.0f;
+		skullXDir = 1.0f;
 		skullZDir = 0.0f;
 		// Rotate to face moving direction
 		GetTransform().rotation.y = 90.0f;
-		// Set move direcion
-		movingOnX = true;
 	}
 	// Has the skull reached the bottom left corner 
-	else if (GetTransform().position.x >= 800.0f &&
-		GetTransform().position.z <= -800.0f)
+	else if (GetTransform().position.x >= patrolPointA.x &&
+		GetTransform().position.z <= patrolPointA.z - roomLength)
 	{
 		// Go to front of room
 		skullXDir = 0.0f;
-		skullZDir += 1.0f;
+		skullZDir = 1.0f;
 		// Rotate to face moving direction
 		GetTransform().rotation.y = 0.0f;
-		// Set move direcion
-		movingOnX = false;
 	}
-
-	// Translate skull
-	GetTransform().position.x += skullXDir * movementSpeed * deltaTime;
-	GetTransform().position.z += skullZDir * movementSpeed * deltaTime;
-	
-	if (const auto& hoverLight = m_HoverLight.lock())
-	{
-		hoverLight->position = GetTransform().position + m_HoverLightOffset;
-	}
-
-	if (const auto& leftEye = m_LeftEye.lock())
-	{
-		if (const auto& rightEye = m_RightEye.lock())
-		{
-			if (movingOnX)
-			{
-				leftEye->position.x = GetTransform().position.x;
-				leftEye->position.y = GetTransform().position.y + 1;
-				leftEye->position.z = GetTransform().position.z - 3;
-				leftEye->direction.x = GetTransform().Forward().x;
-				leftEye->direction.y = GetTransform().Forward().y;
-				leftEye->direction.z = GetTransform().Forward().z - 0.03f;
-				rightEye->position.x = GetTransform().position.x;
-				rightEye->position.y = GetTransform().position.y + 1;
-				rightEye->position.z = GetTransform().position.z + 3;
-				rightEye->direction.x = GetTransform().Forward().x;
-				rightEye->direction.y = GetTransform().Forward().y;
-				rightEye->direction.z = GetTransform().Forward().z + 0.03f;
-			}
-			else
-			{
-				leftEye->position.x = GetTransform().position.x - 3;
-				leftEye->position.y = GetTransform().position.y + 1;
-				leftEye->position.z = GetTransform().position.z;
-				leftEye->direction.x = GetTransform().Forward().x - 0.03f;
-				leftEye->direction.y = GetTransform().Forward().y;
-				leftEye->direction.z = GetTransform().Forward().z;
-				rightEye->position.x = GetTransform().position.x + 3;
-				rightEye->position.y = GetTransform().position.y + 1;
-				rightEye->position.z = GetTransform().position.z;
-				rightEye->direction.x = GetTransform().Forward().x + 0.03f;
-				rightEye->direction.y = GetTransform().Forward().y;
-				rightEye->direction.z = GetTransform().Forward().z;
-			}
-		}
-	}
-
-	//GetTransform().position.x += 1.0f * deltaTime;
 }
 
-void Skull::CircleRoom()
+void Skull::ChasePlayer(float deltaTime)
 {
+	m_Eye.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
+
+	if (const auto& camRef = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock())
+	{
+		// Chase the player
+		glm::vec3 distance = GetTransform().position - camRef->transform.position;
+		GetTransform().position.x -= glm::normalize(distance).x * movementSpeed * deltaTime;
+		GetTransform().position.z -= glm::normalize(distance).z * movementSpeed * deltaTime;
+
+		if ((glm::normalize(distance).x > 0 && (glm::normalize(distance).z > 0) || (glm::normalize(distance).x > 0 && glm::normalize(distance).z < 0)))
+		{
+			GetTransform().rotation.y = -(glm::normalize(distance).z * 90.0f + 90.0f);
+		}
+		else
+			GetTransform().rotation.y = (glm::normalize(distance).z * 90.0f + 90.0f);
+	}
+}
+
+void Skull::PatrolPoints(float deltaTime)
+{
+	// Note: These conditions can't use == as they will always run on only one axis
+
+	// Check if the skull has moved beyond the patrol points on the x coord
+	if (GetTransform().position.x < patrolPointA.x && GetTransform().position.x < patrolPointA.x)
+	{
+		skullXDir = 1.0f;
+		GetTransform().rotation.y = 90.0f;
+	}
+	else if (GetTransform().position.x > patrolPointA.x && GetTransform().position.x > patrolPointB.x)
+	{
+		skullXDir = -1.0f;
+		GetTransform().rotation.y = 270.0f;
+	}
+
+	// Check if the skull has moved beyond the patrol points on the x coord
+	if (GetTransform().position.z < patrolPointA.z && GetTransform().position.z < patrolPointB.z)
+	{
+		skullZDir = 1.0f;
+		GetTransform().rotation.y = 0.0f;
+	}
+	else if (GetTransform().position.z > patrolPointA.z && GetTransform().position.z > patrolPointB.z)
+	{
+		skullZDir = -1.0f;
+		GetTransform().rotation.y = 180.0f;
+	}
 }

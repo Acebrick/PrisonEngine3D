@@ -23,7 +23,10 @@ TWeak<PSCollision> PWorldObject::AddCollision(const PSBox& box, const bool& debu
 	// Set the position and size
 	newCol->box = box;
 
-	// TO DO: DEBUG COLLISION
+	if (debug)
+	{
+		PGameEngine::GetGameEngine()->GetGraphics()->CreateCollisionMesh(newCol);
+	}
 
 	// Add the collision to the array
 	m_ObjectCollisions.push_back(newCol);

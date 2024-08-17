@@ -192,3 +192,26 @@ void PMesh::Render(const std::shared_ptr<PShaderProgram>& shader, const PSTransf
 	// Clear the VAO
 	glBindVertexArray(0);
 }
+
+void PMesh::WireRender(const TShared<PShaderProgram>& shader, const PSTransform& transform)
+{
+	// Update the transform of the mesh based on the model transform
+	shader->SetModelTransform(transform);
+
+	// Set the relative transform for the mesh in the shader
+	shader->SetMeshTransform(m_MatTransform);
+
+	// Binding this mesh as the active VAO
+	glBindVertexArray(m_VAO);
+
+	// Render the VAO
+	glDrawElements(
+		GL_LINE_LOOP, // Draw the mesh as triangles
+		static_cast<GLsizei>(m_Indices.size()), // How many vertices are there
+		GL_UNSIGNED_INT, // What type of data is the index array
+		nullptr // How many are you gonna skip
+	);
+
+	// Clear the VAO
+	glBindVertexArray(0);
+}

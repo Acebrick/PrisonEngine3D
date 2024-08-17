@@ -12,17 +12,22 @@
 #include <SDL/SDL_opengl.h>
 
 
-const std::vector<PSVertexData> vertexData = {
-	//   x      y	   z      r     g     b       tx    ty
-	{ {-0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 1.0f} }, // vertex data 1 (top left)
-	{ { 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 1.0f} }, // vertex data 2 (top right)
-	{ {-0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 0.0f, 0.0f} }, // vertex data 3 (bot left) 
-	{ { 0.5f, -0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, { 1.0f, 0.0f} } // vertex data 4 (bot right)
+const std::vector<PSVertexData> colMeshVData = {
+	// x   // y   // z 
+{ {	-1.0f, -1.0f,  1.0f } }, // bl f
+{ {	 1.0f, -1.0f,  1.0f } }, // br f
+{ {  1.0f,  1.0f,  1.0f } }, // tr f
+{ { -1.0f,  1.0f,  1.0f } }, // tl f
+{ {	-1.0f, -1.0f, -1.0f } }, // bl b
+{ {	 1.0f, -1.0f, -1.0f } }, // br b
+{ {  1.0f,  1.0f, -1.0f } }, // tr b
+{ { -1.0f,  1.0f, -1.0f } }, // tl b
 };
 
-const std::vector<uint32_t> indexData = {
-	 0, 1, 2, // Triangle 1
-	 1, 2, 3  // Triangle 2
+const std::vector<uint32_t> colMeshIData = {
+	0, 1, 1, 2, 2, 3, 3, 0, // front
+	4, 5, 5, 6, 6, 7, 7, 4, // back
+	0, 4, 1, 5, 2, 6, 3, 7  // sides
 };
 
 bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
@@ -92,11 +97,22 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 		return false;
 	}
 
+	// Create the shader object
+	m_WireShader = TMakeShared<PShaderProgram>();
+
+	// Attempt to initialise shdaer and test if failed
+	if (!m_WireShader->InitShader("Shaders/Wireframe/Wireframe.vertex", "Shaders/Wireframe/Wireframe.frag"))
+	{
+		PDebug::Log("Graphics engine failed to intialise due to wire shader failure");
+		return false;
+	}
+
 	// Create the camera
 	m_Camera = TMakeShared<PSCamera>();
-	m_Camera->transform.position.y = 200.0f;
-	m_Camera->transform.position.z = -75.0f;
-
+	m_Camera->transform.position = glm::vec3(5850.0f, 300.0f, -3650.0f);
+	PDebug::Log("X: " + std::to_string(m_Camera->transform.position.x) +
+		"\tY: " + std::to_string(m_Camera->transform.position.y) +
+		"\tZ: " + std::to_string(m_Camera->transform.position.z));
 	//TShared<PTexture> defaultTexture = TMakeShared<PTexture>();
 
 	//if (!defaultTexture->LoadTexture("Default grid", "Textures/P_DefaultGrid.png"))
@@ -201,7 +217,9 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+	PDebug::Log("X: " + std::to_string(m_Camera->transform.position.x) +
+		"\tY: " + std::to_string(m_Camera->transform.position.y) +
+		"\tZ: " + std::to_string(m_Camera->transform.position.z));
 	
 	/* SKULL
 	
@@ -300,6 +318,35 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 			m_Models.erase(m_Models.begin() + i);
 	} 
 
+	// WIREFRAME SHADER
+	// Activate the shader
+	m_WireShader->Activate();
+
+	// Set the world transformations based on the camera
+	m_WireShader->SetWorldTransform(m_Camera);
+
+	// Render custom graphics
+	// Models will update their own positions in the mesh based on the transform
+	for (int i = m_Collisions.size() - 1; i >= 0; --i)
+	{
+		// Checking if the reference still exists
+		if (const auto& colRef = m_Collisions[i].lock())
+		{
+			PSTransform transform;
+			transform.position = colRef->box.position;
+			transform.scale = colRef->box.halfSize;
+
+			// Render if there is a reference
+			colRef->debugMesh->WireRender(m_WireShader, transform);
+		}
+		else
+		{
+			// Erasing from the array if there is no reference
+			m_Collisions.erase(m_Collisions.begin() + i);
+		}
+	}
+
+
 	// Presented the frame to the window
 	// Swapping the back buffer with the front buffer
 	SDL_GL_SwapWindow(sdlWindow);
@@ -342,6 +389,21 @@ TShared<PSMaterial> PGraphicsEngine::CreateMaterial()
 	return TMakeShared<PSMaterial>();
 }
 
+void PGraphicsEngine::CreateCollisionMesh(const TWeak<PSCollision>& col)
+{
+	if (const auto& colRef = col.lock())
+	{
+		TShared<PMesh> newMesh = TMakeShared<PMesh>();
+
+		// Create a box of lines
+		newMesh->CreateMesh(colMeshVData, colMeshIData);
+
+		// Store the shared mesh into the collision
+		colRef->debugMesh = newMesh;
+
+		m_Collisions.push_back(col);
+	}
+}
 
 /*
 void PGraphicsEngine::ToggleFlashlight()
