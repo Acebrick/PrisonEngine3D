@@ -46,6 +46,18 @@ struct SpotLight
 	float outerCutOff;
 };
 
+struct RectLight
+{
+	vec3 colour;
+	 vec3 position;
+	 vec3 direction;
+	 float intensity;
+	 float linear;
+	 float quadratic;
+	 float width;
+	 float height;
+};
+
 #define NUM_DIR_LIGHTS 1 // 1 = Number of available directional lights that can be used
 uniform DirLight dirLights[NUM_DIR_LIGHTS]; // Create a directional light array
 
@@ -239,8 +251,5 @@ void main() {
 		}
 	}
 
-
-	finalColour = vec4(result, 1.0f);
-
-	
+	finalColour = vec4(result, 1.0f);	
 }

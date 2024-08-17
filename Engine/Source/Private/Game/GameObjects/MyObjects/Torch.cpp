@@ -22,6 +22,8 @@ void Torch::OnStart()
 		normTex->LoadTexture("Torch normal", "Models/Torch/LowResTex/torchNormal.png");
 		mat->m_BaseColourMap = tex;
 		mat->m_SpecularMap = specTex;
+		mat->shininess = 16.0f;
+		mat->specularStrength = 0.25f;
 		mat->m_NormalMap = normTex;
 		//specTex->LoadTexture("Torch specular", "Models/Torch/textures/torchSpecular.png");
 		modelRef->SetMaterialBySlot(0, mat);

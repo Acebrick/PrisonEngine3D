@@ -152,10 +152,10 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	// Check if exists as a reference and change it
 	if (const auto& lightRef = dirLight.lock())
 	{
-		lightRef->colour = glm::vec3(1.0f, 1.0f, 1.0f);
-		lightRef->intensity = 1.0f;
+		lightRef->colour = glm::vec3(1.0f, 0.0f, 0.0f);
+		lightRef->intensity = 0.1f;
 		lightRef->direction = glm::vec3(0.0f, 1.0f, 0.0f);
-		lightRef->ambient = glm::vec3(0.1f);
+		lightRef->ambient = glm::vec3(0.01f);
 
 	}
 

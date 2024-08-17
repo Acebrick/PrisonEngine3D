@@ -126,20 +126,20 @@ void PGameEngine::Start()
 		torchRef->GetTransform().position.z = -2400.0f;
 		torchRef->GetTransform().rotation.y = 90.0f;
 	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 5470.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = -3200.0f;
-		torchRef->GetTransform().rotation.y = 90.0f;
-	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 6130.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = -2400.0f;
-		torchRef->GetTransform().rotation.y = -90.0f;
-	}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 5470.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = -3200.0f;
+	//	torchRef->GetTransform().rotation.y = 90.0f;
+	//}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 6130.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = -2400.0f;
+	//	torchRef->GetTransform().rotation.y = -90.0f;
+	//}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = 6130.0f;
@@ -156,20 +156,20 @@ void PGameEngine::Start()
 		torchRef->GetTransform().position.z = -400.0f;
 		torchRef->GetTransform().rotation.y = 90.0f;
 	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 5470.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = -1200.0f;
-		torchRef->GetTransform().rotation.y = 90.0f;
-	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 6130.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = -400.0f;
-		torchRef->GetTransform().rotation.y = -90.0f;
-	}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 5470.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = -1200.0f;
+	//	torchRef->GetTransform().rotation.y = 90.0f;
+	//}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 6130.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = -400.0f;
+	//	torchRef->GetTransform().rotation.y = -90.0f;
+	//}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = 6130.0f;
@@ -191,13 +191,13 @@ void PGameEngine::Start()
 		torchRef->GetTransform().position.z = 330.0f;
 		torchRef->GetTransform().rotation.y = 180.0f;
 	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 2600.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = 330.0f;
-		torchRef->GetTransform().rotation.y = 180.0f;
-	}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 2600.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = 330.0f;
+	//	torchRef->GetTransform().rotation.y = 180.0f;
+	//}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = 3390.0f;
@@ -205,13 +205,13 @@ void PGameEngine::Start()
 		torchRef->GetTransform().position.z = 330.0f;
 		torchRef->GetTransform().rotation.y = 180.0f;
 	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 4200.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = 330.0f;
-		torchRef->GetTransform().rotation.y = 180.0f;
-	}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 4200.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = 330.0f;
+	//	torchRef->GetTransform().rotation.y = 180.0f;
+	//}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = 4600.0f;
@@ -219,13 +219,13 @@ void PGameEngine::Start()
 		torchRef->GetTransform().position.z = 330.0f;
 		torchRef->GetTransform().rotation.y = 180.0f;
 	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 5400.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = 330.0f;
-		torchRef->GetTransform().rotation.y = 180.0f;
-	}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 5400.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = 330.0f;
+	//	torchRef->GetTransform().rotation.y = 180.0f;
+	//}
 	// opposite side
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
@@ -233,36 +233,36 @@ void PGameEngine::Start()
 		torchRef->GetTransform().position.y = 200.0f;
 		torchRef->GetTransform().position.z = -310.0f;
 	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 2600.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = -330.0f;
-	}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 2600.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = -330.0f;
+	//}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = 3390.0f;
 		torchRef->GetTransform().position.y = 200.0f;
 		torchRef->GetTransform().position.z = -330.0f;
 	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 4200.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = -330.0f;
-	}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 4200.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = -330.0f;
+	//}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = 4600.0f;
 		torchRef->GetTransform().position.y = 200.0f;
 		torchRef->GetTransform().position.z = -330.0f;
 	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 5400.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = -330.0f;
-	}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 5400.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = -330.0f;
+	//}
 
 	// SECOND LAST ROOM - 0,0,0 COORDS LOCATION
 	if (const auto& skull = CreateObject<Skull>().lock())
@@ -284,20 +284,20 @@ void PGameEngine::Start()
 		torchRef->GetTransform().position.z = -400.0f;
 		torchRef->GetTransform().rotation.y = 90.0f;
 	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 330.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = -400.0f;
-		torchRef->GetTransform().rotation.y = -90.0f;
-	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = -330.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = 400.0f;
-		torchRef->GetTransform().rotation.y = 90.0f;
-	}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 330.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = -400.0f;
+	//	torchRef->GetTransform().rotation.y = -90.0f;
+	//}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = -330.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = 400.0f;
+	//	torchRef->GetTransform().rotation.y = 90.0f;
+	//}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = 330.0f;
@@ -356,20 +356,20 @@ void PGameEngine::Start()
 		torchRef->GetTransform().position.z = 5200.0f;
 		torchRef->GetTransform().rotation.y = 90.0f;
 	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = 330.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = 5200.0f;
-		torchRef->GetTransform().rotation.y = -90.0f;
-	}
-	if (const auto& torchRef = CreateObject<Torch>().lock())
-	{
-		torchRef->GetTransform().position.x = -330.0f;
-		torchRef->GetTransform().position.y = 200.0f;
-		torchRef->GetTransform().position.z = 6000.0f;
-		torchRef->GetTransform().rotation.y = 90.0f;
-	}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = 330.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = 5200.0f;
+	//	torchRef->GetTransform().rotation.y = -90.0f;
+	//}
+	//if (const auto& torchRef = CreateObject<Torch>().lock())
+	//{
+	//	torchRef->GetTransform().position.x = -330.0f;
+	//	torchRef->GetTransform().position.y = 200.0f;
+	//	torchRef->GetTransform().position.z = 6000.0f;
+	//	torchRef->GetTransform().rotation.y = 90.0f;
+	//}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{
 		torchRef->GetTransform().position.x = 330.0f;

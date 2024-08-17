@@ -128,6 +128,11 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 			{
 				//m_CameraDirection.y += 1.0f;	
 			}
+
+			if (key == SDL_SCANCODE_LSHIFT)
+			{
+				GetGraphics()->GetCamera().lock()->moveSpeed *= 2;
+			}
 		});
 
 	m_Input->OnKeyRelease->Bind([this](const SDL_Scancode& key)
@@ -160,6 +165,11 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 			if (key == SDL_SCANCODE_E) // Up
 			{
 				//m_CameraDirection.y += -1.0f;
+			}
+
+			if (key == SDL_SCANCODE_LSHIFT)
+			{
+				GetGraphics()->GetCamera().lock()->moveSpeed /= 2;
 			}
 		});
 
