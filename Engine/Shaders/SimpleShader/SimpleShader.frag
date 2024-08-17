@@ -5,13 +5,13 @@ in vec2 fTexCoords;
 in vec3 fNormals;
 in vec3 fVertPos;
 in vec3 fViewPos;
-in mat3 fTBN;
+//in mat3 fTBN;
 
 struct Material
 {
 	sampler2D baseColourMap;
 	sampler2D specularMap;
-	sampler2D normalMap;
+	//sampler2D normalMap;
 	float shininess;
 	float specularStrength;
 };
@@ -46,18 +46,6 @@ struct SpotLight
 	float outerCutOff;
 };
 
-struct RectLight
-{
-	vec3 colour;
-	 vec3 position;
-	 vec3 direction;
-	 float intensity;
-	 float linear;
-	 float quadratic;
-	 float width;
-	 float height;
-};
-
 #define NUM_DIR_LIGHTS 1 // 1 = Number of available directional lights that can be used
 uniform DirLight dirLights[NUM_DIR_LIGHTS]; // Create a directional light array
 
@@ -89,7 +77,7 @@ void main() {
 
 														// NORMAL MAPPING ATTEMPT
 	// Normal map value
-	vec3 normalColour = texture(material.normalMap, fTexCoords).rgb;
+	// vec3 normalColour = texture(material.normalMap, fTexCoords).rgb;
 	
 	// Opengl reads y/g values reversed
 	// This brings it back to normal to correctly read the normal maps, I think???
@@ -98,7 +86,7 @@ void main() {
 	// equation -> normalColour.g = normalColour.g * -1.0f + 1.0f;
 
 	// Convert the values from an rgb range (0 to 1) to a normal vector range (-1 to 1)
-	normalColour = normalColour * 2.0f - 1.0f;
+	// normalColour = normalColour * 2.0f - 1.0f;
 
 	// Apply the normalColour to work in tangent space, uncomment to test
 	// normalColour = normalize(fTBN * normalColour);

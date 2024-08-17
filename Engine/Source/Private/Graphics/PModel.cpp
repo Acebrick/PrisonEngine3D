@@ -128,16 +128,16 @@ bool PModel::FindAndImportMeshes(const aiNode& node, const aiScene& scene, const
 			vertex.m_Normal[1] = aMesh->mNormals[j].y;
 			vertex.m_Normal[2] = aMesh->mNormals[j].z;
 
-			// Checks if texture is a normal map, working
-			if (aMesh->HasTangentsAndBitangents())
-			{
-				// Meant to require scene component to be changed which ruins everything
-				// Seems to be applying values from normal maps though
-				// Maybe values are wrong? Already normalized
-				vertex.m_Tangent[0] = aMesh->mTangents[j].x;
-				vertex.m_Tangent[1] = aMesh->mTangents[j].y;
-				vertex.m_Tangent[2] = aMesh->mTangents[j].z;
-			}
+			//// Checks if texture is a normal map, working
+			//if (aMesh->HasTangentsAndBitangents())
+			//{
+			//	// Meant to require scene component to be changed which ruins everything
+			//	// Seems to be applying values from normal maps though
+			//	// Maybe values are wrong? Already normalized
+			//	vertex.m_Tangent[0] = aMesh->mTangents[j].x;
+			//	vertex.m_Tangent[1] = aMesh->mTangents[j].y;
+			//	vertex.m_Tangent[2] = aMesh->mTangents[j].z;
+			//}
 
 			// Add the data into our vertex array
 			meshVertices.push_back(vertex);

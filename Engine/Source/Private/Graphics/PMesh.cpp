@@ -143,19 +143,19 @@ bool PMesh::CreateMesh(const std::vector<PSVertexData>& vertices, const std::vec
 		(void*)(sizeof(float) * 8) // How many numbers to skip in bytes (skipping the position and colour values)
 	);
 
-	// Pass out the vertex data in separate formats
-	// TANGENTS
-	glEnableVertexAttribArray(4);
+	//// Pass out the vertex data in separate formats
+	//// TANGENTS
+	//glEnableVertexAttribArray(4);
 
-	// Set the texture coordinates of that data to the 3 index of the attribute array
-	glVertexAttribPointer(
-		4, // Location to store the data in the attribute array
-		3, // How many numbers to pass into the attribute array index
-		GL_FLOAT, // The type of data to store (only one per index)
-		GL_FALSE, // Should we normalise the values, generally no
-		sizeof(PSVertexData), // How big is each data array in a VertexData
-		(void*)(sizeof(float) * 11) // How many numbers to skip in bytes (skipping the position and colour values)
-	);
+	//// Set the texture coordinates of that data to the 3 index of the attribute array
+	//glVertexAttribPointer(
+	//	4, // Location to store the data in the attribute array
+	//	3, // How many numbers to pass into the attribute array index
+	//	GL_FLOAT, // The type of data to store (only one per index)
+	//	GL_FALSE, // Should we normalise the values, generally no
+	//	sizeof(PSVertexData), // How big is each data array in a VertexData
+	//	(void*)(sizeof(float) * 11) // How many numbers to skip in bytes (skipping the position and colour values)
+	//);
 
 	// Common practice to clear the VAO from the GPU
 	glBindVertexArray(0); // Set to 0 because there is no such thing as a 0 id

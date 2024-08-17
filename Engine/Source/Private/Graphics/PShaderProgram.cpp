@@ -353,16 +353,16 @@ void PShaderProgram::SetMaterial(const TShared<PSMaterial>& material)
 	}
 
 	// NORMAL MAP
-	if (material->m_NormalMap)
-	{
-		// Bind the texture to the 1 index
-		material->m_NormalMap->BindTexture(2);
+	//if (material->m_NormalMap)
+	//{
+	//	// Bind the texture to the 1 index
+	//	material->m_NormalMap->BindTexture(2);
 
-		// Get the specular map id
-		varID = glGetUniformLocation(m_ProgramID, "material.normalMap");
+	//	// Get the specular map id
+	//	varID = glGetUniformLocation(m_ProgramID, "material.normalMap");
 
-		glUniform1f(varID, 2);
-	}
+	//	glUniform1f(varID, 2);
+	//}
 
 	// SHININESS
 	// Get the base colour map id

@@ -27,10 +27,10 @@ void Bludgeon::OnStart()
 		TShared<PSMaterial> bludgeonMat = TMakeShared<PSMaterial>();
 		bludgeonTex->LoadTexture("Bludgeon base colour", "Models/Bludgeon/textures/Bludgeon_BaseColor.png");
 		bludgeonSpecTex->LoadTexture("Bludgeon specular", "Models/Bludgeon/textures/Bludgeon_Specular.png");
-		bludgeonNormTex->LoadTexture("Bludgeon normal", "Models/Bludgeon/textures/Bludgeon_Normal.png");
+		//bludgeonNormTex->LoadTexture("Bludgeon normal", "Models/Bludgeon/textures/Bludgeon_Normal.png");
 		bludgeonMat->m_BaseColourMap = bludgeonTex;
 		bludgeonMat->m_SpecularMap = bludgeonSpecTex;
-		bludgeonMat->m_NormalMap = bludgeonNormTex;
+		//bludgeonMat->m_NormalMap = bludgeonNormTex;
 		modelRef->SetMaterialBySlot(0, bludgeonMat);
 		modelRef->GetTransform().scale = glm::vec3(2.0f);
 		GetTransform().position = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock()->transform.position + m_BludgeonOffset;

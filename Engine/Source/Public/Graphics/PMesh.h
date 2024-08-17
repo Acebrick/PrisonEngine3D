@@ -33,7 +33,7 @@ struct PSVertexData
 	// 0 = x
 	// 1 = y
 	// 2 = z
-	float m_Tangent[3] = { 0.0f, 0.0f, 0.0f };
+	//float m_Tangent[3] = { 0.0f, 0.0f, 0.0f };
 };
 
 class PMesh

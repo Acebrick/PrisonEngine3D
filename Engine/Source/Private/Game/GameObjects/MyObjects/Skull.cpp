@@ -32,11 +32,11 @@ void Skull::OnStart()
 	{
 		TShared<PTexture> skullTex = TMakeShared<PTexture>();
 		TShared<PSMaterial> skullMat = TMakeShared<PSMaterial>();
-		TShared<PTexture> skullNormTex = TMakeShared<PTexture>();
+		//TShared<PTexture> skullNormTex = TMakeShared<PTexture>();
 		skullTex->LoadTexture("Skull base colour", "Models/Skull/LowResTex/defaultMat_baseColor.png");
-		skullNormTex->LoadTexture("Skull normal", "Models/Skull/LowResTex/defaultMat_normal.png");
+		//skullNormTex->LoadTexture("Skull normal", "Models/Skull/LowResTex/defaultMat_normal.png");
 		skullMat->m_BaseColourMap = skullTex;
-		skullMat->m_NormalMap = skullNormTex;
+		//skullMat->m_NormalMap = skullNormTex;
 		skullMat->shininess = 1.0f;
 		skullMat->specularStrength = 0.01f;
 		modelRef->SetMaterialBySlot(0, skullMat);

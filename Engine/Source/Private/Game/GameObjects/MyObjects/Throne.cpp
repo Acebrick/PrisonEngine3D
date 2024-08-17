@@ -15,17 +15,17 @@ void Throne::OnStart()
 		// textures
 		TShared<PTexture> throneTex = TMakeShared<PTexture>();
 		TShared<PTexture> throneSpecTex = TMakeShared<PTexture>();
-		TShared<PTexture> throneNormTex = TMakeShared<PTexture>();
+		//TShared<PTexture> throneNormTex = TMakeShared<PTexture>();
 		throneTex->LoadTexture("Throne base colour", "Models/Throne/LowResTex/RustedThrone_Base_Color.png");
 		throneSpecTex->LoadTexture("Throne specular", "Models/Throne/LowResTex/RustedThrone_Specular.png");
-		throneNormTex->LoadTexture("Throne normal", "Models/Throne/LowResTex/RustedThrone_Normal_OpenGL.png");
+		//throneNormTex->LoadTexture("Throne normal", "Models/Throne/LowResTex/RustedThrone_Normal_OpenGL.png");
 		// materials
 		TShared<PSMaterial> throneMat = TMakeShared<PSMaterial>();
 		throneMat->m_BaseColourMap = throneTex;
 		throneMat->m_SpecularMap = throneSpecTex;
 		throneMat->shininess = 16.0f;
 		throneMat->specularStrength = 0.01f;
-		throneMat->m_NormalMap = throneNormTex;
+		//throneMat->m_NormalMap = throneNormTex;
 		modelRef->SetMaterialBySlot(0, throneMat);
 	}
 	

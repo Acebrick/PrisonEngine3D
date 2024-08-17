@@ -16,7 +16,7 @@ struct PSMaterial
 	TShared<PTexture> m_SpecularMap;
 
 	// This is the bumpiness/depth of an object to give it a more 3D look
-	TShared<PTexture> m_NormalMap;
+	//TShared<PTexture> m_NormalMap;
 
 	// Material properties
 	// Shininess of the material
