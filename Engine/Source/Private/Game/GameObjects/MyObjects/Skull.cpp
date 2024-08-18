@@ -65,7 +65,7 @@ void Skull::OnStart()
 
 	if (const auto& colRef = AddCollision({ GetTransform().position, GetTransform().scale }).lock())
 	{
-		colRef->type = PECollisionType::ALL;
+		colRef->type = PECollisionType::ENEMY;
 	}
 }
 
@@ -88,8 +88,8 @@ void Skull::OnTick(float deltaTime)
 	{
 		if (isPatrolling) // If skull is alive and patrolling
 		{
-			// Check if the distance between the skull and the player is less than 600
-			if (glm::distance(GetTransform().position, camRef->transform.position) < 600.0f)
+			// Check if the distance between the skull and the player is less than 800
+			if (glm::distance(GetTransform().position, camRef->transform.position) < 800.0f)
 			{
 				isPatrolling = false;
 			}

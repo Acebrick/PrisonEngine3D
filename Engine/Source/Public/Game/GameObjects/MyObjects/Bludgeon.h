@@ -8,9 +8,9 @@ public:
 
 	void SwingBludgeon();
 
-	glm::vec3 GetOffset() { return m_BludgeonOffset; }
+	glm::vec3 GetOffset() const { return m_BludgeonOffset; }
 
-	bool GetIsSwinging() { return m_IsSwinging; }
+	bool GetIsSwinging() const { return m_IsSwinging; }
 
 protected:
 	void OnStart() override;

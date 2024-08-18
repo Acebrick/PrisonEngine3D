@@ -7,6 +7,7 @@ enum class PECollisionType
 	ALL,
 	COLLECTIBLE,
 	PLAYER,
+	ENEMY,
 	NONE
 };
 

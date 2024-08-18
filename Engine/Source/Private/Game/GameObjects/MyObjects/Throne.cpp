@@ -28,8 +28,11 @@ void Throne::OnStart()
 		//throneMat->m_NormalMap = throneNormTex;
 		modelRef->SetMaterialBySlot(0, throneMat);
 	}
-	AddCollision({ GetTransform().position, glm::vec3(130.0f, 205.0f, 100.0f) });
-	//SetLifeTime(5.0f);
+	AddCollision({glm::vec3(GetTransform().position.x,
+							GetTransform().position.y,
+							GetTransform().position.z), 
+							glm::vec3(130.0f, 500.0f, 100.0f)});
+
 }
 
 void Throne::OnTick(float deltaTime)
@@ -43,6 +46,11 @@ void Throne::OnOverlap(const TShared<PWorldObject>& other, const TShared<PSColli
 {
 	if (otherCol->type == PECollisionType::PLAYER)
 	{
-		PDebug::Log("YOU WIN");
+		static bool messagePrinted = false;
+		if (!messagePrinted)
+		{
+			PDebug::Log("YOU WIN!!!");
+			messagePrinted = true;
+		}
 	}
 }

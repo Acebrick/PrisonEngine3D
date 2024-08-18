@@ -13,6 +13,8 @@ public:
 
 	void SetIsCircling() { isCircling = true; }
 
+	bool GetIsAlive() const { return isAlive; }
+
 protected:
 	void OnStart() override;
 

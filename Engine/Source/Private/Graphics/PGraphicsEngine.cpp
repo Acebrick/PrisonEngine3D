@@ -196,7 +196,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	{
 		lightRef->colour = glm::vec3(1.0f, 1.0f, 1.0f);
 		lightRef->intensity = 0.5f;
-		lightRef->direction = glm::vec3(0.0f, 0.0f, 1.0f);
+		lightRef->direction = glm::vec3(0.0f, 0.0f, -1.0f);
 		lightRef->ambient = glm::vec3(0.25f);
 
 }

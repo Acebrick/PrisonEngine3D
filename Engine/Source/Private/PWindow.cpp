@@ -199,6 +199,13 @@ void PWindow::RegisterInput(const TShared<PInput>& m_Input)
 				m_CanZoom = true;
 			}
 
+			// Prevent attacks when dead
+			if (const auto& playerRef = PGameEngine::GetGameEngine()->GetPlayer().lock())
+				if (playerRef->GetIsDead())
+				{
+					return;
+				}
+
 			if (button == SDL_BUTTON_LEFT)
 			{
 				if (const auto& bludgeonRef = PGameEngine::GetGameEngine()->GetBludgeon().lock())
@@ -231,8 +238,15 @@ void PWindow::Render()
 		{
 			if (!m_InputMode)
 			{
-				// Translate the camera based on input direction
-				camRef->Translate(m_CameraDirection);
+				// Only allow player movement if dead
+				if (const auto& playerRef = PGameEngine::GetGameEngine()->GetPlayer().lock())
+				{
+					if (!playerRef->GetIsDead())
+					{
+						// Translate the camera based on input direction
+						camRef->Translate(m_CameraDirection);
+					}
+				}
 
 				// Rotate the camera based on input direction
 				// glm::abs = absolute (force a positive value)

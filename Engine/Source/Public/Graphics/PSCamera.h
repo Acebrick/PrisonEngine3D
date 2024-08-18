@@ -2,6 +2,7 @@
 #include "Math/PSTransform.h"
 #include "Game/PGameEngine.h"
 #include "Game/GameObjects/MyObjects/Bludgeon.h"
+#include "Game/GameObjects/MyObjects/Player.h"
 
 struct PSCamera
 {
@@ -36,9 +37,13 @@ struct PSCamera
 		{
 			if (const auto& bludgeonRef = PGameEngine::GetGameEngine()->GetBludgeon().lock())
 			{
-				bludgeonRef->TranslateOffModelRotation(transform.position.x, transform.position.z, -(transform.rotation.y - oldYRot),
-						bludgeonRef->GetTransform().position.x, bludgeonRef->GetTransform().position.z);
-				//bludgeonRef->GetTransform().rotation.y = transform.rotation.y;
+				if (const auto& playerRef = PGameEngine::GetGameEngine()->GetPlayer().lock())
+					if (!playerRef->GetIsDead())
+					{
+						bludgeonRef->TranslateOffModelRotation(transform.position.x, transform.position.z, -(transform.rotation.y - oldYRot),
+							bludgeonRef->GetTransform().position.x, bludgeonRef->GetTransform().position.z);
+						//bludgeonRef->GetTransform().rotation.y = transform.rotation.y;
+					}
 			}
 		}
 	}
@@ -67,15 +72,20 @@ struct PSCamera
 
 		if (const auto& bludgeonRef = PGameEngine::GetGameEngine()->GetBludgeon().lock())
 		{
-			if (moveDir != glm::vec3(0.0f))
-			{
-				bludgeonRef->GetTransform().position.x += moveDir.x * scale.x * moveSpeed * deltaTime;
-				bludgeonRef->GetTransform().position.z += moveDir.z * scale.z * moveSpeed * deltaTime;
-			}
+			if (const auto& playerRef = PGameEngine::GetGameEngine()->GetPlayer().lock())
+				if (!playerRef->GetIsDead())
+				{
+					if (moveDir != glm::vec3(0.0f))
+					{
+						bludgeonRef->GetTransform().position.x += moveDir.x * scale.x * moveSpeed * deltaTime;
+							bludgeonRef->GetTransform().position.z += moveDir.z * scale.z * moveSpeed * deltaTime;
+					}
+					// Apply constraint to the movement on the y axis
+					transform.position.y = 350.0f;
+				}
 		}
 
-		// Apply constraint to the movement on the y axis
-		transform.position.y = 350.0f;
+		
 	}
 
 	// Zoom in the fov based on the amount added

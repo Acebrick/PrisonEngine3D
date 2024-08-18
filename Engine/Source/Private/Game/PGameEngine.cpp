@@ -105,7 +105,7 @@ void PGameEngine::Start()
 	m_Window->RegisterInput(m_Input);
 	// Create world objects
 
-	CreateObject<Player>();
+	m_Player = CreateObject<Player>();
 	CreateObject<Dungeon>();
 	m_Bludgeon = CreateObject<Bludgeon>();
 

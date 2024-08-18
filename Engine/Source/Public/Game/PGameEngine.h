@@ -8,6 +8,7 @@
 
 class PObject;
 class Bludgeon;
+class Player;
 
 class PGameEngine 
 {
@@ -48,6 +49,8 @@ public:
 	TUnique<PGraphicsEngine>& GetGraphics();
 
 	TWeak<Bludgeon> GetBludgeon() { return m_Bludgeon; }
+
+	TWeak<Player> GetPlayer() { return m_Player; }
 
 private:
 	// Constructor and destructor are private to ensure we can only have 1 game engine
@@ -105,4 +108,6 @@ private:
 
 	// Store the bludgeon (not ideal but just an easy way for inputs without having to dynamic_cast through objectStack)
 	TWeak<Bludgeon> m_Bludgeon;
+
+	TWeak<Player> m_Player;
 };
