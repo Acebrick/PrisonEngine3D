@@ -45,7 +45,7 @@ void Skull::OnStart()
 
 	// Create lights
 	m_Eye = PGameEngine::GetGameEngine()->GetGraphics()->CreateSpotLight();
-	//m_HoverLight = PGameEngine::GetGameEngine()->GetGraphics()->CreatePointLight();
+	m_HoverLight = PGameEngine::GetGameEngine()->GetGraphics()->CreatePointLight();
 
 	// Set the light values
 	if (const auto& eye = m_Eye.lock())
@@ -56,12 +56,12 @@ void Skull::OnStart()
 		eye->linear = 0.00014f;
 		eye->quadratic = 0.00000007f;
 	}
-	//if (const auto& hoverLight = m_HoverLight.lock())
-	//{
-	//	hoverLight->colour = glm::vec3(0.0f, 1.0f, 0.0f);
-	//	hoverLight->linear = 0.007f;
-	//	hoverLight->quadratic = 0.000002f;
-	//}
+	if (const auto& hoverLight = m_HoverLight.lock())
+	{
+		hoverLight->colour = glm::vec3(0.0f, 1.0f, 0.0f);
+		hoverLight->linear = 0.007f;
+		hoverLight->quadratic = 0.000002f;
+	}
 
 	if (const auto& colRef = AddCollision({ GetTransform().position, GetTransform().scale }).lock())
 	{
@@ -73,10 +73,10 @@ void Skull::OnTick(float deltaTime)
 {
 	PWorldObject::OnTick(deltaTime);
 
-	//if (const auto& hoverLight = m_HoverLight.lock())
-	//{
-	//	hoverLight->position = GetTransform().position + m_HoverLightOffset;
-	//}
+	if (const auto& hoverLight = m_HoverLight.lock())
+	{
+		hoverLight->position = GetTransform().position + m_HoverLightOffset;
+	}
 
 	if (const auto& eye = m_Eye.lock())
 	{
@@ -122,7 +122,7 @@ void Skull::OnTick(float deltaTime)
 			else
 			{
 				// When the skull hits the ground, delete the attached lights
-				//m_HoverLight.lock()->~PSPointLight();
+				m_HoverLight.lock()->~PSPointLight();
 				m_Eye.lock()->~PSSpotLight();
 			}
 		}
@@ -184,6 +184,7 @@ void Skull::PatrolSquare(float deltaTime)
 void Skull::ChasePlayer(float deltaTime)
 {
 	m_Eye.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
+	m_HoverLight.lock()->colour = glm::vec3(1.0f, 0.0f, 0.0f);
 
 	if (const auto& camRef = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock())
 	{

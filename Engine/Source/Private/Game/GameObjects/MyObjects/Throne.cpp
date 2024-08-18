@@ -23,6 +23,8 @@ void Throne::OnStart()
 		TShared<PSMaterial> throneMat = TMakeShared<PSMaterial>();
 		throneMat->m_BaseColourMap = throneTex;
 		throneMat->m_SpecularMap = throneSpecTex;
+		throneMat->specularStrength = 0.1f;
+		throneMat->shininess = 16.0f;
 		throneMat->m_NormalMap = throneNormTex;
 		modelRef->SetMaterialBySlot(0, throneMat);
 	}

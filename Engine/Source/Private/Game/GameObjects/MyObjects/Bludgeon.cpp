@@ -9,7 +9,7 @@ Bludgeon::Bludgeon()
 {
 	m_BludgeonOffset = glm::vec3(-25.0f, 0.0f, 50.0f);
 	m_IsSwinging = false;
-	m_SwingTime = 1.0f;
+	m_SwingTime = 0.1f;
 }
 
 void Bludgeon::SwingBludgeon()

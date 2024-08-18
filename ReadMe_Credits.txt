@@ -9,3 +9,5 @@
 "Concrete Wall" (https://skfb.ly/DBxM) by NguoiDaiViet is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
 
 "Brick Wall Segment 02 Tilable" (https://skfb.ly/oQovx) by Biser Borislavov is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+"Torch stick" (https://skfb.ly/outXy) by DJMaesen is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
