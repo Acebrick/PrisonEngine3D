@@ -25,7 +25,7 @@ void Throne::OnStart()
 		throneMat->m_SpecularMap = throneSpecTex;
 		throneMat->specularStrength = 0.1f;
 		throneMat->shininess = 16.0f;
-		throneMat->m_NormalMap = throneNormTex;
+		//throneMat->m_NormalMap = throneNormTex;
 		modelRef->SetMaterialBySlot(0, throneMat);
 	}
 	AddCollision({ GetTransform().position, glm::vec3(130.0f, 205.0f, 100.0f) });
@@ -43,6 +43,6 @@ void Throne::OnOverlap(const TShared<PWorldObject>& other, const TShared<PSColli
 {
 	if (otherCol->type == PECollisionType::PLAYER)
 	{
-		PDebug::Log("Colliding with throne");
+		PDebug::Log("YOU WIN");
 	}
 }

@@ -31,17 +31,14 @@ void Dungeon::OnStart()
 		dungeonMat->m_BaseColourMap = dungeonTex;
 		dungeonMat->m_SpecularMap = dungeonSpecTex;
 		//dungeonMat->m_NormalMap = dungoenNormTex;
-		dungeonMat->shininess = 100.0f;
 		dungeonMat->specularStrength = 0.1f;
 		dungeonMat2->m_BaseColourMap = dungeonTex2;
 		dungeonMat2->m_SpecularMap = dungeonSpecTex2;
 		//dungeonMat->m_NormalMap = dungoenNormTex2;
-		dungeonMat2->shininess = 100.0f;
 		dungeonMat2->specularStrength = 0.1f;
 		dungeonMat3->m_BaseColourMap = dungeonTex3;
 		dungeonMat3->m_SpecularMap = dungeonSpecTex3;
 		//dungeonMat->m_NormalMap = dungoenNormTex3;
-		dungeonMat3->shininess = 100.0f;
 		dungeonMat3->specularStrength = 0.1f;
 		modelRef->SetMaterialBySlot(0, dungeonMat);
 		modelRef->SetMaterialBySlot(1, dungeonMat2);

@@ -31,11 +31,11 @@ void Bludgeon::OnStart()
 		bludgeonNormTex->LoadTexture("Bludgeon normal", "Models/Bludgeon/textures/Bludgeon_Normal.png");
 		bludgeonMat->m_BaseColourMap = bludgeonTex;
 		bludgeonMat->m_SpecularMap = bludgeonSpecTex;
-		bludgeonMat->m_NormalMap = bludgeonNormTex;
+		//bludgeonMat->m_NormalMap = bludgeonNormTex;
 		modelRef->SetMaterialBySlot(0, bludgeonMat);
 		modelRef->GetTransform().scale = glm::vec3(0.25f);
 		GetTransform().position = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock()->transform.position + m_BludgeonOffset;
-		GetTransform().position.y = 300.0f;
+		//GetTransform().position.y = 300.0f;
 
 		collisionBounds = AddCollision({ GetTransform().position, glm::vec3(100.0f, 10.0f, 100.0f) }).lock();
 
@@ -51,9 +51,9 @@ void Bludgeon::OnTick(float deltaTime)
 {
 	if (const auto& camRef = PGameEngine::GetGameEngine()->GetGraphics()->GetCamera().lock())
 	{
+		//GetTransform().position.y = camRef->transform.position.y - 50.0f;
 		if (!m_IsSwinging)
 		{
-			GetTransform().position.y = camRef->transform.position.y;
 			GetTransform().rotation.x = 0.0f;
 			GetTransform().rotation.z = 0.0f;
 			m_StopSwingingTime = m_LifeTimeTimer + m_SwingTime;
@@ -65,7 +65,6 @@ void Bludgeon::OnTick(float deltaTime)
 			{
 				collisionBounds.lock()->type = PECollisionType::ALL;
 
-				GetTransform().position.y = camRef->transform.position.y - 50.0f;
 
 				if (camRef->transform.Forward().z >= 0)
 				{

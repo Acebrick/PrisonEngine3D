@@ -112,8 +112,8 @@ void PGameEngine::Start()
 	// FIRST ROOM
 	if (const auto& skull = CreateObject<Skull>().lock())
 	{
-		skull->GetTransform().position = glm::vec3(5850.0f, 300.0f, 2400.0f);
-		skull->SetupPatrol(glm::vec3(5850.0f, 0.0f, -1200.0f), glm::vec3(5850.0f, 0.0f, 1200.0f), 0.0f, -1.0f);
+		skull->GetTransform().position = glm::vec3(5800.0f, 300.0f, 2400.0f);
+		skull->SetupPatrol(glm::vec3(5800.0f, 0.0f, -1800.0f), glm::vec3(5800.0f, 0.0f, 1100.0f), 0.0f, -1.0f);
 	}
 	if (const auto& torchRef = CreateObject<Torch>().lock())
 	{

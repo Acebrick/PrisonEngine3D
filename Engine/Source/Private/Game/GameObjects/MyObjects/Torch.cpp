@@ -15,36 +15,35 @@ void Torch::OnStart()
 	{
 		TShared<PTexture> tex = TMakeShared<PTexture>();
 		TShared<PTexture> specTex = TMakeShared<PTexture>();
-		//TShared<PTexture> normTex = TMakeShared<PTexture>();
+		TShared<PTexture> normTex = TMakeShared<PTexture>();
 		TShared<PSMaterial> mat = TMakeShared < PSMaterial>();
 		tex->LoadTexture("Torch base colour", "Models/Torch2/LowResTex/torchstickColor.png");
 		specTex->LoadTexture("Torch specular", "Models/Torch2/LowResTex/torchstickSpecular.png");
-		//normTex->LoadTexture("Torch normal", "Models/Torch/LowResTex/torchNormal.png");
+		normTex->LoadTexture("Torch normal", "Models/Torch/LowResTex/torchNormal.png");
 		mat->m_BaseColourMap = tex;
 		mat->m_SpecularMap = specTex;
 		mat->shininess = 16.0f;
-		mat->specularStrength = 0.25f;
+		mat->specularStrength = 0.1f;
 		//mat->m_NormalMap = normTex;
-		//specTex->LoadTexture("Torch specular", "Models/Torch/textures/torchSpecular.png");
 		modelRef->SetMaterialBySlot(0, mat);
 	}
 
 	if (const auto& lightRef = PGameEngine::GetGameEngine()->GetGraphics()->CreatePointLight().lock())
 	{
 		if (GetTransform().rotation.x == 20)
-			lightRef->position = GetTransform().position + glm::vec3(20.0f, 150.0f, 0.0f);
+			lightRef->position = GetTransform().position + glm::vec3(0.0f, 250.0f, 50.0f);
 		else if (GetTransform().rotation.x == -20)
-			lightRef->position = GetTransform().position + glm::vec3(-20.0f, 150.0f, 0.0f);
+			lightRef->position = GetTransform().position + glm::vec3(0.0f, 250.0f, -50.0f);
 		if (GetTransform().rotation.z == 20)
-			lightRef->position = GetTransform().position + glm::vec3(0.0f, 150.0f, 20.0f);
+			lightRef->position = GetTransform().position + glm::vec3(-50.0f, 250.0f, 0.0f);
 		else if (GetTransform().rotation.z == -20)
-			lightRef->position = GetTransform().position + glm::vec3(0.0f, 150.0f, -20.0f);
+			lightRef->position = GetTransform().position + glm::vec3(50.0f, 250.0f, 0.0f);
 
 
 		lightRef->colour = glm::vec3(1.0f, 0.5f, 0.0f);
 
-		lightRef->linear = 0.0014;
-		lightRef->quadratic = 0.000007f;
+		lightRef->linear = 0.0011;
+		lightRef->quadratic = 0.000002f;
 		lightRef->intensity = 1.0f;
 	}
 

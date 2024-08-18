@@ -110,9 +110,7 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	// Create the camera
 	m_Camera = TMakeShared<PSCamera>();
 	m_Camera->transform.position = glm::vec3(5850.0f, 300.0f, -3650.0f);
-	PDebug::Log("X: " + std::to_string(m_Camera->transform.position.x) +
-		"\tY: " + std::to_string(m_Camera->transform.position.y) +
-		"\tZ: " + std::to_string(m_Camera->transform.position.z));
+
 	//TShared<PTexture> defaultTexture = TMakeShared<PTexture>();
 
 	//if (!defaultTexture->LoadTexture("Default grid", "Textures/P_DefaultGrid.png"))
@@ -197,9 +195,9 @@ bool PGraphicsEngine::InitEngine(SDL_Window* sdlWindow, const bool& vsync)
 	if (const auto& lightRef = dirLight.lock())
 	{
 		lightRef->colour = glm::vec3(1.0f, 1.0f, 1.0f);
-		lightRef->intensity = 1.0f;
-		lightRef->direction = glm::vec3(0.0f, 1.0f, 0.0f);
-		lightRef->ambient = glm::vec3(0.5f);
+		lightRef->intensity = 0.5f;
+		lightRef->direction = glm::vec3(0.0f, 0.0f, 1.0f);
+		lightRef->ambient = glm::vec3(0.25f);
 
 }
 
@@ -217,9 +215,9 @@ void PGraphicsEngine::Render(SDL_Window* sdlWindow)
 	// Clear the back buffer with a solid colour
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	PDebug::Log("X: " + std::to_string(m_Camera->transform.position.x) +
-		"\tY: " + std::to_string(m_Camera->transform.position.y) +
-		"\tZ: " + std::to_string(m_Camera->transform.position.z));
+	//PDebug::Log("X: " + std::to_string(m_Camera->transform.position.x) +
+	//	"\tY: " + std::to_string(m_Camera->transform.position.y) +
+	//	"\tZ: " + std::to_string(m_Camera->transform.position.z));
 	
 	/* SKULL
 	

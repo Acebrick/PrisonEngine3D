@@ -119,12 +119,6 @@ void Skull::OnTick(float deltaTime)
 				// Rotate on every axis
 				GetTransform().rotation += 500.0f * deltaTime;
 			}
-			else
-			{
-				// When the skull hits the ground, delete the attached lights
-				m_HoverLight.lock()->~PSPointLight();
-				m_Eye.lock()->~PSSpotLight();
-			}
 		}
 	}
 }
